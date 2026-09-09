@@ -1,0 +1,383 @@
+/* =======================================================================
+   CLASES TRANSVERSALES
+   -----------------------------------------------------------------------
+   Solo vive aquí lo que no se puede encapsular en un componente:
+
+   - clases que un padre aplica sobre el marcado de un hijo (`.focus-ring`,
+     `.touch-target`, `.tone-*`);
+   - estado que un componente escribe fuera de su propio árbol (`.modal-open`
+     en `<body>`).
+
+   La geometría del armazón NO terminó aquí. La fase 4 le dio a cada
+   componente del armazón su propia caja — el host es la barra, el host es el
+   panel — y convirtió el riel y el cajón en inputs, así que
+   `body.sidebar-collapsed .app-main` y los cuarenta y tantos selectores
+   `body.sidebar-collapsed .sidebar-*` del original se volvieron reglas
+   ordinarias dentro del componente que estilizan. Ya nada del armazón cruza
+   el árbol, así que nada de eso pertenece a este archivo.
+
+   IMPORTANTE: estas reglas deliberadamente NO están dentro de `@layer`. En la
+   cascada de CSS, las reglas sin capa le ganan a `@layer utilities` de
+   Tailwind, así que sobrescriben utilidades sin necesitar `!important`. Por
+   eso `styles.css` importa Tailwind ANTES que este archivo.
+   ======================================================================= */
+
+/* Bloquea el scroll del body mientras un modal está abierto. `Modal` lo
+   aplica a `<body>`, fuera de su propio árbol. */
+.modal-open {
+  overflow: hidden;
+}
+
+/* El estilo de foco del sistema. Va en TODO elemento interactivo.
+
+   Un `outline` con un offset, no dos sombras apiladas. La versión con sombra
+   tenía que PINTAR el espacio entre el control y el anillo, lo que
+   significaba nombrar un color para él: blanco por defecto y `#0b1120` bajo
+   el tema oscuro, ambos escritos en el lugar. De ahí salieron dos problemas.
+   El espacio se pintaba del color del lienzo sin importar sobre qué estuviera
+   el control en realidad — un botón enfocado dentro de una tarjeta obtenía
+   una franja del color del lienzo alrededor — y el valor era un literal que
+   no seguiría si el lienzo alguna vez cambiaba.
+
+   `outline-offset` deja el espacio TRANSPARENTE, así que muestra lo que sea
+   que haya detrás del control: correcto en cada superficie y en ambos temas,
+   sin ningún color que declarar. También deja de arrollar el `box-shadow`
+   propio de un componente, que la regla anterior reemplazaba por completo al
+   enfocarse. */
+.focus-ring:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* Objetivo táctil mínimo de 44x44 (WCAG AA). */
+.touch-target {
+  display: flex;
+  min-height: 44px;
+  min-width: 44px;
+  align-items: center;
+  justify-content: center;
+}
+
+.transition-layout {
+  transition:
+    transform var(--duration-fast) var(--ease-out-quart),
+    opacity var(--duration-fast) var(--ease-out-quart),
+    box-shadow var(--duration-fast) var(--ease-out-quart),
+    background-color var(--duration-fast) var(--ease-out-quart);
+}
+
+/* Entrada escalonada. El índice llega a través de [style.--stagger-idx]
+   desde el componente que lo usa. */
+.animate-stagger-enter {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: stagger-enter var(--duration-slow) var(--ease-out-quart) forwards;
+  animation-delay: calc(var(--stagger-idx, 0) * 50ms);
+}
+
+@keyframes stagger-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =======================================================================
+   Clases de tono
+   -----------------------------------------------------------------------
+   La mitad consumidora de los tokens de tono en `tokens/semantic.css`. Un
+   componente fija `data-tone="green"` en el elemento y agrega una de estas
+   tres; nunca nombra un matiz en su propia hoja de estilos, y el valor de
+   modo oscuro sale gratis del token.
+
+   - `soft`   píldoras y burbujas: relleno del matiz, primer plano más fuerte
+   - `subtle` superficies a lo largo de la página como una alerta en línea:
+              relleno más claro
+   - `text`   una cifra o nota desnuda sobre una tarjeta: sin relleno alguno
+   ======================================================================= */
+
+.tone-soft {
+  background-color: var(--tone-surface-soft);
+  color: var(--tone-ink-strong);
+}
+
+.tone-subtle {
+  background-color: var(--tone-surface-subtle);
+  color: var(--tone-ink-strong);
+}
+
+.tone-text {
+  color: var(--tone-ink);
+}
+
+.tone-border {
+  border-color: var(--tone-border);
+}
+
+/* =======================================================================
+   Piel del control de formulario
+   -----------------------------------------------------------------------
+   Cinco componentes renderizan un elemento nativo distinto — `<input>`,
+   `<textarea>`, `<select>`, el campo numérico, el campo de búsqueda — y los
+   cinco deben pintarse de forma idéntica. Angular acota la hoja de estilos de
+   un componente, así que la única forma de garantizar una sola apariencia es
+   una regla, aquí, que cada control aplica a su propio elemento.
+
+   Las medidas vienen de los tokens de nivel 3 `--field-*`; nada aquí nombra
+   un color o un tamaño propio.
+   ======================================================================= */
+
+.field-control {
+  width: 100%;
+  border: var(--field-border-width) solid var(--field-border);
+  border-radius: var(--field-radius);
+  background-color: var(--field-surface);
+  color: var(--field-ink);
+  font-size: var(--field-font-size);
+  padding-inline: var(--field-padding-x);
+  outline: none;
+  transition:
+    border-color var(--duration-fast) var(--ease-out-quart),
+    box-shadow var(--duration-fast) var(--ease-out-quart),
+    background-color var(--duration-fast) var(--ease-out-quart);
+}
+
+/* Un control de una sola línea recibe una altura fija, para que se alinee
+   con un botón del mismo tamaño. Un textarea fija su propia altura a partir
+   de `rows`. */
+.field-control:not(textarea) {
+  height: var(--field-height-md);
+}
+
+.field-control--sm:not(textarea) {
+  height: var(--field-height-sm);
+  font-size: var(--text-caption);
+}
+
+.field-control--lg:not(textarea) {
+  height: var(--field-height-lg);
+  font-size: var(--text-subheading);
+}
+
+textarea.field-control {
+  padding-block: var(--field-padding-y);
+  resize: none;
+}
+
+.field-control:hover:not(:disabled):not(:focus) {
+  border-color: var(--field-border-hover);
+}
+
+.field-control:focus {
+  border-color: var(--field-border-focus);
+  box-shadow: 0 0 0 3px var(--field-focus-halo);
+}
+
+.field-control:disabled {
+  cursor: not-allowed;
+  opacity: var(--field-disabled-opacity);
+}
+
+.field-control--invalid,
+.field-control[aria-invalid='true'] {
+  border-color: var(--field-border-invalid);
+}
+
+/* Espacio para un icono que se sienta dentro del campo. */
+.field-control--with-icon {
+  padding-inline-start: calc(var(--field-padding-x) * 2 + 1rem);
+}
+
+/* Un icono o unidad que se sienta dentro de un campo, sobre el control.
+   -----------------------------------------------------------------------
+   Tiene que ser una caja flex, no un span desnudo: un `app-icon` es
+   `inline-flex`, así que dentro de un span de bloque cae en la línea base del
+   texto en vez del centro de la caja — el span medía 22px (su
+   line-height) alrededor de un glifo de 16px y el icono quedaba 3px más
+   arriba. `line-height: 0` quita el interlineado para que la caja del afijo
+   sea exactamente del tamaño de lo que contiene. */
+.field-affix {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  line-height: 0;
+  color: var(--field-ink-placeholder);
+  pointer-events: none;
+}
+
+.field-affix--start {
+  inset-inline-start: var(--field-padding-x);
+}
+
+.field-affix--end {
+  inset-inline-end: var(--field-padding-x);
+}
+
+/* =======================================================================
+   Coreografía de overlay
+   -----------------------------------------------------------------------
+   Global porque los selectores cruzan el árbol de componentes: la entrada del
+   panel la gobierna una clase en su overlay ancestro, que el acotamiento de
+   Angular partiría en dos si no.
+
+   Oculto por clase en vez de desmontado, para que la salida pueda animar
+   siquiera: un elemento removido del DOM ya no tiene nada que transicionar.
+   ======================================================================= */
+
+.modal-overlay {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--modal-enter-duration) var(--ease-out-quart),
+    visibility var(--modal-enter-duration) var(--ease-out-quart);
+}
+
+.modal-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-panel {
+  transform: scale(0.95) translateY(10px);
+  opacity: 0;
+  transition:
+    transform var(--modal-enter-duration) var(--ease-out-quart),
+    opacity var(--modal-enter-duration) var(--ease-out-quart);
+}
+
+.modal-overlay.is-open .modal-panel {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-overlay,
+  .modal-panel {
+    transition-duration: 1ms;
+  }
+
+  .modal-panel {
+    transform: none;
+  }
+}
+
+/* =======================================================================
+   Burbuja del tooltip
+   -----------------------------------------------------------------------
+   La directiva `appTooltip` crea este elemento de forma imperativa sobre el
+   host que sea al que se aplique, así que sus estilos no pueden vivir en una
+   hoja de estilos de componente: no hay componente. Los nombres de clase son
+   el contrato de la directiva.
+   ======================================================================= */
+
+.app-tooltip {
+  position: fixed;
+  z-index: 60;
+  width: max-content;
+  max-width: var(--tooltip-max-width);
+  padding: 0.375rem 0.625rem;
+  border: 1px solid var(--tooltip-border);
+  border-radius: var(--tooltip-radius);
+  background-color: var(--tooltip-surface);
+  color: var(--tooltip-ink);
+  font-size: var(--text-caption);
+  box-shadow: var(--shadow-elevated);
+  pointer-events: none;
+
+  /* La burbuja se alterna con `hidden`, que es `display: none`, y un
+     elemento que no se está renderizando no tiene estado DESDE el cual
+     transicionar. Eso es lo que `@starting-style` provee, y lo que
+     `allow-discrete` en `display` hace utilizable: el navegador pinta un
+     frame en el estilo inicial antes de que el elemento se vuelva visible, y
+     retiene `display` hasta que termina la salida.
+
+     Sin ambos, las opciones eran mantener la burbuja en el layout de forma
+     permanente — una caja oculta bajo cada control que lleva una pista — o
+     dejarla aparecer sin ningún movimiento. `translate` y no `transform`,
+     porque la posición misma se fija desde el script como `left` y `top`. */
+  opacity: 0;
+  translate: 0 var(--tooltip-rise);
+  transition:
+    opacity var(--tooltip-enter-duration) var(--ease-out-quart),
+    translate var(--tooltip-enter-duration) var(--ease-out-quart),
+    display var(--tooltip-enter-duration) allow-discrete;
+}
+
+.app-tooltip:not([hidden]) {
+  opacity: 1;
+  translate: 0 0;
+}
+
+@starting-style {
+  .app-tooltip:not([hidden]) {
+    opacity: 0;
+    translate: 0 var(--tooltip-rise);
+  }
+}
+
+/* Una burbuja debajo de su ancla se eleva desde el otro lado: el movimiento
+   apunta de vuelta al control al que pertenece. El lado lo escribe la
+   directiva DESPUÉS del volteo, así que una burbuja que tuvo que moverse al
+   otro lado anima desde ahí. */
+.app-tooltip[data-placement^='bottom'] {
+  translate: 0 calc(var(--tooltip-rise) * -1);
+}
+
+@starting-style {
+  .app-tooltip[data-placement^='bottom']:not([hidden]) {
+    translate: 0 calc(var(--tooltip-rise) * -1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-tooltip,
+  .app-tooltip[data-placement^='bottom'] {
+    translate: none;
+    transition-duration: 1ms;
+  }
+}
+
+/* =======================================================================
+   Confirmación de copiar-un-token
+   -----------------------------------------------------------------------
+   Misma situación que el tooltip de arriba: el atributo lo escribe una
+   directiva, así que no hay hoja de estilos de componente donde estas reglas
+   puedan vivir. El nombre del atributo es el contrato de la directiva.
+   ======================================================================= */
+
+/* La confirmación viaja sobre la propia muestra: un toast por «copiado»
+   robaría atención para algo que quien lee acaba de hacer, y sesenta muestras
+   encolarían sesenta de ellos. */
+[data-copy-state]::after {
+  position: absolute;
+  z-index: 5;
+  top: 50%;
+  left: 50%;
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--radius-full);
+  font-family: var(--font-sans);
+  font-size: var(--text-overline);
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  translate: -50% -50%;
+  pointer-events: none;
+}
+
+[data-copy-state='copied']::after {
+  content: 'copiado';
+  background-color: var(--showcase-copied-surface);
+  color: var(--showcase-copied-ink);
+}
+
+[data-copy-state='failed']::after {
+  content: 'no se pudo copiar';
+  background-color: var(--showcase-copy-failed-surface);
+  color: var(--showcase-copy-failed-ink);
+}

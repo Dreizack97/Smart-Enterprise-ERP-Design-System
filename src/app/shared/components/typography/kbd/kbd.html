@@ -1,0 +1,6 @@
+@for (key of keys(); track $index; let last = $last) {
+  <kbd class="kbd">{{ key }}</kbd>
+  @if (!last) {
+    <span class="kbd__separator" aria-hidden="true">{{ separator() }}</span>
+  }
+}

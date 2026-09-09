@@ -1,0 +1,93 @@
+:host {
+  display: block;
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border: var(--field-border-width) solid var(--field-border);
+  border-radius: var(--field-radius);
+  background-color: var(--field-surface);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-out-quart),
+    background-color var(--duration-fast) var(--ease-out-quart);
+}
+
+.radio-option:hover:not(:has(:disabled)) {
+  border-color: var(--field-border-hover);
+}
+
+.radio-option:has(:disabled) {
+  cursor: not-allowed;
+  opacity: var(--field-disabled-opacity);
+}
+
+/* El estado elegido NO se pinta con una utilidad de paleta cruda. Derivar el
+   tinte de la propia superficie del tema mantiene el contraste correcto en
+   ambos modos por construcción, en vez de necesitar un remapeo de modo
+   oscuro para una clase más. */
+.radio-option:has(:checked) {
+  border-color: var(--field-accent);
+  background: var(--field-selected-surface);
+}
+
+.radio-option__input {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--field-accent);
+  cursor: inherit;
+}
+
+.radio-option__icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-xl);
+  background: var(--field-icon-surface);
+  color: var(--field-icon-ink);
+}
+
+.radio-option__body {
+  min-width: 0;
+  flex: 1;
+}
+
+.radio-option__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.radio-option__label {
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--ink-primary);
+}
+
+.radio-option__badge {
+  border-radius: var(--badge-radius);
+  padding: 0.125rem 0.5rem;
+  font-size: var(--text-caption);
+  font-weight: 500;
+}
+
+.radio-option__description {
+  display: block;
+  margin-top: 0.125rem;
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+}

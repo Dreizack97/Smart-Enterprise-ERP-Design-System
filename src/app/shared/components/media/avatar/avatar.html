@@ -1,0 +1,9 @@
+<span
+  class="avatar"
+  [class]="'avatar--' + size()"
+  [style.background-color]="color()"
+  [attr.aria-hidden]="label() ? null : 'true'"
+  [attr.role]="label() ? 'img' : null"
+  [attr.aria-label]="label() || null"
+  >{{ initials() }}</span
+>

@@ -1,0 +1,10 @@
+:host {
+  display: block;
+}
+
+/* Chart.js dimensiona su canvas según el contenedor, así que el contenedor
+   debe tener su propia altura o el gráfico colapsa a nada. */
+.chart {
+  position: relative;
+  height: var(--chart-height);
+}

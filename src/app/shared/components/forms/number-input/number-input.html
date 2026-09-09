@@ -1,0 +1,34 @@
+<app-field
+  [label]="label()"
+  [controlId]="inputId()"
+  [required]="required()"
+  [hint]="hint()"
+  [error]="message()"
+  [errorId]="errorId()"
+>
+  <div class="number-wrap">
+    <input
+      class="field-control number-wrap__control"
+      [class]="'field-control--' + size()"
+      [id]="inputId()"
+      type="number"
+      inputmode="decimal"
+      [value]="value()"
+      [placeholder]="placeholder()"
+      [disabled]="disabled()"
+      [required]="required()"
+      [attr.name]="name() || null"
+      [attr.aria-label]="!label() && ariaLabel() ? ariaLabel() : null"
+      [attr.min]="min()"
+      [attr.max]="max()"
+      [step]="step()"
+      [attr.aria-invalid]="message() ? 'true' : null"
+      [attr.aria-describedby]="message() ? errorId() : null"
+      (input)="onInput($event)"
+      (blur)="onBlur()"
+    />
+    @if (suffix(); as unit) {
+      <span class="field-affix number-wrap__suffix" aria-hidden="true">{{ unit }}</span>
+    }
+  </div>
+</app-field>

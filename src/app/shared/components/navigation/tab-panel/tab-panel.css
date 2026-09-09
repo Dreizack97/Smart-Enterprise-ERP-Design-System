@@ -1,0 +1,22 @@
+:host {
+  display: block;
+}
+
+.tab-panel {
+  padding-block: 1rem;
+  font-size: var(--text-body);
+  color: var(--ink-secondary);
+}
+
+/* `@angular/aria` marca los paneles que no se muestran con `inert`, que los
+   saca de la interacción y del árbol de accesibilidad — pero NO del layout.
+   Cada uno conservaba su propio padding vertical, así que cuatro pestañas
+   apilaban 96 px de caja vacía bajo el panel visible y el bloque parecía
+   tener un hueco.
+
+   `inert` es la señal propia de la librería para «este panel no es el
+   actual», así que es de ahí de donde hay que partir: ninguna segunda fuente
+   de verdad sobre qué pestaña está abierta. */
+.tab-panel[inert] {
+  display: none;
+}

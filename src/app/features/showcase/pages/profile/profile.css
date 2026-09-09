@@ -1,0 +1,222 @@
+/* El host de la página es un bloque: el layout de abajo es un contenedor
+   flex de columna, y un host dejado en línea depende de cajas anónimas para
+   obtener su ancho. */
+:host {
+  display: block;
+}
+
+/* Los propios márgenes de la página, igualando `showcase-page` y las otras
+   plantillas para que una plantilla y una página del catálogo se sienten en
+   la misma cuadrícula. */
+.profile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--showcase-block-gap);
+  padding: var(--showcase-block-gap) var(--showcase-gutter) 2.5rem;
+}
+
+@media (min-width: 1024px) {
+  .profile {
+    padding-right: var(--showcase-gutter-wide);
+    padding-left: var(--showcase-gutter-wide);
+  }
+}
+
+/* =======================================================================
+   Ritmo dentro de una tarjeta
+   -----------------------------------------------------------------------
+   Un envoltorio en vez de `app-section-card > * + *`. La tarjeta proyecta su
+   contenido en `.card__body`, así que un combinador de hijo desde el host
+   nunca lo alcanza: medido, una cuadrícula de campos y el textarea debajo de
+   ella se sentaban a 0px de distancia. El envoltorio ES el hijo proyectado,
+   así que puede espaciar a sus propios hijos sin saber nada de las
+   internas de la tarjeta — y sin `::ng-deep`, que sí lo haría.
+
+   `--card-gap` y no un literal: el sistema ya decidió cuál es el ritmo
+   interno de una tarjeta, y una segunda opinión aquí es como dos tarjetas
+   terminan respirando distinto.
+   ======================================================================= */
+.card-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-gap);
+}
+
+/* Las acciones se sientan separadas de los campos sobre los que actúan: el
+   mismo espacio se leería como «un campo más». */
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-top: 0.25rem;
+}
+
+/* Los campos llenan la fila y envuelven por su cuenta. `auto-fit` en vez de
+   un número fijo: tres columnas en una pantalla ancha, dos en una tablet,
+   una en un teléfono, sin un breakpoint para cada una. */
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
+  gap: 1rem;
+}
+
+/* Dos campos que pertenecen juntos — el par de contraseñas — se detienen en
+   dos columnas para que se queden uno junto al otro en vez de alejarse en
+   una tarjeta ancha. */
+.field-grid--pair {
+  grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+  max-width: 44rem;
+}
+
+/* =======================================================================
+   Identidad
+   ======================================================================= */
+
+/* Tres zonas: la foto conserva su ancho intrínseco, el nombre toma lo que
+   queda, y los datos de solo lectura se sientan al final. Bajo el
+   breakpoint se apilan, porque un avatar de 96px junto a dos líneas de
+   texto en un teléfono no le deja suficiente espacio a ninguno. */
+.identity {
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-gap);
+}
+
+@media (min-width: 768px) {
+  .identity {
+    flex-direction: row;
+    align-items: center;
+    gap: 1.5rem;
+  }
+}
+
+.identity__photo {
+  flex-shrink: 0;
+}
+
+.identity__facts {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.identity__name {
+  font-size: var(--text-heading);
+  font-weight: 600;
+  color: var(--ink-strong);
+}
+
+.identity__mail {
+  font-size: var(--text-body);
+  color: var(--ink-secondary);
+}
+
+.identity__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+/* Los datos son una lista de definición porque eso es lo que son: una
+   etiqueta y el valor que nombra. También le da a la mitad derecha vacía de
+   la tarjeta algo que sostener — el espacio se leía como un layout sin
+   terminar. */
+.identity__meta {
+  display: grid;
+  gap: 0.625rem;
+}
+
+@media (min-width: 768px) {
+  .identity__meta {
+    min-width: 12rem;
+    padding-left: 1.5rem;
+    border-left: 1px solid var(--line-subtle);
+  }
+}
+
+.identity__fact-label {
+  font-size: var(--text-overline);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.identity__fact-value {
+  margin-top: 0.125rem;
+  font-size: var(--text-body);
+  color: var(--ink-primary);
+}
+
+/* =======================================================================
+   Paneles
+   ======================================================================= */
+
+/* Tres opciones cortas se leían como tres franjas de ancho completo. La
+   página limita cuánto espacio les da; cómo se dibujan por dentro sigue
+   siendo asunto del radio group — meterse en su marcado desde aquí ataría
+   esta página a un nombre de clase que no le pertenece. */
+.theme-choice {
+  display: block;
+  max-width: 34rem;
+}
+
+.switches {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Una acción destructiva y su explicación: el texto toma el espacio, el
+   botón se queda en su propio tamaño y nunca se estira a lo ancho de la
+   tarjeta. */
+.danger {
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-gap);
+}
+
+@media (min-width: 640px) {
+  .danger {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+}
+
+.danger__text {
+  min-width: 0;
+}
+
+.danger__title {
+  margin-bottom: 0.25rem;
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--ink-strong);
+}
+
+.note {
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+}
+
+/* Los hosts que no cargan un display propio no se pueden distribuir como
+   bloques, y estos se sientan directo en el cuerpo de una tarjeta o en una
+   columna flex. */
+app-section-card,
+app-data-table,
+app-timeline,
+app-tabs,
+app-password-strength-meter,
+app-textarea,
+app-alert,
+app-otp-input,
+app-resend-timer,
+app-radio-group {
+  display: block;
+  min-width: 0;
+}

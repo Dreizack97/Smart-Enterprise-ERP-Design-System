@@ -1,0 +1,747 @@
+<app-showcase-page
+  title="Formularios"
+  subtitle="Trece controles con la misma altura, el mismo foco y la misma forma de decir que algo falla"
+>
+  <app-showcase-block
+    title="field"
+    anchor="campo"
+    description="La anatomía que comparten todos los controles: rótulo, control, pista y error. Se usa al construir un control nuevo."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="label + hint">
+        <app-field
+          label="Almacén de salida"
+          controlId="field-demo-1"
+          hint="Solo los almacenes con existencias."
+        >
+          <input id="field-demo-1" class="field-control field-control--md" value="Central" />
+        </app-field>
+      </app-variant-row>
+      <app-variant-row label="required" note="dibuja el asterisco">
+        <app-field label="Clave del pedido" controlId="field-demo-2" required>
+          <input id="field-demo-2" class="field-control field-control--md" value="PED-2481" />
+        </app-field>
+      </app-variant-row>
+      <app-variant-row label="error" note="sustituye a la pista">
+        <app-field
+          label="Clave del pedido"
+          controlId="field-demo-3"
+          hint="Esta pista no se ve mientras haya error."
+          error="Ya existe un pedido con esa clave."
+          errorId="field-demo-3-error"
+          required
+        >
+          <input
+            id="field-demo-3"
+            class="field-control field-control--md"
+            value="PED-2481"
+            aria-invalid="true"
+            aria-describedby="field-demo-3-error"
+          />
+        </app-field>
+      </app-variant-row>
+      <app-variant-row label="labelHidden" note="rótulo solo para lectores">
+        <app-field label="Buscar en el catálogo" controlId="field-demo-4" labelHidden>
+          <input id="field-demo-4" class="field-control field-control--md" placeholder="Buscar…" />
+        </app-field>
+      </app-variant-row>
+      <app-variant-row label="labelAsText" note="para un radiogroup">
+        <app-field label="Turno de entrega" controlId="field-demo-5" labelAsText>
+          <div class="forms__group" role="radiogroup" aria-labelledby="field-demo-5-label">
+            Matutino · Vespertino
+          </div>
+        </app-field>
+      </app-variant-row>
+    </app-variant-grid>
+
+    <p note>
+      Cada control repetía este marcado palabra por palabra y ya habían divergido:
+      <code>input</code> dibujaba el asterisco de obligatorio y <code>textarea</code> y
+      <code>select</code> no, así que el mismo esquema producía dos rótulos distintos según qué
+      control lo renderizara.
+    </p>
+
+    <p note>
+      <code>labelAsText</code> no es un capricho: un <code>&lt;label for&gt;</code> solo puede
+      apuntar a un control de formulario, y un <code>role="radiogroup"</code> no lo es. Se nombra
+      con <code>aria-labelledby</code>, y para eso el rótulo tiene que ser direccionable, no
+      pulsable.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="input"
+    anchor="texto"
+    description="Campo de texto con etiqueta, pista, icono opcional y error. La etiqueta es un <label> real."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      @for (size of sizes; track size) {
+        <app-variant-row [label]="size">
+          <app-input [(value)]="company" label="Razón social" [size]="size" name="company" />
+        </app-variant-row>
+      }
+      <app-variant-row label="icon">
+        <app-input
+          [(value)]="email"
+          label="Correo de contacto"
+          type="email"
+          icon="mail"
+          placeholder="nombre@empresa.mx"
+          hint="Se usará para enviar la factura."
+        />
+      </app-variant-row>
+      <app-variant-row label="error" note="touched + errors">
+        <app-input
+          value=""
+          label="RFC"
+          icon="briefcase"
+          [errors]="[{ kind: 'pattern', message: 'El RFC no tiene el formato esperado.' }]"
+          touched
+          required
+        />
+      </app-variant-row>
+      <app-variant-row label="disabled">
+        <app-input value="No editable" label="Folio" disabled />
+      </app-variant-row>
+    </app-variant-grid>
+
+    <p note>
+      El error solo se muestra cuando el campo está <code>touched</code>: avisar antes de que
+      alguien escriba es regañar por adelantado.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="textarea"
+    description="Texto largo, con contador cuando hay un máximo declarado."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="rows + maxLength" [note]="notes().length + ' de 180'">
+        <app-textarea
+          [(value)]="notes"
+          label="Notas del pedido"
+          placeholder="Instrucciones de entrega, referencias del almacén…"
+          hint="Aparecerán impresas en la orden de salida."
+          [rows]="4"
+          [maxLength]="180"
+        />
+      </app-variant-row>
+      <app-variant-row label="cerca del límite" note="el contador avisa al 90 %">
+        <app-textarea
+          [(value)]="nearLimitNote"
+          label="Referencia corta"
+          [rows]="2"
+          [maxLength]="40"
+        />
+      </app-variant-row>
+      <app-variant-row label="error" note="touched + errors">
+        <app-textarea
+          value=""
+          label="Motivo de la devolución"
+          [rows]="2"
+          [errors]="[{ kind: 'required', message: 'Indica por qué se devuelve la mercancía.' }]"
+          touched
+          required
+        />
+      </app-variant-row>
+      <app-variant-row label="disabled">
+        <app-textarea
+          value="Cerrado por auditoría. No se admiten cambios."
+          label="Observaciones"
+          [rows]="2"
+          disabled
+        />
+      </app-variant-row>
+      <app-variant-row label="ariaLabel" note="sin rótulo visible">
+        <app-textarea
+          [(value)]="quickNote"
+          ariaLabel="Nota rápida del almacén"
+          placeholder="Nota rápida…"
+          [rows]="2"
+        />
+      </app-variant-row>
+    </app-variant-grid>
+
+    <p note>
+      El contador avisa <strong>antes</strong> de llegar al máximo, no después: pasado el límite ya
+      no queda nada que decidir. Y no se permite redimensionar a mano — arrastrar la esquina rompe
+      la retícula del formulario.
+    </p>
+
+    <p note>
+      Un control sin <code>label</code> ni <code>ariaLabel</code> llega a un lector de pantalla como
+      una caja de edición sin nombre, que es un fallo de la WCAG 4.1.2. La última fila es la forma
+      correcta de prescindir del rótulo visible.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="select"
+    anchor="seleccion"
+    description="Desplegable nativo con la piel del sistema: en móvil abre la rueda del sistema operativo."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="optgroup" [note]="'valor: ' + country()">
+        <app-select
+          [(value)]="country"
+          label="País de facturación"
+          [options]="countries"
+          placeholder="Elige un país"
+        />
+      </app-variant-row>
+      @for (size of sizes; track size) {
+        <app-variant-row [label]="size">
+          <app-select [(value)]="country" label="País" [options]="countries" [size]="size" />
+        </app-variant-row>
+      }
+    </app-variant-grid>
+
+    <p note>
+      Las opciones se agrupan por <code>group</code> en <code>&lt;optgroup&gt;</code>, y «Francia»
+      llega deshabilitada. Nativo a propósito: ningún desplegable propio iguala el teclado ni el
+      comportamiento móvil de este.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="checkbox"
+    description="Confirma una elección que se guardará con el resto del formulario. Admite estado parcial."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="checked" [note]="terms() ? 'aceptado' : 'sin aceptar'">
+        <app-checkbox [(checked)]="terms" label="Acepto los términos del contrato" />
+      </app-variant-row>
+      <app-variant-row label="indeterminate" note="selección parcial">
+        <app-checkbox [(checked)]="partial" label="Seleccionar todos los almacenes" indeterminate />
+      </app-variant-row>
+      <app-variant-row label="disabled">
+        <app-checkbox [checked]="true" label="Requerido por la política fiscal" disabled />
+      </app-variant-row>
+      @for (size of sizes; track size) {
+        <app-variant-row [label]="size">
+          <app-checkbox [checked]="true" [size]="size" label="Notificar al almacén" />
+        </app-variant-row>
+      }
+    </app-variant-grid>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="toggle-switch"
+    description="Aplica el cambio en el acto, sin nada que confirmar. No es intercambiable con la casilla."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="checked" [note]="notify() ? 'activado' : 'desactivado'">
+        <app-toggle-switch [(checked)]="notify" label="Avisos por correo" />
+      </app-variant-row>
+      <app-variant-row label="unchecked">
+        <app-toggle-switch [(checked)]="offline" label="Modo sin conexión" />
+      </app-variant-row>
+      <app-variant-row label="disabled" note="encendido y bloqueado">
+        <app-toggle-switch [checked]="true" label="Registro de auditoría" disabled />
+      </app-variant-row>
+      <app-variant-row label="labelHidden" note="cuando algo alrededor ya nombra">
+        <app-toggle-switch [(checked)]="notify" label="Avisos por correo" labelHidden />
+      </app-variant-row>
+      @for (size of sizes; track size) {
+        <app-variant-row [label]="size">
+          <app-toggle-switch
+            [(checked)]="notify"
+            [size]="size"
+            label="Avisos por correo"
+            labelHidden
+          />
+        </app-variant-row>
+      }
+    </app-variant-grid>
+
+    <p note>
+      La etiqueta se dibuja y además es el nombre accesible, atada con
+      <code>aria-labelledby</code>: lo que se ve y lo que se anuncia salen del mismo texto.
+      <code>labelHidden</code> la esconde solo a la vista, para cuando la fila —como estas— ya
+      nombra al control.
+    </p>
+
+    <p note>
+      Es un <code>&lt;button role="switch"&gt;</code>, no una casilla: lo que comunica
+      <code>switch</code> es justamente que el efecto es inmediato. Si el cambio necesita un
+      «Guardar», el control correcto es el de arriba.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="radio-group"
+    description="Una elección entre pocas, todas visibles. Con descripción, icono e insignia."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="icon + badge" [note]="'valor: ' + plan()">
+        <app-radio-group
+          [(value)]="plan"
+          label="Plan de contratación"
+          [options]="plans"
+          hint="Puedes cambiarlo en cualquier momento."
+        />
+      </app-variant-row>
+      <app-variant-row label="simple" note="solo etiqueta">
+        <app-radio-group [(value)]="shift" label="Turno de entrega" [options]="shifts" />
+      </app-variant-row>
+      <app-variant-row label="error" note="touched + errors">
+        <app-radio-group
+          value=""
+          label="Forma de pago"
+          [options]="shifts"
+          [errors]="[{ kind: 'required', message: 'Elige una opción para continuar.' }]"
+          touched
+          required
+        />
+      </app-variant-row>
+      <app-variant-row label="disabled" note="el grupo entero">
+        <app-radio-group value="am" label="Turno de entrega" [options]="shifts" disabled />
+      </app-variant-row>
+      <app-variant-row label="labelHidden" note="nombre solo para lectores">
+        <app-radio-group
+          [(value)]="shift"
+          label="Turno de entrega"
+          [options]="shifts"
+          labelHidden
+        />
+      </app-variant-row>
+    </app-variant-grid>
+
+    <p note>
+      «Corporativo» llega deshabilitada y sigue leyéndose: una opción que existe pero no está
+      disponible informa; una que desaparece, no.
+    </p>
+
+    <p note>
+      El rótulo del grupo se dibuja con <code>labelAsText</code> de <code>field</code>, porque
+      nombra un <code>radiogroup</code> y no un control. Es el caso que motivó esa propiedad.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="number-input"
+    description="Cantidad con pasos, límites y sufijo. El teclado sube y baja con las flechas."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="min/max" [note]="'valor: ' + quantity()">
+        <app-number-input
+          [(value)]="quantity"
+          label="Cantidad"
+          [min]="1"
+          [max]="99"
+          suffix="cajas"
+        />
+      </app-variant-row>
+      <app-variant-row label="step" note="de 5 en 5">
+        <app-number-input
+          [(value)]="discount"
+          label="Descuento"
+          [min]="0"
+          [max]="100"
+          [step]="5"
+          suffix="%"
+        />
+      </app-variant-row>
+    </app-variant-grid>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="search-input"
+    description="Dos formas: pastilla para la barra superior, campo para el filtro de una tabla."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="chip">
+        <app-search-input [(value)]="query" placeholder="Buscar en el catálogo…" />
+      </app-variant-row>
+      <app-variant-row label="field">
+        <app-search-input [(value)]="query" variant="field" placeholder="Filtrar clientes…" />
+      </app-variant-row>
+      <app-variant-row label="loading">
+        <app-search-input [(value)]="query" variant="field" loading />
+      </app-variant-row>
+    </app-variant-grid>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="password-input · password-strength-meter"
+    anchor="seguridad"
+    description="Escribe para ver el medidor. La evaluación es zxcvbn, no una cuenta de caracteres."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="new-password" note="escribe para ver el medidor">
+        <div class="forms__pair">
+          <app-password-input
+            [(value)]="password"
+            label="Nueva contraseña"
+            autocomplete="new-password"
+            hint="Doce caracteres o más. Una frase corriente vale más que un símbolo raro."
+          />
+          <app-password-strength-meter [password]="password()" [userInputs]="['Industrias Vega']" />
+        </div>
+      </app-variant-row>
+      <app-variant-row label="current-password" note="al iniciar sesión">
+        <app-password-input value="una-contraseña-cualquiera" label="Contraseña" />
+      </app-variant-row>
+      <app-variant-row label="error" note="touched + errors">
+        <app-password-input
+          value="12345"
+          label="Nueva contraseña"
+          autocomplete="new-password"
+          [errors]="[{ kind: 'minlength', message: 'Faltan caracteres: el mínimo son doce.' }]"
+          touched
+          required
+        />
+      </app-variant-row>
+      <app-variant-row label="disabled">
+        <app-password-input value="bloqueada" label="Contraseña" disabled />
+      </app-variant-row>
+    </app-variant-grid>
+
+    <p note>
+      Los cinco niveles del medidor, sin tener que dar con una contraseña que provoque cada uno:
+    </p>
+
+    <app-variant-grid>
+      @for (sample of passwordSamples; track sample.label) {
+        <app-variant-row [label]="sample.label" [note]="sample.password">
+          <app-password-strength-meter [password]="sample.password" [showFeedback]="false" />
+        </app-variant-row>
+      }
+      <app-variant-row label="showFeedback" note="con los consejos de zxcvbn">
+        <app-password-strength-meter password="empresa2024" />
+      </app-variant-row>
+    </app-variant-grid>
+
+    <p note>
+      <code>autocomplete="new-password"</code> aquí y <code>current-password</code> al iniciar
+      sesión. El original lo tenía fijo en <code>current-password</code>, así que el gestor de
+      contraseñas ofrecía la contraseña vieja en el formulario de alta.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="otp-input"
+    description="Código de un solo uso. Pega los seis dígitos y se reparten entre las casillas."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="length 6" note="el valor por defecto">
+        <app-otp-input [(value)]="code" (complete)="onCodeComplete($event)" />
+      </app-variant-row>
+      <app-variant-row label="length 4" note="códigos cortos">
+        <app-otp-input [(value)]="shortCode" [length]="4" label="Código de la terminal" />
+      </app-variant-row>
+      <app-variant-row label="disabled" note="mientras se verifica">
+        <app-otp-input value="481" disabled />
+      </app-variant-row>
+    </app-variant-grid>
+
+    @if (lastCode(); as done) {
+      <p class="forms__note">Último código completado: {{ done }}</p>
+    }
+
+    <p note>
+      Es un único campo con <code>autocomplete="one-time-code"</code> y las casillas dibujadas
+      detrás, no seis campos. Seis campos obligan a mover el foco a mano, rompen el pegado del
+      código completo y el navegador no ofrece el que acaba de llegar por SMS.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="file-upload"
+    anchor="medida"
+    description="Dos formas de la misma pieza: retrato de una persona, o documento del expediente."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="avatar">
+        <app-file-upload
+          [(value)]="avatar"
+          variant="avatar"
+          label="Fotografía"
+          fallbackInitials="IV"
+        />
+      </app-variant-row>
+      <app-variant-row label="dropzone">
+        <app-file-upload
+          [(value)]="document"
+          variant="dropzone"
+          label="Constancia de situación fiscal"
+          accept="application/pdf,image/png,image/jpeg"
+          hint="PDF, PNG o JPG. Máximo 2 MB."
+        />
+      </app-variant-row>
+    </app-variant-grid>
+
+    <p note>
+      La validación de <code>accept</code> compara el tipo completo, no solo el prefijo. El original
+      aceptaba cualquier <code>image/*</code> en cuanto una entrada empezaba por
+      <code>image/</code>, así que un GIF pasaba por un filtro que pedía PNG.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="slider"
+    description="Un valor a lo largo de un rango, cuando el rango es parte de la información."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="suffix" [note]="'valor: ' + budget()">
+        <app-slider
+          [(value)]="budget"
+          label="Importe máximo"
+          [min]="0"
+          [max]="100000"
+          [step]="500"
+          suffix="MXN"
+        />
+      </app-variant-row>
+      <app-variant-row label="step" note="de 5 en 5">
+        <app-slider [(value)]="tolerance" label="Descuento máximo" [step]="5" suffix="%" />
+      </app-variant-row>
+      <app-variant-row label="showValue" note="sin lectura numérica">
+        <app-slider [(value)]="tolerance" label="Descuento máximo" [showValue]="false" />
+      </app-variant-row>
+      <app-variant-row label="disabled">
+        <app-slider [value]="40" label="Fijado por la política de compras" suffix="%" disabled />
+      </app-variant-row>
+    </app-variant-grid>
+
+    <p note>
+      Es un <code>&lt;input type="range"&gt;</code>: el arrastre, las flechas, Inicio y Fin y el
+      anuncio del valor ya los trae el navegador. Lo único que el componente le quita es el relleno
+      de la barra, que no tiene seudoelemento estándar y se pinta con un degradado atado al valor.
+    </p>
+
+    <p note>
+      Las reglas de la barra y del tirador están escritas <strong>dos veces</strong>, una para
+      WebKit y otra para Firefox. No es un descuido: cada motor descarta la lista de selectores
+      entera si contiene un seudoelemento que no conoce.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="rating"
+    description="Una puntuación sobre cinco, para leerla o para darla. No son el mismo elemento."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="editable" [note]="score() + ' de 5'">
+        <app-rating [(value)]="score" label="Valoración del producto" />
+      </app-variant-row>
+      <app-variant-row label="readonly" note="una imagen de un número">
+        <app-rating [value]="4" label="Valoración media" readonly />
+      </app-variant-row>
+      @for (size of sizes; track size) {
+        <app-variant-row [label]="size">
+          <app-rating [value]="3" [size]="size" label="Valoración media" readonly />
+        </app-variant-row>
+      }
+      <app-variant-row label="max" note="sobre diez">
+        <app-rating [value]="7" [max]="10" label="Índice de satisfacción" readonly />
+      </app-variant-row>
+      <app-variant-row label="disabled">
+        <app-rating [value]="2" label="Valoración bloqueada" disabled />
+      </app-variant-row>
+    </app-variant-grid>
+
+    <p note>
+      Leer una puntuación es mirar la imagen de un número, así que en modo lectura es un solo
+      <code>role="img"</code> que dice «4 de 5» — y no cinco estrellas idénticas que un lector de
+      pantalla recorre una por una. Darla es elegir entre pocas opciones, así que son radios
+      nativos, con sus flechas y su foco móvil.
+    </p>
+
+    <p note>
+      Estrellas enteras. Media estrella es un valor al que el control no puede llegar ni con el
+      teclado ni con el ratón, y ofrecerlo solo para mostrar sería un componente capaz de enseñar un
+      estado que no sabe producir.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="combobox"
+    description="Elegir una entrada de un catálogo demasiado largo para leerlo. Escribe para acotar."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="catálogo" [note]="pickedLabel()">
+        <app-combobox
+          [(value)]="client"
+          [options]="clientOptions"
+          label="Cliente"
+          hint="Escribe parte del nombre o del correo."
+        />
+      </app-variant-row>
+      <app-variant-row label="error" note="touched + errors">
+        <app-combobox
+          value=""
+          [options]="clientOptions"
+          label="Cliente"
+          [errors]="[{ kind: 'required', message: 'Elige un cliente del catálogo.' }]"
+          touched
+          required
+        />
+      </app-variant-row>
+      <app-variant-row label="disabled">
+        <app-combobox value="c1" [options]="clientOptions" label="Cliente" disabled />
+      </app-variant-row>
+      <app-variant-row label="emptyMessage" note="escribe algo que no exista">
+        <app-combobox
+          [(value)]="product"
+          [options]="productOptions"
+          label="Producto"
+          emptyMessage="Ningún producto con ese nombre"
+        />
+      </app-variant-row>
+    </app-variant-grid>
+
+    <p note>
+      <strong>No admite texto libre.</strong> Lo que produce es el identificador de una entrada
+      real, así que un texto que no casa con nada no es un valor: al salir, el campo vuelve a
+      mostrar lo que de verdad hay elegido. Un ERP que deja escribir «Industrias Vego» en un campo
+      de cliente no ha guardado ningún cliente.
+    </p>
+
+    <p note>
+      El teclado, el desplegado y <code>aria-activedescendant</code> son de
+      <code>@angular/aria</code>, igual que en <code>tabs</code> y <code>accordion</code>. La parte
+      que todo el mundo falla al escribirla a mano no son las flechas: es que
+      <strong>el foco se queda en el campo</strong> mientras la lista mueve su opción activa.
+    </p>
+
+    <p note>
+      La lista se coloca con <code>anchored-position</code>, la misma primitiva del desplegable y
+      del globo de ayuda. Un selector de catálogo vive dentro de tarjetas, barras de herramientas y
+      celdas de tabla, y todas ellas recortan lo que se sale.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="date-picker · date-range-picker"
+    anchor="fechas"
+    description="Un día del calendario, y el periodo con el que empieza cualquier informe."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="date-picker" [note]="'valor: ' + (invoiceDate() || 'vacío')">
+        <app-date-picker
+          [(value)]="invoiceDate"
+          label="Fecha de la factura"
+          hint="Escribe dd/mm/aaaa o elige en el calendario."
+        />
+      </app-variant-row>
+      <app-variant-row label="sin valor" note="muestra el marcador de posición">
+        <app-date-picker value="" label="Fecha de entrega" />
+      </app-variant-row>
+      <app-variant-row label="error" note="touched + errors">
+        <app-date-picker
+          value=""
+          label="Fecha de la factura"
+          [errors]="[{ kind: 'required', message: 'La factura necesita fecha.' }]"
+          touched
+          required
+        />
+      </app-variant-row>
+      <app-variant-row label="disabled">
+        <app-date-picker value="2026-09-08" label="Fecha de alta" disabled />
+      </app-variant-row>
+      <app-variant-row label="date-grid" note="la cuadrícula sola, sin desplegable">
+        <app-date-grid
+          [month]="gridMonth()"
+          [selected]="invoiceDate() || null"
+          label="Calendario en línea"
+          (daySelected)="invoiceDate.set($event)"
+          (monthChanged)="gridMonth.set($event)"
+        />
+      </app-variant-row>
+      <app-variant-row label="date-range-picker" [note]="rangeNote()">
+        <app-date-range-picker
+          [(start)]="periodStart"
+          [(end)]="periodEnd"
+          label="Periodo del informe"
+          hint="Escribe las dos fechas, o elige con dos pulsaciones."
+        />
+      </app-variant-row>
+    </app-variant-grid>
+
+    <p note>
+      El valor es <code>2026-09-08</code>, no un <code>Date</code>. Un <code>Date</code> es un
+      instante y un día del calendario no lo es, y la diferencia aparece como el error de un día que
+      todo el mundo encuentra una vez: <code>new Date('2026-09-08')</code> se interpreta como
+      <strong>medianoche UTC</strong>, que al oeste de Greenwich es el día 7.
+    </p>
+
+    <p note>
+      <strong>El campo admite escritura, en día/mes/año.</strong> Ese orden es lo único de una fecha
+      escrita que no se puede deducir —<code>08/09/2026</code> es el 9 de agosto en inglés—, así que
+      el componente lo declara en la pista en vez de adivinarlo. Los separadores sí son flexibles
+      (<code>/</code>, <code>-</code>, <code>.</code> o un espacio), porque qué tecla alcanza cada
+      quien no es información.
+    </p>
+
+    <p note>
+      Lo que no hace es aceptar una fecha que no entendió. <code>31/02/2026</code> se
+      <strong>rechaza</strong>, no se convierte en el 2 de marzo: <code>new Date(2026, 1, 31)</code>
+      devuelve justo eso, y así es como una errata acaba siendo una fecha equivocada en una base de
+      datos. El texto se conserva para poder corregirlo, con el aviso debajo.
+    </p>
+
+    <p note>
+      Tres formas de moverse, porque hay tres prisas distintas: las flechas para el mes de al lado,
+      <strong>las dos listas</strong> para «marzo» y «2020» —pasar veinte veces de mes hasta una
+      fecha de nacimiento no es navegar—, y el teclado sobre la cuadrícula: flechas para un día,
+      <code>Re Pág</code>/<code>Av Pág</code> para un mes, con <code>Mayús</code> para un año, e
+      <code>Inicio</code>/<code>Fin</code> para los extremos de la semana. Solo un día está en el
+      orden de tabulación, así que pasar de largo cuesta una pulsación y no cuarenta y dos.
+    </p>
+
+    <p note>
+      La cuadrícula dibuja <strong>siempre seis semanas</strong>. Dibujando solo las que el mes
+      necesita, el calendario cambiaba de alto al pasar de mes —en 2026, de cuatro filas en febrero
+      a seis en mayo—, así que el desplegable saltaba y el día al que alguien apuntaba dejaba de
+      estar donde su ojo lo había dejado. Cuesta una fila de días vecinos en febrero y compra un
+      calendario que no se mueve. Medido en los doce meses: <strong>202 × 236 px, siempre</strong>.
+    </p>
+
+    <p note>
+      Elegido el periodo al revés —primero el final—, los dos extremos
+      <strong>se intercambian</strong>, no se rechazan. Quien elige el cierre de mes y luego su
+      inicio ha expresado un periodo con toda claridad; un mensaje de error ahí sería el componente
+      imponiendo su orden.
+    </p>
+
+    <p note>
+      La cuadrícula es la misma en los dos, y no es <code>calendar-cell</code>: aquella es la
+      casilla de una <em>agenda</em>, muestra un día con lo que hay en él y no es un control. Aquí
+      cada día es un botón. Dos elementos que se parecen y responden preguntas distintas son dos
+      elementos.
+    </p>
+  </app-showcase-block>
+</app-showcase-page>

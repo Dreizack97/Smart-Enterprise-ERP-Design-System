@@ -1,0 +1,19 @@
+<nav class="sidebar__nav" aria-label="Navegación principal">
+  @for (section of sections(); track $index) {
+    <div class="sidebar__section">
+      @if (section.title; as title) {
+        <p class="sidebar__section-title">{{ title }}</p>
+      }
+      <ul class="sidebar__list">
+        @for (item of section.items; track item.id) {
+          <app-sidebar-nav-item
+            [item]="item"
+            [siblingIds]="topLevelIds()"
+            [depth]="0"
+            [rail]="rail()"
+          />
+        }
+      </ul>
+    </div>
+  }
+</nav>

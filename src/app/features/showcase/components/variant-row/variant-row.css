@@ -1,0 +1,33 @@
+:host {
+  display: contents;
+}
+
+.row__term {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+/* Monoespaciado a propósito: este es el valor literal pasado al input, no
+   prosa, y quien lee tiene que poder copiarlo. */
+.row__name {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--ink-primary);
+}
+
+.row__note {
+  font-size: var(--text-overline);
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--ink-muted);
+}
+
+.row__demo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--showcase-demo-gap);
+  min-width: 0;
+}

@@ -1,0 +1,14 @@
+<section class="block" [attr.id]="anchor() || null">
+  <header class="block__head">
+    <h2 class="block__title">{{ title() }}</h2>
+    @if (description(); as text) {
+      <p class="block__description">{{ text }}</p>
+    }
+  </header>
+
+  <div class="block__demo" [class]="'block__demo--' + layout() + ' block__demo--on-' + surface()">
+    <ng-content />
+  </div>
+
+  <div class="block__note"><ng-content select="[note]" /></div>
+</section>

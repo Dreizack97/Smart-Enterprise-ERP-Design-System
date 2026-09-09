@@ -1,0 +1,53 @@
+:host {
+  display: inline-block;
+}
+
+.rating {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rating-gap);
+}
+
+.rating__star {
+  display: inline-flex;
+  color: var(--rating-empty);
+}
+
+.rating__star--on {
+  color: var(--rating-filled);
+}
+
+/* Solo la forma interactiva toma un puntero y reacciona al hover. La de
+   solo lectura es una imagen: un cambio de cursor ahí promete algo que no
+   sucede. */
+label.rating__star {
+  cursor: pointer;
+  transition: transform var(--duration-instant) var(--ease-out-quart);
+}
+
+label.rating__star:hover {
+  transform: scale(1.1);
+}
+
+label.rating__star:has(.rating__input:disabled) {
+  cursor: not-allowed;
+  opacity: 0.5;
+  transform: none;
+}
+
+/* El radio en sí está fuera de pantalla, así que el anillo de foco tiene que
+   dibujarse en la estrella que lo representa — sin esto, quien navega con
+   teclado no puede ver dónde está. */
+label.rating__star:has(.rating__input:focus-visible) {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+  border-radius: var(--radius-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  label.rating__star,
+  label.rating__star:hover {
+    transform: none;
+    transition: none;
+  }
+}

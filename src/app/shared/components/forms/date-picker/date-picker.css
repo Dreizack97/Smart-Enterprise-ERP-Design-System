@@ -1,0 +1,51 @@
+:host {
+  display: block;
+}
+
+.picker {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Espacio para el botón, para que una fecha nunca corra debajo de él. */
+.picker__input {
+  width: 100%;
+  padding-inline-end: var(--date-toggle-space);
+  font-variant-numeric: tabular-nums;
+}
+
+.picker__toggle {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inset-inline-end: 0;
+  width: var(--date-toggle-space);
+  height: 100%;
+  border-radius: var(--radius-md);
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+
+.picker__toggle:hover:not(:disabled) {
+  color: var(--ink-secondary);
+}
+
+.picker__toggle:disabled {
+  cursor: not-allowed;
+  opacity: var(--field-disabled-opacity);
+}
+
+/* Fijo y posicionado desde script, para que un selector dentro de una
+   tarjeta, una barra de herramientas o una celda de tabla no sea recortado
+   por ella. */
+.picker__popup {
+  position: fixed;
+  z-index: 60;
+  padding: var(--date-popup-padding);
+  border: 1px solid var(--dropdown-border);
+  border-radius: var(--dropdown-radius);
+  background-color: var(--dropdown-surface);
+  box-shadow: var(--shadow-elevated);
+}

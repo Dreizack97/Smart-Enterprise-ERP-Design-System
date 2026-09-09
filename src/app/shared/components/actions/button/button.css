@@ -1,0 +1,185 @@
+/* `contents` deja que el `<button>` participe directamente del layout del
+   padre: sin esto, el host agregaría una caja intermedia y rompería
+   `w-full`, los espacios de una barra de acciones, y cualquier grid. */
+:host {
+  display: contents;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--button-gap);
+  border: 1px solid transparent;
+  border-radius: var(--button-radius);
+  font-weight: var(--button-font-weight);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    transform var(--duration-fast) var(--ease-out-quart),
+    box-shadow var(--duration-fast) var(--ease-out-quart),
+    background-color var(--duration-fast) var(--ease-out-quart),
+    border-color var(--duration-fast) var(--ease-out-quart),
+    color var(--duration-fast) var(--ease-out-quart),
+    opacity var(--duration-fast) var(--ease-out-quart);
+}
+
+/* =======================================================================
+   Tamaño — una altura fija, nunca un padding vertical que haya que sumar
+   ======================================================================= */
+
+.btn--sm {
+  height: var(--button-height-sm);
+  padding-inline: var(--button-padding-x-sm);
+  font-size: var(--button-font-size-sm);
+}
+
+.btn--md {
+  height: var(--button-height-md);
+  padding-inline: var(--button-padding-x-md);
+  font-size: var(--button-font-size-md);
+}
+
+.btn--lg {
+  height: var(--button-height-lg);
+  padding-inline: var(--button-padding-x-lg);
+  font-size: var(--button-font-size-lg);
+}
+
+.btn--full {
+  width: 100%;
+}
+
+/* =======================================================================
+   Variante
+   ======================================================================= */
+
+.btn--primary {
+  background-color: var(--button-primary-surface);
+  color: var(--button-primary-ink);
+}
+
+.btn--primary:hover:not(:disabled) {
+  background-color: var(--button-primary-surface-hover);
+}
+
+.btn--secondary {
+  background-color: var(--button-secondary-surface);
+  border-color: var(--button-secondary-border);
+  color: var(--button-secondary-ink);
+}
+
+.btn--secondary:hover:not(:disabled) {
+  background-color: var(--button-secondary-surface-hover);
+}
+
+.btn--ghost {
+  color: var(--button-ghost-ink);
+}
+
+.btn--ghost:hover:not(:disabled) {
+  background-color: var(--button-ghost-surface-hover);
+}
+
+.btn--soft {
+  background-color: var(--button-soft-surface);
+  color: var(--button-soft-ink);
+}
+
+.btn--soft:hover:not(:disabled) {
+  background-color: var(--button-soft-surface-hover);
+}
+
+.btn--danger {
+  background-color: var(--button-danger-surface);
+  color: var(--button-danger-ink);
+}
+
+.btn--danger:hover:not(:disabled) {
+  background-color: var(--button-danger-surface-hover);
+}
+
+.btn--soft-danger {
+  background-color: var(--button-danger-soft-surface);
+  color: var(--button-danger-soft-ink);
+}
+
+.btn--soft-danger:hover:not(:disabled) {
+  background-color: var(--button-danger-soft-surface-hover);
+}
+
+.btn--link {
+  color: var(--button-link-ink);
+  padding-inline: 0;
+  height: auto;
+}
+
+.btn--link:hover:not(:disabled) {
+  text-decoration: underline;
+}
+
+/* =======================================================================
+   La firma táctil: una elevación al hacer hover, un rebote al presionar
+   -----------------------------------------------------------------------
+   Solo las variantes elevadas se levantan. Un ghost o un link no tienen
+   cuerpo que elevar, y moverlos se lee como un glitch y no como
+   retroalimentación.
+   ======================================================================= */
+
+.btn--primary:hover:not(:disabled),
+.btn--danger:hover:not(:disabled) {
+  transform: translateY(var(--button-lift));
+  box-shadow: var(--button-primary-shadow);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0) scale(var(--button-press-scale));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn:hover:not(:disabled),
+  .btn:active:not(:disabled) {
+    transform: none;
+  }
+}
+
+/* =======================================================================
+   Estados inactivos
+   ======================================================================= */
+
+.btn:disabled {
+  opacity: var(--button-disabled-opacity);
+  cursor: not-allowed;
+}
+
+/* Mientras carga, la etiqueta se queda en su lugar y solo se desvanece:
+   reemplazarla por un spinner cambiaría el ancho a mitad de clic y
+   empujaría lo que estuviera a un lado. */
+.btn--loading .btn__label {
+  opacity: 0.7;
+}
+
+.btn__spinner {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentcolor;
+  border-top-color: transparent;
+  border-radius: var(--radius-full);
+  animation: btn-spin 0.6s linear infinite;
+}
+
+@keyframes btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Un spinner que no gira igual tiene que leerse como "ocupado", así que
+   conserva el hueco en el anillo en vez de convertirse en un círculo
+   plano. */
+@media (prefers-reduced-motion: reduce) {
+  .btn__spinner {
+    animation-duration: 2s;
+  }
+}

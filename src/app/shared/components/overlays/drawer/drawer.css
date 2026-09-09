@@ -1,0 +1,147 @@
+:host {
+  display: block;
+}
+
+/* =======================================================================
+   Coreografía
+   -----------------------------------------------------------------------
+   Ambos elementos viven en ESTA plantilla, así que los selectores que cruzan
+   del scrim al panel se quedan aquí — a diferencia de los del modal, que
+   tuvieron que mudarse a `shell.css` porque `confirm-dialog` los comparte.
+
+   Oculto por clase en vez de desmontado, para que la salida pueda animar del
+   todo: un elemento removido del DOM ya no tiene nada que transicionar.
+   ======================================================================= */
+
+.drawer-scrim {
+  position: fixed;
+  z-index: 60;
+  inset: 0;
+  display: flex;
+  background-color: var(--modal-scrim);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--drawer-enter-duration) var(--ease-out-quart),
+    visibility var(--drawer-enter-duration) var(--ease-out-quart);
+}
+
+.drawer-scrim.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* `justify-content` y no `margin-left: auto`: la línea flex ya sabe cuál
+   extremo es cuál, y sigue la dirección de escritura gratis. */
+.drawer-scrim:has(.panel--end) {
+  justify-content: flex-end;
+}
+
+.drawer-scrim:has(.panel--start) {
+  justify-content: flex-start;
+}
+
+/* El panel se desliza desde el borde al que pertenece. `translate` y no
+   `transform`, para que nada aquí tenga que saber si algo más ya está
+   usando el transform. */
+.panel--end {
+  translate: 100% 0;
+}
+
+.panel--start {
+  translate: -100% 0;
+}
+
+.drawer-scrim .panel {
+  transition: translate var(--drawer-enter-duration) var(--ease-out-quart);
+}
+
+.drawer-scrim.is-open .panel {
+  translate: 0 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drawer-scrim,
+  .drawer-scrim .panel {
+    transition-duration: 1ms;
+  }
+
+  .drawer-scrim .panel {
+    translate: 0 0;
+  }
+}
+
+.panel {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  background-color: var(--drawer-surface);
+  box-shadow: var(--shadow-2xl);
+}
+
+/* El panel es tan alto como el viewport y solo su cuerpo hace scroll, así
+   que el encabezado y las acciones se quedan fijos mientras el contenido se
+   mueve debajo de ellos — que es la razón entera para preferir un panel de
+   borde en un detalle largo. */
+.panel__body {
+  flex: 1;
+  padding: var(--drawer-padding);
+  overflow-y: auto;
+}
+
+.panel--sm {
+  max-width: var(--drawer-width-sm);
+}
+
+.panel--md {
+  max-width: var(--drawer-width-md);
+}
+
+.panel--lg {
+  max-width: var(--drawer-width-lg);
+}
+
+.panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: var(--drawer-padding);
+  border-bottom: 1px solid var(--line-subtle);
+}
+
+.panel__title {
+  font-size: var(--text-heading);
+  font-weight: 700;
+  color: var(--ink-primary);
+}
+
+.panel__close {
+  display: flex;
+  width: 2.25rem;
+  height: 2.25rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  color: var(--ink-secondary);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-out-quart);
+}
+
+.panel__close:hover {
+  background-color: var(--surface-3);
+}
+
+.panel__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: var(--drawer-padding);
+  border-top: 1px solid var(--line-subtle);
+}
+
+/* Sin pie proyectado no hay barra vacía con un borde arriba. */
+.panel__footer:empty {
+  display: none;
+}

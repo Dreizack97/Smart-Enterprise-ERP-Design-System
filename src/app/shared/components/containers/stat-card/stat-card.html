@@ -1,0 +1,61 @@
+@let kind = variant();
+
+<article
+  class="stat animate-stagger-enter"
+  [class]="'stat--' + kind"
+  [attr.data-tone]="tone()"
+  [style.--stagger-idx]="index()"
+>
+  <div class="stat__main">
+    <div class="stat__head">
+      <p class="stat__label">{{ label() }}</p>
+      @if (kind === 'metric' && icon(); as name) {
+        <app-icon class="stat__icon" [name]="name" [size]="16" />
+      }
+    </div>
+
+    <div class="stat__figure">
+      <p class="stat__value">{{ value() }}</p>
+
+      @if (kind === 'metric' && note(); as text) {
+        <span class="stat__note" [attr.data-tone]="noteTone()">
+          @if (noteIcon(); as arrow) {
+            <app-icon [name]="arrow" [size]="10" />
+          }
+          {{ text }}
+        </span>
+      }
+    </div>
+
+    @if (kind !== 'metric' && note(); as text) {
+      <span class="stat__note stat__note--block" [attr.data-tone]="noteTone()">{{ text }}</span>
+    }
+  </div>
+
+  @if (kind === 'report' && icon(); as name) {
+    <span class="stat__badge tone-soft">
+      <app-icon [name]="name" [size]="22" />
+    </span>
+  }
+
+  <!-- The bar is drawn whenever a progress value is given, whatever the
+       variant. It used to live inside `kind === 'metric'`, so passing
+       `progress` to a `report` or a `tile` did nothing and said nothing — an
+       input that is silently ignored is worse than one that does not exist.
+       The mini chart stays exclusive to `metric`: the other two have no room
+       for it. -->
+  @if (hasProgress()) {
+    <div
+      class="stat__track"
+      role="progressbar"
+      [attr.aria-label]="label()"
+      [attr.aria-valuenow]="clampedProgress()"
+      aria-valuemin="0"
+      aria-valuemax="100"
+    >
+      <span class="stat__fill" [style.width.%]="clampedProgress()"></span>
+    </div>
+  } @else if (kind === 'metric') {
+    <div class="stat__chart"><ng-content select="[chart]" /></div>
+  }
+</article>

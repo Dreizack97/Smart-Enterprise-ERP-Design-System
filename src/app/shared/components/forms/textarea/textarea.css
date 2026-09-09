@@ -1,0 +1,15 @@
+:host {
+  display: block;
+}
+
+.textarea__counter {
+  align-self: flex-end;
+  font-family: var(--font-mono);
+  font-size: var(--field-hint-font-size);
+  color: var(--field-hint-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.textarea__counter--near {
+  color: var(--field-invalid-ink);
+}

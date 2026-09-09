@@ -1,0 +1,50 @@
+:host {
+  display: block;
+}
+
+.card {
+  border-radius: var(--radius-2xl);
+  background-color: var(--card-surface);
+  box-shadow: var(--card-shadow);
+  padding: var(--card-padding);
+}
+
+/* Contenido de borde a borde: el padding se mueve al encabezado, y las
+   esquinas tienen que recortar lo que sea que las alcance. */
+.card--flush {
+  padding: 0;
+  overflow: hidden;
+}
+
+.card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: var(--card-padding);
+}
+
+.card--flush .card__header {
+  margin-bottom: 0;
+  padding: var(--card-padding);
+  border-bottom: 1px solid var(--line-subtle);
+}
+
+.card__title {
+  font-weight: 700;
+  color: var(--ink-primary);
+}
+
+.card__title--lg {
+  font-size: var(--text-subheading);
+}
+
+.card__title--xl {
+  font-size: var(--text-heading);
+}
+
+.card__subtitle {
+  margin-top: 0.25rem;
+  font-size: var(--text-body);
+  color: var(--ink-secondary);
+}

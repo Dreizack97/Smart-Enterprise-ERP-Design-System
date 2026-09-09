@@ -1,0 +1,102 @@
+<app-page-header
+  title="Sistema de Diseño"
+  subtitle="Smart Enterprise ERP · el catálogo, y las reglas que impiden que se desalinee"
+/>
+
+<div class="home">
+  <section class="home__figures" aria-label="El sistema en cifras">
+    <app-stat-card variant="tile" label="Componentes" [value]="componentCount" tone="blue" />
+    <app-stat-card variant="tile" label="Familias" [value]="familyCount" tone="purple" />
+    <app-stat-card variant="tile" label="Niveles de token" value="3" tone="green" />
+    <app-stat-card variant="tile" label="Iconos" value="68" tone="orange" />
+  </section>
+
+  <app-section-card
+    title="Las familias"
+    subtitle="El catálogo sigue las carpetas de shared/components: el menú y el disco son una sola estructura"
+  >
+    <ul class="cards">
+      @for (family of families; track family.folder) {
+        <li>
+          <a
+            class="card focus-ring"
+            [routerLink]="family.route"
+            [fragment]="family.fragment"
+          >
+            <span class="card__head">
+              <app-icon [name]="family.icon" [size]="18" />
+              <span class="card__title">{{ family.label }}</span>
+              <app-badge tone="neutral">{{ family.count }}</app-badge>
+            </span>
+            <span class="card__body">{{ family.summary }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+  </app-section-card>
+
+  <app-section-card
+    title="Las reglas"
+    subtitle="Ninguna es una aspiración: cada una tiene detrás un linter, un script o un tipo que falla la compilación"
+  >
+    <ul class="rules">
+      @for (rule of principles; track rule.title) {
+        <li class="rule">
+          <span class="rule__mark tone-soft" [attr.data-tone]="rule.tone">
+            <app-icon [name]="rule.icon" [size]="18" />
+          </span>
+          <span class="rule__text">
+            <span class="rule__title">{{ rule.title }}</span>
+            <span class="rule__body">{{ rule.body }}</span>
+          </span>
+        </li>
+      }
+    </ul>
+  </app-section-card>
+
+  <app-section-card
+    title="Las plantillas"
+    subtitle="Pantallas completas armadas solo con piezas del sistema: es donde se ve si las piezas encajan"
+  >
+    <ul class="cards">
+      @for (template of templates; track template.route) {
+        <li>
+          <a class="card focus-ring" [routerLink]="template.route">
+            <span class="card__head">
+              <app-icon [name]="template.icon" [size]="18" />
+              <span class="card__title">{{ template.label }}</span>
+            </span>
+            <span class="card__body">{{ template.summary }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+  </app-section-card>
+
+  <app-section-card title="Por dónde empezar">
+    <ol class="steps">
+      <li class="step">
+        <a class="step__link focus-ring" routerLink="/fundamentos">Fundamentos</a>
+        <span class="step__note">
+          Color, tipografía, forma y movimiento. Todo se lee del documento, así que lo que se ve
+          ahí es lo que de verdad está cargado.
+        </span>
+      </li>
+      <li class="step">
+        <a class="step__link focus-ring" routerLink="/formularios" fragment="campo">
+          Un componente
+        </a>
+        <span class="step__note">
+          Cada bloque muestra la matriz de variantes y explica por qué el componente es así, no
+          solo cómo se ve.
+        </span>
+      </li>
+      <li class="step">
+        <a class="step__link focus-ring" routerLink="/panel">Una plantilla</a>
+        <span class="step__note">
+          La prueba de que las piezas componen una pantalla real sin reglas nuevas.
+        </span>
+      </li>
+    </ol>
+  </app-section-card>
+</div>

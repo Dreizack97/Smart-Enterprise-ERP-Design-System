@@ -1,0 +1,60 @@
+:host {
+  display: inline-block;
+}
+
+.segmented {
+  display: inline-flex;
+  gap: 0.125rem;
+  padding: var(--segmented-padding);
+  border-radius: var(--segmented-radius);
+  background-color: var(--segmented-surface);
+}
+
+.segment {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  border-radius: var(--segmented-item-radius);
+  color: var(--segmented-item-ink);
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-out-quart),
+    color var(--duration-fast) var(--ease-out-quart);
+}
+
+/* La altura viene de la escala de control compartida menos el padding de la
+   pista en ambos lados, para que un control segmentado se alinee con un
+   botón del mismo tamaño. */
+.segmented--sm .segment {
+  height: calc(var(--control-height-sm) - var(--segmented-padding) * 2);
+  padding-inline: 0.5rem;
+  font-size: var(--text-caption);
+}
+
+.segmented--md .segment {
+  height: calc(var(--control-height-md) - var(--segmented-padding) * 2);
+  padding-inline: 0.75rem;
+  font-size: var(--text-body);
+}
+
+.segmented--lg .segment {
+  height: calc(var(--control-height-lg) - var(--segmented-padding) * 2);
+  padding-inline: 1rem;
+  font-size: var(--text-subheading);
+}
+
+.segment:hover:not(:disabled):not(.segment--active) {
+  color: var(--ink-primary);
+}
+
+.segment--active {
+  background-color: var(--segmented-item-surface-active);
+  color: var(--segmented-item-ink-active);
+}
+
+.segment:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}

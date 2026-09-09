@@ -1,0 +1,31 @@
+<app-field
+  [label]="label()"
+  [controlId]="inputId()"
+  [required]="required()"
+  [hint]="hint()"
+  [error]="message()"
+  [errorId]="errorId()"
+>
+  <div class="input-wrap">
+    @if (icon(); as leading) {
+      <span class="field-affix field-affix--start"><app-icon [name]="leading" /></span>
+    }
+    <input
+      class="field-control"
+      [class]="'field-control--' + size()"
+      [class.field-control--with-icon]="icon()"
+      [id]="inputId()"
+      [type]="type()"
+      [value]="value()"
+      [placeholder]="placeholder()"
+      [disabled]="disabled()"
+      [required]="required()"
+      [attr.name]="name() || null"
+      [attr.aria-label]="!label() && ariaLabel() ? ariaLabel() : null"
+      [attr.aria-invalid]="message() ? 'true' : null"
+      [attr.aria-describedby]="message() ? errorId() : null"
+      (input)="onInput($event)"
+      (blur)="onBlur()"
+    />
+  </div>
+</app-field>

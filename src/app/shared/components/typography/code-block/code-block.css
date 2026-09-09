@@ -1,0 +1,40 @@
+:host {
+  display: block;
+}
+
+.code {
+  overflow: hidden;
+  border: 1px solid var(--code-border);
+  border-radius: var(--code-radius);
+  background-color: var(--code-surface);
+}
+
+.code__bar {
+  display: flex;
+  min-height: var(--code-bar-height);
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: var(--code-padding);
+  border-bottom: 1px solid var(--code-border);
+  background-color: var(--code-bar-surface);
+}
+
+.code__language {
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-overline);
+}
+
+/* El bloque hace scroll por su cuenta en vez de envolver. Un código que
+   envuelve inventa saltos de línea que el código no tiene, y en un lenguaje
+   donde la indentación carga significado eso es un programa distinto. */
+.code__body {
+  overflow-x: auto;
+  padding: var(--code-padding);
+  margin: 0;
+  color: var(--code-ink);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  line-height: 1.6;
+  tab-size: 2;
+}

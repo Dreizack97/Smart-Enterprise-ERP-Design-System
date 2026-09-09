@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Smart Enterprise ERP · Sistema de Diseño</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <!--
+      The theme BEFORE the first paint.
+
+      Angular boots after the first frame, so applying this from a service
+      would flash the light theme first. Synchronous, and deliberately so.
+
+      Only the theme: it paints the page background, which exists from frame
+      one. The sidebar does not exist until the application renders, so
+      pre-painting its rail state bought nothing.
+
+      The value is written by `BrowserStorage`, which stores JSON — hence the
+      `JSON.parse`. The key is duplicated here by force: this script runs
+      before Angular and cannot import anything. It must stay in step with
+      `core/theme/theme.model.ts`.
+    -->
+    <script>
+      (function () {
+        try {
+          var parse = function (raw) {
+            return raw === null ? null : JSON.parse(raw);
+          };
+          var stored = parse(localStorage.getItem('seerp:theme'));
+          var dark =
+            stored === 'dark' ||
+            (stored !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+          if (dark) document.documentElement.classList.add('dark');
+        } catch (e) {
+          /* storage blocked or value unreadable: the light theme is used */
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <app-root></app-root>
+  </body>
+</html>

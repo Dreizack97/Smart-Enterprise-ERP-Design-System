@@ -1,0 +1,22 @@
+<app-field [label]="label()" [controlId]="sliderId()" [hint]="hint()">
+  <div class="slider">
+    <input
+      type="range"
+      class="slider__input focus-ring"
+      [id]="sliderId()"
+      [min]="min()"
+      [max]="max()"
+      [step]="step()"
+      [value]="value()"
+      [disabled]="disabled()"
+      [style.--slider-progress.%]="progress()"
+      [attr.aria-label]="!label() && ariaLabel() ? ariaLabel() : null"
+      [attr.aria-valuetext]="suffix() ? display() : null"
+      (input)="onInput($event)"
+    />
+
+    @if (showValue()) {
+      <output class="slider__value" [attr.for]="sliderId()">{{ display() }}</output>
+    }
+  </div>
+</app-field>

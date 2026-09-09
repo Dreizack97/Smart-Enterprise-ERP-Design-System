@@ -1,0 +1,122 @@
+<div class="navbar__group">
+  <button
+    type="button"
+    class="navbar__control navbar__control--drawer focus-ring"
+    aria-label="Abrir navegación"
+    (click)="drawerToggled.emit()"
+  >
+    <app-icon name="menu" [size]="20" />
+  </button>
+
+  <button
+    type="button"
+    class="navbar__control navbar__control--rail focus-ring"
+    [attr.aria-label]="railLabel()"
+    [attr.aria-pressed]="railCollapsed()"
+    (click)="railToggled.emit()"
+  >
+    <app-icon
+      class="navbar__rail-icon"
+      name="chevron-left"
+      [size]="18"
+      [class.navbar__rail-icon--flipped]="railCollapsed()"
+    />
+  </button>
+
+  <a class="navbar__brand focus-ring" routerLink="/">
+    <span class="navbar__mark" aria-hidden="true">
+      <app-icon name="chart-line" [size]="18" />
+    </span>
+    <span class="navbar__identity">
+      <span class="navbar__brand-name">{{ brand() }}</span>
+      <span class="navbar__brand-suffix">{{ brandSuffix() }}</span>
+    </span>
+  </a>
+</div>
+
+<div class="navbar__group">
+  <app-search-input class="navbar__search" [(value)]="query" (valueChange)="onSearch($event)" />
+
+  <button
+    type="button"
+    class="navbar__control focus-ring"
+    [attr.aria-label]="theme.toggleLabel()"
+    (click)="theme.toggle()"
+  >
+    <app-icon [name]="themeIcon()" [size]="18" />
+  </button>
+
+  <app-dropdown-menu
+    #notices
+    [(open)]="notificationsOpen"
+    variant="panel"
+    width="20rem"
+    placement="bottom-end"
+    label="Notificaciones"
+  >
+    <button
+      trigger
+      type="button"
+      class="navbar__control navbar__control--bell focus-ring"
+      [attr.aria-label]="notificationsLabel()"
+      aria-haspopup="dialog"
+      [attr.aria-expanded]="notificationsOpen()"
+      (click)="notices.toggle()"
+    >
+      <app-icon name="bell" [size]="18" />
+      @if (feed.hasUnread()) {
+        <span class="navbar__dot"></span>
+      }
+    </button>
+
+    <app-notification-list
+      [items]="feed.all()"
+      (selected)="onNotificationSelected($event)"
+      (markAllRead)="feed.markAllRead()"
+    />
+  </app-dropdown-menu>
+
+  <app-dropdown-menu
+    #account
+    [(open)]="userMenuOpen"
+    [items]="userMenuItems"
+    placement="bottom-end"
+    label="Menú de cuenta"
+    (selected)="onUserMenuSelect($event.label)"
+  >
+    <button
+      trigger
+      type="button"
+      class="navbar__account focus-ring"
+      [attr.aria-expanded]="userMenuOpen()"
+      aria-haspopup="menu"
+      [attr.aria-label]="accountLabel()"
+      (click)="account.toggle()"
+    >
+      @if (userImage(); as src) {
+        <img class="navbar__photo" [src]="src" alt="" aria-hidden="true" />
+      } @else {
+        <app-avatar [name]="userName()" size="md" />
+      }
+      <span class="navbar__identity">
+        <span class="navbar__user-name">{{ userName() }}</span>
+        @if (userRole(); as role) {
+          <span class="navbar__user-role">{{ role }}</span>
+        }
+      </span>
+      <app-icon
+        class="navbar__account-chevron"
+        name="chevron-down"
+        [size]="14"
+        [class.navbar__account-chevron--flipped]="userMenuOpen()"
+      />
+    </button>
+
+    <div header class="navbar__account-header">
+      <p class="navbar__user-name">{{ userName() }}</p>
+      @if (userEmail(); as email) {
+        <p class="navbar__user-email">{{ email }}</p>
+      }
+    </div>
+  </app-dropdown-menu>
+</div>

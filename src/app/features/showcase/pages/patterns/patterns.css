@@ -1,0 +1,33 @@
+/* El propio marco del calendario. Pertenece a esta página, no a
+   `calendar-cell`: la celda sabe cómo ser una celda, y cuántas de ellas
+   forman una semana es decisión de quien la llama. */
+.calendar {
+  overflow: hidden;
+  width: 100%;
+  border: 1px solid var(--line-subtle);
+  border-radius: var(--card-radius);
+  background-color: var(--card-surface);
+}
+
+.calendar__head,
+.calendar__week {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.calendar__head-cell {
+  padding: 0.625rem 0.5rem;
+  border-bottom: 1px solid var(--line-subtle);
+  font-size: var(--text-overline);
+  font-weight: 600;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-muted);
+}
+
+/* La cuadrícula dibuja los separadores por sí misma, así que la última fila
+   y columna los duplicarían contra el marco. */
+.calendar__week:last-child app-calendar-cell {
+  border-bottom: none;
+}

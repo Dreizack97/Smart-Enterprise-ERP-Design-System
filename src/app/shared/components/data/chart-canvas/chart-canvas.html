@@ -1,0 +1,9 @@
+<div class="chart" [style.height]="height() || null">
+  <canvas
+    #canvas
+    role="img"
+    [attr.aria-label]="summary()"
+    [attr.aria-describedby]="summaryId"
+  ></canvas>
+</div>
+<p class="sr-only" [id]="summaryId">{{ summary() }}</p>

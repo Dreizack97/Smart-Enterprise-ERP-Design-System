@@ -1,0 +1,158 @@
+<app-showcase-page
+  title="Acciones"
+  subtitle="Variante y tamaño son ejes independientes: ninguna variante trae su propio relleno"
+>
+  <app-showcase-block
+    title="button · variantes"
+    anchor="botones"
+    description="Siete variantes, generadas desde BUTTON_VARIANTS. Añadir una la hace aparecer aquí sola."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      @for (variant of variants; track variant) {
+        <app-variant-row [label]="variant">
+          <app-button [variant]="variant">Guardar cambios</app-button>
+          <app-button [variant]="variant" icon="plus">Con icono</app-button>
+          <app-button [variant]="variant" disabled>Deshabilitado</app-button>
+        </app-variant-row>
+      }
+    </app-variant-grid>
+
+    <p note>
+      La variante <code>gradient</code> del original se retiró: pintaba el mismo azul plano que
+      <code>primary</code>, así que era un nombre distinto para el mismo botón.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="button · tamaños"
+    description="Tres alturas fijas — 32, 40 y 48 px — con un solo tamaño de letra por columna."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      @for (size of sizes; track size) {
+        <app-variant-row [label]="size">
+          <app-button [size]="size">Facturar</app-button>
+          <app-button [size]="size" variant="secondary" icon="printer">Imprimir</app-button>
+          <app-button
+            [size]="size"
+            variant="ghost"
+            icon="ellipsis-vertical"
+            ariaLabel="Más acciones"
+          />
+        </app-variant-row>
+      }
+    </app-variant-grid>
+
+    <p note>
+      El original ataba el relleno a la variante: tres rellenos horizontales distintos, tres
+      verticales, y tres de seis variantes sin tamaño de letra declarado. Aquí el alto sale de
+      <code>--control-height-*</code> y la variante solo decide el color.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="button · estados"
+    description="Cargando bloquea la pulsación y anuncia el cambio; el ancho completo es para el pie de un formulario."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="loading" note="pulsa para verlo">
+        <app-button [loading]="busy()" (pressed)="simulate()">Enviar pedido</app-button>
+        <app-button variant="secondary" [loading]="busy()" (pressed)="simulate()">
+          Guardar borrador
+        </app-button>
+      </app-variant-row>
+      <app-variant-row label="fullWidth">
+        <app-button fullWidth icon="send">Confirmar y enviar</app-button>
+      </app-variant-row>
+      <app-variant-row label="iconAfter">
+        <app-button variant="link" iconAfter="arrow-right">Ver el detalle</app-button>
+      </app-variant-row>
+    </app-variant-grid>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="social-button"
+    description="Botón de proveedor externo: marca a la izquierda, etiqueta a lo ancho."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      @for (provider of providers; track provider.label) {
+        <app-variant-row [label]="provider.name">
+          <app-social-button [label]="provider.label" [iconSrc]="provider.icon" />
+        </app-variant-row>
+      }
+      <app-variant-row label="etiqueta larga" note="el botón crece, no recorta">
+        <app-social-button
+          label="Continuar con el proveedor de identidad corporativo del grupo"
+          [iconSrc]="providers[0].icon"
+        />
+      </app-variant-row>
+    </app-variant-grid>
+
+    <p note>
+      La altura es un <strong>mínimo</strong>, no una medida fija. La llevaba fija, y una etiqueta
+      de dos líneas dibujaba 63 px de texto dentro de una caja de 46 px: se salía por el borde. Las
+      etiquetas de proveedor las escribe quien integra el proveedor, y no son cortas.
+    </p>
+
+    <p note>
+      Las marcas están dibujadas aquí como SVG: un sistema de diseño no debería cargar el logotipo
+      de otra empresa para enseñar la forma de un botón, y una demo que toma prestada una marca real
+      se lee como una integración que existe.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="segmented-control"
+    anchor="segmentado"
+    description="Elección entre pocas opciones visibles a la vez. Con más de cinco, un select."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="con icono" [note]="'valor: ' + view()">
+        <app-segmented-control
+          [(value)]="view"
+          [options]="viewOptions"
+          label="Forma de ver los datos"
+        />
+      </app-variant-row>
+      <app-variant-row label="iconOnly">
+        <app-segmented-control
+          [(value)]="view"
+          [options]="viewOptions"
+          label="Forma de ver los datos, solo iconos"
+          iconOnly
+        />
+      </app-variant-row>
+      <app-variant-row label="disabled" note="la tercera opción">
+        <app-segmented-control
+          [(value)]="density"
+          [options]="densityOptions"
+          label="Densidad de la tabla"
+        />
+      </app-variant-row>
+      @for (size of sizes; track size) {
+        <app-variant-row [label]="size">
+          <app-segmented-control
+            [(value)]="density"
+            [options]="densityOptions"
+            [size]="size"
+            label="Densidad de la tabla"
+          />
+        </app-variant-row>
+      }
+    </app-variant-grid>
+
+    <p note>
+      Los dos primeros comparten el mismo <code>model()</code>: mover uno mueve el otro. Es el doble
+      enlace, no una copia del estado.
+    </p>
+  </app-showcase-block>
+</app-showcase-page>

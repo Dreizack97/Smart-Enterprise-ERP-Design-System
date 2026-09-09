@@ -1,0 +1,71 @@
+:host {
+  display: block;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  border-bottom: 1px solid var(--line-subtle);
+}
+
+/* Las directivas de Angular Aria no traen estilos propios: el estado se lee
+   de los atributos ARIA que ya mantienen, nunca de una clase propia que
+   habría que mantener sincronizada a mano. */
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: var(--tab-height);
+  padding-inline: var(--tab-padding-x);
+  border-bottom: var(--tab-indicator-width) solid transparent;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  margin-bottom: -1px;
+  color: var(--tab-ink);
+  font-size: var(--text-body);
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    color var(--duration-fast) var(--ease-out-quart),
+    background-color var(--duration-fast) var(--ease-out-quart),
+    border-color var(--duration-fast) var(--ease-out-quart);
+}
+
+.tabs:not([aria-disabled='true']) .tab:hover:not([aria-disabled='true']) {
+  color: var(--ink-primary);
+  background-color: var(--tab-surface-hover);
+}
+
+.tab[aria-selected='true'] {
+  color: var(--tab-ink-active);
+  border-bottom-color: var(--tab-ink-active);
+}
+
+/* Dos formas en que una pestaña puede no estar disponible, y se marcan en
+   elementos distintos. Una pestaña `disabled` sola carga `aria-disabled`
+   ella misma; el input `disabled` del grupo marca la LISTA en su lugar —
+   @angular/aria lo fija ahí y saca a cada pestaña del orden de tabulación.
+   Solo existía el primer selector, así que una barra entera podía estar
+   inutilizable y verse perfectamente normal. */
+.tab[aria-disabled='true'],
+.tabs[aria-disabled='true'] .tab {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tab__badge {
+  min-width: 1.25rem;
+  padding-inline: 0.375rem;
+  border-radius: var(--radius-full);
+  background-color: var(--surface-3);
+  color: var(--ink-secondary);
+  font-size: var(--text-overline);
+  font-weight: 600;
+  text-align: center;
+}
+
+.tab[aria-selected='true'] .tab__badge {
+  background-color: var(--tab-pill-surface);
+  color: var(--tab-pill-ink);
+}

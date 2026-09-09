@@ -1,0 +1,42 @@
+app-section-card,
+app-activity-item {
+  display: block;
+  width: 100%;
+}
+
+app-form-card {
+  display: block;
+  width: 100%;
+  max-width: 26rem;
+}
+
+app-stat-card {
+  display: block;
+  min-width: 14rem;
+}
+
+.containers__text {
+  font-size: var(--text-body);
+  color: var(--ink-secondary);
+}
+
+/* `flush` quita el propio padding de la tarjeta, así que el contenido de la
+   demostración tiene que traer el suyo o se sienta contra el borde. */
+.containers__flush {
+  padding: var(--card-padding);
+  font-size: var(--text-body);
+  color: var(--ink-secondary);
+}
+
+.containers__footer {
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+}
+
+/* El divisor vertical necesita una fila donde estirarse: por sí solo no
+   tiene altura que tomar. */
+.containers__inline {
+  display: inline-flex;
+  align-items: stretch;
+  gap: 0.5rem;
+}

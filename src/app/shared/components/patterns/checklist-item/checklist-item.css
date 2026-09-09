@@ -1,0 +1,82 @@
+:host {
+  display: block;
+}
+
+.checklist {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: var(--checklist-padding);
+  border-radius: var(--card-radius);
+  background-color: var(--card-surface);
+  box-shadow: var(--card-shadow);
+  transition:
+    transform var(--duration-fast) var(--ease-out-quart),
+    box-shadow var(--duration-fast) var(--ease-out-quart);
+}
+
+.checklist:hover {
+  transform: translateY(var(--checklist-lift));
+  box-shadow: var(--shadow-md);
+}
+
+.checklist__box {
+  margin-top: 0.125rem;
+}
+
+.checklist__body {
+  min-width: 0;
+  flex: 1;
+}
+
+.checklist__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.checklist__title {
+  font-size: var(--text-subheading);
+  font-weight: 600;
+  color: var(--ink-primary);
+}
+
+/* Tachado y atenuado: la fila se mantiene legible como registro de lo que
+   se hizo, en vez de desaparecer en el momento en que se marca. */
+.checklist__title--done {
+  text-decoration: line-through;
+  color: var(--ink-muted);
+}
+
+.checklist__description {
+  margin-top: 0.25rem;
+  font-size: var(--text-body);
+  color: var(--ink-secondary);
+}
+
+.checklist__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  font-size: var(--text-body);
+  color: var(--ink-secondary);
+}
+
+.checklist__meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .checklist {
+    transition: none;
+  }
+
+  .checklist:hover {
+    transform: none;
+  }
+}

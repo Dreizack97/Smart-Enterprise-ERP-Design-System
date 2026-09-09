@@ -1,0 +1,83 @@
+<app-field
+  [label]="label()"
+  [controlId]="pickerId()"
+  [hint]="hint()"
+  [error]="parseError()"
+  errorId="{{ pickerId() }}-error"
+>
+  <div #anchor class="picker">
+    <input
+      type="text"
+      class="field-control field-control--md picker__input"
+      inputmode="numeric"
+      autocomplete="off"
+      maxlength="10"
+      [id]="pickerId()"
+      [value]="startText()"
+      [placeholder]="placeholder()"
+      [disabled]="disabled()"
+      [attr.aria-label]="(label() || ariaLabel() || 'Periodo') + ': inicio'"
+      (keydown)="onKeydown($event)"
+      (input)="onType('start', $event)"
+      (blur)="onLeave('start')"
+    />
+
+    <span class="picker__dash" aria-hidden="true">—</span>
+
+    <input
+      type="text"
+      class="field-control field-control--md picker__input"
+      inputmode="numeric"
+      autocomplete="off"
+      maxlength="10"
+      [value]="endText()"
+      [placeholder]="placeholder()"
+      [disabled]="disabled()"
+      [attr.aria-label]="(label() || ariaLabel() || 'Periodo') + ': final'"
+      (keydown)="onKeydown($event)"
+      (input)="onType('end', $event)"
+      (blur)="onLeave('end')"
+    />
+
+    <button
+      type="button"
+      class="picker__toggle focus-ring"
+      [disabled]="disabled()"
+      [attr.aria-expanded]="open()"
+      aria-haspopup="dialog"
+      aria-label="Abrir el calendario"
+      (click)="toggle()"
+    >
+      <app-icon name="calendar" [size]="16" />
+    </button>
+  </div>
+
+  @if (open()) {
+    <div #popup class="picker__popup" role="dialog" aria-label="Elegir periodo">
+      <app-date-grid
+        [month]="month()"
+        [rangeStart]="start() || null"
+        [rangeEnd]="end() || null"
+        label="Calendario"
+        (daySelected)="choose($event)"
+        (monthChanged)="month.set($event)"
+      />
+
+      <p class="picker__status" aria-live="polite">
+        @if (picking()) {
+          Elige el final del periodo.
+        } @else if (start() && end()) {
+          Periodo elegido. Pulsa un día para empezar otro.
+        } @else {
+          Elige el inicio del periodo.
+        }
+      </p>
+
+      @if (start() || end()) {
+        <button type="button" class="picker__clear focus-ring" (click)="clear()">
+          Quitar el periodo
+        </button>
+      }
+    </div>
+  }
+</app-field>

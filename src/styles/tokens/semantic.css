@@ -1,0 +1,319 @@
+/* =======================================================================
+   NIVEL 2 — TOKENS SEMÁNTICOS
+   -----------------------------------------------------------------------
+   Roles, no valores. Este es el único nivel que cambia con el tema activo, y
+   el único que el nivel 3 tiene permitido leer.
+
+   Por qué `@theme inline` al final: con un `@theme` simple, Tailwind resuelve
+   la variable en tiempo de compilación y congela el color de modo claro. Con
+   `inline` la utilidad sigue emitiendo `var(--surface-1)`, así que el
+   sobrescrito de `html.dark` sigue aplicando en tiempo de ejecución.
+   ======================================================================= */
+
+/* =======================================================================
+   Roles tipográficos
+   -----------------------------------------------------------------------
+   Siete escalones, cada uno con su propia altura de línea. Los tamaños
+   `text-*` propios de Tailwind se vacían a propósito: dos formas de nombrar
+   el mismo tamaño es exactamente la deriva que este sistema existe para
+   evitar. Después de esto, `text-sm` no existe — `text-body` sí.
+   ======================================================================= */
+
+@theme static {
+  --text-*: initial;
+
+  --text-display: var(--size-text-700);
+  --text-display--line-height: 1.2;
+  --text-display--letter-spacing: -0.02em;
+
+  --text-title: var(--size-text-600);
+  --text-title--line-height: 1.25;
+  --text-title--letter-spacing: -0.015em;
+
+  --text-heading: var(--size-text-500);
+  --text-heading--line-height: 1.3;
+  --text-heading--letter-spacing: -0.01em;
+
+  --text-subheading: var(--size-text-400);
+  --text-subheading--line-height: 1.4;
+
+  --text-body: var(--size-text-300);
+  --text-body--line-height: 1.5;
+
+  --text-caption: var(--size-text-200);
+  --text-caption--line-height: 1.4;
+
+  --text-overline: var(--size-text-100);
+  --text-overline--line-height: 1.3;
+  --text-overline--letter-spacing: 0.05em;
+  --text-overline--font-weight: 600;
+}
+
+/* =======================================================================
+   Superficies, líneas y tinta — modo claro (por defecto)
+   ======================================================================= */
+
+:root {
+  --surface-canvas: var(--color-secondary-50);
+  --surface-1: #ffffff; /* tarjetas, navbar, sidebar, modales */
+  --surface-2: var(--color-secondary-100); /* relleno sutil en reposo: chips, búsqueda */
+  --surface-3: var(--color-secondary-100); /* hover y popovers */
+  --surface-field: var(--color-secondary-50); /* relleno de control de formulario */
+  --surface-inset: var(--color-secondary-100); /* hundido: riel de la barra de scroll */
+
+  --line-subtle: var(--color-secondary-100);
+  --line-default: var(--color-secondary-200);
+  --line-strong: var(--color-secondary-300);
+
+  --ink-strong: var(--color-secondary-900); /* cifras y títulos destacados */
+  --ink-primary: var(--color-secondary-800);
+  --ink-body: var(--color-secondary-700); /* texto de control de formulario */
+  --ink-secondary: var(--color-secondary-600);
+  /* No `--color-secondary-500`: medido contra las superficies elevadas donde
+     este rol realmente cae — una pista de campo dentro de un campo hundido,
+     una marca de hora en una fila con hover — dio 4.34:1. AA es 4.5, y
+     «casi» no cuenta. Claro: 4.97 en la tarjeta, 4.75 en el lienzo, 4.54 en
+     `--surface-3`. */
+  --ink-muted: #5e718d;
+
+  --link: var(--color-primary-600);
+  --scrim: rgba(15, 23, 42, 0.5);
+}
+
+/* =======================================================================
+   Modo oscuro — anti-fatiga, WCAG AA
+   -----------------------------------------------------------------------
+   Las superficies se elevan por luminosidad, no por sombra. Los ratios de
+   contraste anotados se miden contra --surface-canvas / --surface-1.
+   ======================================================================= */
+
+html.dark {
+  --surface-canvas: #0b1120; /* lienzo, nunca negro puro */
+  --surface-1: #16213a; /* tarjetas, sidebar, encabezado, modales */
+  --surface-2: #1e293b; /* chips, búsqueda, elementos elevados */
+  --surface-3: #273449; /* hover y popovers */
+  --surface-field: #0b1120; /* campos hundidos respecto a la tarjeta */
+  --surface-inset: #0a0f1c; /* hundido: riel de la barra de scroll */
+
+  --line-subtle: #1e293b;
+  --line-default: #334155;
+  --line-strong: #475569;
+
+  --ink-strong: #f8fafc;
+  --ink-primary: #f1f5f9; /* 17.2:1 sobre el lienzo */
+  --ink-body: #e2e8f0;
+  --ink-secondary: #aebac9; /* AAA: 8.1:1 en la tarjeta */
+  /* La misma corrección en reversa: 4.05:1 en `--surface-3`, la superficie de
+     popover y hover. Ahora 5.87 / 6.90 / 5.36 / 4.60 en las cuatro
+     superficies oscuras. */
+  --ink-muted: #8e9eb4; /* placeholders, deshabilitado, marcas de hora */
+
+  --link: #7db3fb; /* AAA: 7.4:1 en la tarjeta */
+  --scrim: rgba(0, 0, 0, 0.6);
+
+  color-scheme: dark; /* controles nativos y barras de scroll en oscuro */
+}
+
+/* =======================================================================
+   Tonos
+   -----------------------------------------------------------------------
+   Un matiz es parte del dato que se muestra, no parte del tema: una factura
+   pagada es verde en ambos modos. Así que los tonos son su propio grupo de
+   tokens en vez de un retinte de utilidades crudas de Tailwind.
+
+   Cada matiz expone los mismos cinco roles. Un componente declara `data-tone`
+   y elige una de las clases `.tone-*` de `shell.css`; nunca nombra un matiz
+   en su propia hoja de estilos.
+
+   Las elecciones de primer plano no son estéticas. Sobre la superficie
+   `soft`, el `-600` que usaba el original fallaba 4.5:1 en cinco de seis
+   matices (verde 2.93:1, amarillo 2.73:1); `-800` deja margen, sin ningún par
+   por debajo de 6.4:1. Sobre una superficie de tarjeta plana, `-700` basta y
+   se lee más brillante para una cifra que debe destacar — de ahí que `ink` e
+   `ink-strong` sean roles distintos.
+   ======================================================================= */
+
+:root {
+  --tone-neutral-surface-soft: var(--surface-2);
+  --tone-neutral-surface-subtle: var(--surface-2);
+  --tone-neutral-border: var(--line-default);
+  --tone-neutral-ink: var(--ink-primary);
+  --tone-neutral-ink-strong: var(--ink-body);
+
+  --tone-blue-surface-soft: var(--color-primary-100);
+  --tone-blue-surface-subtle: var(--color-primary-50);
+  --tone-blue-border: var(--color-primary-200);
+  --tone-blue-ink: var(--color-primary-700);
+  --tone-blue-ink-strong: var(--color-primary-800);
+
+  --tone-green-surface-soft: #dcfce7;
+  --tone-green-surface-subtle: #f0fdf4;
+  --tone-green-border: #bbf7d0;
+  --tone-green-ink: #15803d;
+  --tone-green-ink-strong: #166534;
+
+  --tone-yellow-surface-soft: #fef9c3;
+  --tone-yellow-surface-subtle: #fefce8;
+  --tone-yellow-border: #fef08a;
+  /* Un escalón más oscuro que amber-700: en #a16207 el texto de precaución
+     medía 4.49:1 sobre `--surface-3`, y «casi AA» no es AA. Ahora 5.33 en la
+     tarjeta y 4.86 en la superficie elevada, sin dejar de leerse como
+     ámbar. */
+  --tone-yellow-ink: #9a5d06;
+  --tone-yellow-ink-strong: #854d0e;
+
+  --tone-orange-surface-soft: #ffedd5;
+  --tone-orange-surface-subtle: #fff7ed;
+  --tone-orange-border: #fed7aa;
+  --tone-orange-ink: #c2410c;
+  --tone-orange-ink-strong: #9a3412;
+
+  --tone-red-surface-soft: #fee2e2;
+  --tone-red-surface-subtle: #fef2f2;
+  --tone-red-border: #fecaca;
+  --tone-red-ink: #b91c1c;
+  --tone-red-ink-strong: #991b1b;
+
+  --tone-purple-surface-soft: #f3e8ff;
+  --tone-purple-surface-subtle: #faf5ff;
+  --tone-purple-border: #e9d5ff;
+  --tone-purple-ink: #7e22ce;
+  --tone-purple-ink-strong: #6b21a8;
+}
+
+/* En modo oscuro el relleno se convierte en un lavado translúcido del propio
+   matiz, así que se funde con la superficie que tenga debajo, y el primer
+   plano sube a los escalones 300/400. Un `#dcfce7` literal sobre una tarjeta
+   `#16213a` es un parche que deslumbra, y el texto `-800` encima cae por
+   debajo de 4.5:1. */
+html.dark {
+  --tone-blue-surface-soft: rgba(96, 165, 250, 0.16);
+  --tone-blue-surface-subtle: rgba(96, 165, 250, 0.1);
+  --tone-blue-border: rgba(96, 165, 250, 0.3);
+  --tone-blue-ink: #7db3fb;
+  --tone-blue-ink-strong: #93c5fd;
+
+  --tone-green-surface-soft: rgba(52, 211, 153, 0.16);
+  --tone-green-surface-subtle: rgba(52, 211, 153, 0.1);
+  --tone-green-border: rgba(52, 211, 153, 0.3);
+  --tone-green-ink: #34d399;
+  --tone-green-ink-strong: #6ee7b7;
+
+  --tone-yellow-surface-soft: rgba(251, 191, 36, 0.16);
+  --tone-yellow-surface-subtle: rgba(251, 191, 36, 0.1);
+  --tone-yellow-border: rgba(251, 191, 36, 0.3);
+  --tone-yellow-ink: #fbbf24;
+  --tone-yellow-ink-strong: #fcd34d;
+
+  --tone-orange-surface-soft: rgba(251, 146, 60, 0.16);
+  --tone-orange-surface-subtle: rgba(251, 146, 60, 0.1);
+  --tone-orange-border: rgba(251, 146, 60, 0.3);
+  --tone-orange-ink: #fdba74;
+  --tone-orange-ink-strong: #fed7aa;
+
+  --tone-red-surface-soft: rgba(248, 113, 113, 0.16);
+  --tone-red-surface-subtle: rgba(248, 113, 113, 0.1);
+  --tone-red-border: rgba(248, 113, 113, 0.3);
+  --tone-red-ink: #fca5a5;
+  --tone-red-ink-strong: #fecaca;
+
+  --tone-purple-surface-soft: rgba(192, 132, 252, 0.16);
+  --tone-purple-surface-subtle: rgba(192, 132, 252, 0.1);
+  --tone-purple-border: rgba(192, 132, 252, 0.3);
+  --tone-purple-ink: #c4b5fd;
+  --tone-purple-ink-strong: #ddd6fe;
+}
+
+/* El tono activo. Un componente fija `data-tone` una sola vez y cada clase
+   `.tone-*` de abajo resuelve contra él. */
+[data-tone='neutral'] {
+  --tone-surface-soft: var(--tone-neutral-surface-soft);
+  --tone-surface-subtle: var(--tone-neutral-surface-subtle);
+  --tone-border: var(--tone-neutral-border);
+  --tone-ink: var(--tone-neutral-ink);
+  --tone-ink-strong: var(--tone-neutral-ink-strong);
+}
+
+[data-tone='blue'] {
+  --tone-surface-soft: var(--tone-blue-surface-soft);
+  --tone-surface-subtle: var(--tone-blue-surface-subtle);
+  --tone-border: var(--tone-blue-border);
+  --tone-ink: var(--tone-blue-ink);
+  --tone-ink-strong: var(--tone-blue-ink-strong);
+}
+
+[data-tone='green'] {
+  --tone-surface-soft: var(--tone-green-surface-soft);
+  --tone-surface-subtle: var(--tone-green-surface-subtle);
+  --tone-border: var(--tone-green-border);
+  --tone-ink: var(--tone-green-ink);
+  --tone-ink-strong: var(--tone-green-ink-strong);
+}
+
+[data-tone='yellow'] {
+  --tone-surface-soft: var(--tone-yellow-surface-soft);
+  --tone-surface-subtle: var(--tone-yellow-surface-subtle);
+  --tone-border: var(--tone-yellow-border);
+  --tone-ink: var(--tone-yellow-ink);
+  --tone-ink-strong: var(--tone-yellow-ink-strong);
+}
+
+[data-tone='orange'] {
+  --tone-surface-soft: var(--tone-orange-surface-soft);
+  --tone-surface-subtle: var(--tone-orange-surface-subtle);
+  --tone-border: var(--tone-orange-border);
+  --tone-ink: var(--tone-orange-ink);
+  --tone-ink-strong: var(--tone-orange-ink-strong);
+}
+
+[data-tone='red'] {
+  --tone-surface-soft: var(--tone-red-surface-soft);
+  --tone-surface-subtle: var(--tone-red-surface-subtle);
+  --tone-border: var(--tone-red-border);
+  --tone-ink: var(--tone-red-ink);
+  --tone-ink-strong: var(--tone-red-ink-strong);
+}
+
+[data-tone='purple'] {
+  --tone-surface-soft: var(--tone-purple-surface-soft);
+  --tone-surface-subtle: var(--tone-purple-surface-subtle);
+  --tone-border: var(--tone-purple-border);
+  --tone-ink: var(--tone-purple-ink);
+  --tone-ink-strong: var(--tone-purple-ink-strong);
+}
+
+/* =======================================================================
+   Exposición como utilidades de Tailwind
+   -----------------------------------------------------------------------
+   `inline` es obligatorio aquí: mantiene el `var()` dentro de la utilidad
+   generada para que el sobrescrito de `html.dark` funcione en tiempo de
+   ejecución.
+   ======================================================================= */
+
+@theme static inline {
+  --color-surface-canvas: var(--surface-canvas);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-surface-field: var(--surface-field);
+  --color-surface-inset: var(--surface-inset);
+
+  --color-line-subtle: var(--line-subtle);
+  --color-line-default: var(--line-default);
+  --color-line-strong: var(--line-strong);
+
+  --color-ink-strong: var(--ink-strong);
+  --color-ink-primary: var(--ink-primary);
+  --color-ink-body: var(--ink-body);
+  --color-ink-secondary: var(--ink-secondary);
+  --color-ink-muted: var(--ink-muted);
+
+  --color-link: var(--link);
+  --color-scrim: var(--scrim);
+
+  --color-tone-surface-soft: var(--tone-surface-soft);
+  --color-tone-surface-subtle: var(--tone-surface-subtle);
+  --color-tone-border: var(--tone-border);
+  --color-tone-ink: var(--tone-ink);
+  --color-tone-ink-strong: var(--tone-ink-strong);
+}

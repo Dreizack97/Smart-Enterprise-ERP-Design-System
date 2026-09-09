@@ -1,0 +1,236 @@
+/* El host ES la barra. En el original era `display: contents` alrededor de
+   un `<header>`, así que su geometría se tenía que escribir globalmente
+   contra `.app-navbar`. */
+:host {
+  position: fixed;
+  z-index: 50;
+  inset: 0 0 auto 0;
+  display: flex;
+  height: var(--navbar-height);
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0.75rem;
+  border-bottom: 1px solid var(--navbar-border);
+  background-color: var(--navbar-surface);
+}
+
+@media (min-width: 640px) {
+  :host {
+    padding: 0 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  :host {
+    padding: 0 1.5rem;
+  }
+}
+
+.navbar__group {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+@media (min-width: 640px) {
+  .navbar__group {
+    gap: 0.5rem;
+  }
+}
+
+.navbar__control {
+  display: inline-flex;
+  width: var(--navbar-control-size);
+  height: var(--navbar-control-size);
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--navbar-control-radius);
+  color: var(--navbar-control-ink);
+  transition: background-color var(--duration-instant) var(--ease-out-quart);
+}
+
+.navbar__control:hover {
+  background-color: var(--navbar-control-surface-hover);
+}
+
+/* Los dos controles de menú nunca aparecen juntos: el drawer pertenece al
+   layout móvil, el rail al de escritorio. */
+@media (min-width: 1024px) {
+  .navbar__control--drawer {
+    display: none;
+  }
+}
+
+@media (max-width: 1023.98px) {
+  .navbar__control--rail {
+    display: none;
+  }
+}
+
+.navbar__rail-icon {
+  transition: transform var(--duration-normal) var(--ease-out-quart);
+}
+
+.navbar__rail-icon--flipped {
+  transform: rotate(180deg);
+}
+
+.navbar__control--bell {
+  position: relative;
+}
+
+.navbar__dot {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 0.625rem;
+  height: 0.625rem;
+  border: 2px solid var(--navbar-surface);
+  border-radius: var(--radius-full);
+  background-color: var(--navbar-dot-surface);
+}
+
+.navbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  border-radius: var(--navbar-control-radius);
+}
+
+.navbar__mark {
+  display: flex;
+  width: var(--navbar-mark-size);
+  height: var(--navbar-mark-size);
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--navbar-control-radius);
+  background: var(--navbar-mark-surface);
+  color: var(--navbar-mark-ink);
+  box-shadow: var(--shadow-md);
+}
+
+/* Los nombres desaparecen antes que los controles: en una barra angosta los
+   iconos son lo que tiene que sobrevivir. */
+.navbar__identity {
+  display: none;
+  line-height: 1.25;
+}
+
+@media (min-width: 640px) {
+  .navbar__identity {
+    display: block;
+    text-align: left;
+  }
+}
+
+.navbar__brand-name {
+  display: block;
+  font-size: var(--text-body);
+  font-weight: 700;
+  color: var(--ink-primary);
+}
+
+.navbar__brand-suffix {
+  display: block;
+  font-size: var(--text-caption);
+  color: var(--ink-secondary);
+}
+
+.navbar__search {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .navbar__search {
+    display: block;
+  }
+}
+
+.navbar__account {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: var(--navbar-control-radius);
+  padding: 0.375rem 0.5rem;
+  transition: background-color var(--duration-instant) var(--ease-out-quart);
+}
+
+.navbar__account:hover {
+  background-color: var(--navbar-control-surface-hover);
+}
+
+.navbar__photo {
+  width: var(--avatar-size-md);
+  height: var(--avatar-size-md);
+  border-radius: var(--radius-full);
+  object-fit: cover;
+}
+
+.navbar__user-name,
+.navbar__user-role,
+.navbar__user-email {
+  display: block;
+  overflow: hidden;
+  max-width: var(--navbar-identity-width);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.navbar__user-name {
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--ink-primary);
+}
+
+/* El rol overline expande sus letras porque es una rúbrica de sección; estos
+   son solo etiquetas pequeñas, así que toman el tamaño y descartan el
+   tracking. */
+.navbar__user-role,
+.navbar__user-email {
+  font-size: var(--text-overline);
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.navbar__user-role {
+  color: var(--ink-secondary);
+}
+
+.navbar__user-email {
+  color: var(--ink-muted);
+}
+
+.navbar__account-header {
+  padding: 0.75rem 1rem;
+}
+
+.navbar__account-header .navbar__user-name,
+.navbar__account-header .navbar__user-email {
+  max-width: 100%;
+}
+
+.navbar__account-chevron {
+  display: none;
+  color: var(--ink-muted);
+  transition: transform var(--duration-fast) var(--ease-out-quart);
+}
+
+@media (min-width: 640px) {
+  .navbar__account-chevron {
+    display: block;
+  }
+}
+
+.navbar__account-chevron--flipped {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar__control,
+  .navbar__account,
+  .navbar__rail-icon,
+  .navbar__account-chevron {
+    transition: none;
+  }
+}

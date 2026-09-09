@@ -1,0 +1,78 @@
+:host {
+  display: block;
+}
+
+.slider {
+  display: flex;
+  align-items: center;
+  gap: var(--slider-gap);
+}
+
+/* La lectura es monoespaciada y reserva su ancho, para que la pista no se
+   encoja un píxel cada vez que el número pasa de 9 a 10. */
+.slider__value {
+  min-width: var(--slider-value-width);
+  color: var(--ink-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  text-align: end;
+}
+
+.slider__input {
+  width: 100%;
+  height: var(--slider-thumb-size);
+  flex: 1;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.slider__input:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* WebKit y Firefox exponen la pista y el thumb a través de pseudo-elementos
+   distintos, y ningún motor entiende el del otro — una sola lista de
+   selectores sería descartada entera por ambos. Así que los dos bloques son
+   duplicación deliberada, no un descuido. */
+.slider__input::-webkit-slider-runnable-track {
+  height: var(--slider-track-height);
+  border-radius: var(--radius-full);
+  background:
+    linear-gradient(var(--slider-fill), var(--slider-fill)) 0 / var(--slider-progress, 0%) 100%
+      no-repeat,
+    var(--slider-track);
+}
+
+.slider__input::-moz-range-track {
+  height: var(--slider-track-height);
+  border-radius: var(--radius-full);
+  background:
+    linear-gradient(var(--slider-fill), var(--slider-fill)) 0 / var(--slider-progress, 0%) 100%
+      no-repeat,
+    var(--slider-track);
+}
+
+.slider__input::-webkit-slider-thumb {
+  width: var(--slider-thumb-size);
+  height: var(--slider-thumb-size);
+  appearance: none;
+  /* Centra el thumb sobre la pista: la caja del thumb empieza en el borde
+     superior de la pista, así que tiene que subir de vuelta por la
+     diferencia entre las dos alturas. */
+  margin-top: calc((var(--slider-track-height) - var(--slider-thumb-size)) / 2);
+  border: 2px solid var(--slider-thumb-border);
+  border-radius: var(--radius-full);
+  background-color: var(--slider-thumb-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.slider__input::-moz-range-thumb {
+  width: var(--slider-thumb-size);
+  height: var(--slider-thumb-size);
+  border: 2px solid var(--slider-thumb-border);
+  border-radius: var(--radius-full);
+  background-color: var(--slider-thumb-surface);
+  box-shadow: var(--shadow-sm);
+}

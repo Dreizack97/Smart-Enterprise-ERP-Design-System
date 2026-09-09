@@ -1,0 +1,70 @@
+@let node = item();
+
+@if (isGroup()) {
+  <li class="nav__group">
+    <button
+      type="button"
+      class="nav__toggle focus-ring"
+      [class.nav__toggle--nested]="!isRoot()"
+      [class.nav--trail]="inActiveTrail()"
+      [attr.aria-expanded]="expanded()"
+      [attr.aria-controls]="panelId()"
+      (click)="toggle()"
+    >
+      @if (node.icon; as name) {
+        <app-icon [name]="name" [size]="18" />
+      } @else if (!isRoot()) {
+        <span class="nav__dot"></span>
+      }
+      <span class="nav__label">{{ node.label }}</span>
+      <app-icon class="nav__chevron" name="chevron-down" [size]="12" />
+    </button>
+
+    <div class="nav__submenu" [id]="panelId()" [attr.data-open]="expanded()">
+      <div class="nav__submenu-inner">
+        <p class="nav__flyout-title">{{ node.label }}</p>
+        <ul class="nav__subtree">
+          @for (child of children(); track child.id) {
+            <app-sidebar-nav-item [item]="child" [siblingIds]="childIds()" [depth]="depth() + 1" />
+          }
+        </ul>
+      </div>
+    </div>
+  </li>
+} @else if (node.route; as route) {
+  <li class="nav__item">
+    <a
+      class="nav__link focus-ring"
+      [class.nav__link--nested]="!isRoot()"
+      [class.nav--active]="isActive()"
+      [routerLink]="route"
+      [fragment]="node.fragment"
+      [attr.aria-current]="isActive() ? 'page' : null"
+      (click)="onNavigate()"
+    >
+      @if (node.icon; as name) {
+        <app-icon [name]="name" [size]="18" />
+      } @else if (!isRoot()) {
+        <span class="nav__dot"></span>
+      }
+      <span class="nav__label">{{ node.label }}</span>
+    </a>
+  </li>
+} @else {
+  <!-- A section not yet implemented: shown so the shape of the product is
+       visible, but without a link, because it leads nowhere. -->
+  <li class="nav__item">
+    <span
+      class="nav__link nav__link--pending"
+      [class.nav__link--nested]="!isRoot()"
+      aria-disabled="true"
+    >
+      @if (node.icon; as name) {
+        <app-icon [name]="name" [size]="18" />
+      } @else if (!isRoot()) {
+        <span class="nav__dot"></span>
+      }
+      <span class="nav__label">{{ node.label }}</span>
+    </span>
+  </li>
+}

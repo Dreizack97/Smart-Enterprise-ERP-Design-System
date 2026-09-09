@@ -1,0 +1,15 @@
+@for (entry of entries(); track entry.title; let last = $last) {
+  <div class="timeline__row" role="listitem">
+    @if (!last) {
+      <span class="timeline__rail" aria-hidden="true"></span>
+    }
+
+    <app-activity-item
+      [icon]="entry.icon"
+      [tone]="entry.tone ?? 'blue'"
+      [title]="entry.title"
+      [description]="entry.description ?? ''"
+      [time]="entry.time ?? ''"
+    />
+  </div>
+}

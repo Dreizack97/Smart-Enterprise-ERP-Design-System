@@ -1,0 +1,616 @@
+/* =======================================================================
+   NIVEL 3 — TOKENS DE COMPONENTE
+   -----------------------------------------------------------------------
+   Las medidas que lee un componente. Este es el único nivel que una hoja de
+   estilos de componente puede consumir: un `.css` que alcanza `var(--color-*)`
+   o escribe un hex literal es un error de revisión.
+
+   Los tamaños se expresan como una altura fija más un padding horizontal,
+   nunca como un padding vertical que haya que sumar. Eso es lo que mantiene
+   alineados a un botón, un campo y un select cuando se sientan uno junto al
+   otro en una barra de herramientas.
+   ======================================================================= */
+
+:root {
+  /* --- Tamaño de control, compartido por botón, campo y select ----------
+     Una sola escala de altura para todo control interactivo. 40px es el
+     valor por defecto y reproduce el botón primario actual (px-4 py-2.5
+     sobre texto de 14px). */
+  --control-height-sm: 2rem; /*   32px */
+  --control-height-md: 2.5rem; /* 40px */
+  --control-height-lg: 3rem; /*   48px */
+
+  /* --- Botón -------------------------------------------------------------- */
+  --button-height-sm: var(--control-height-sm);
+  --button-height-md: var(--control-height-md);
+  --button-height-lg: var(--control-height-lg);
+
+  --button-padding-x-sm: 0.75rem;
+  --button-padding-x-md: 1rem;
+  --button-padding-x-lg: 1.5rem;
+
+  --button-font-size-sm: var(--text-caption);
+  --button-font-size-md: var(--text-body);
+  --button-font-size-lg: var(--text-subheading);
+
+  --button-gap: 0.5rem;
+  /* `--radius-lg` (0,75 rem), que es el `rounded-xl` del original. Con
+     `--radius-xl` el botón quedaba 0,25 rem más redondo que el campo de al
+     lado, que es justo la desalineación que estos tokens existen para evitar. */
+  --button-radius: var(--radius-lg);
+  --button-font-weight: 500;
+  --button-disabled-opacity: 0.5;
+
+  /* Color por variante. Nombrar el rol aquí en vez de en la hoja de estilos
+     del componente es lo que mantiene un cambio de marca dentro de este
+     archivo. */
+  --button-primary-surface: var(--color-primary-600);
+  --button-primary-surface-hover: var(--color-primary-700);
+  --button-primary-ink: #ffffff;
+  --button-primary-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+
+  --button-secondary-surface: var(--surface-1);
+  --button-secondary-surface-hover: var(--surface-2);
+  --button-secondary-border: var(--line-default);
+  --button-secondary-ink: var(--ink-body);
+
+  --button-ghost-surface-hover: var(--surface-2);
+  --button-ghost-ink: var(--ink-secondary);
+
+  --button-soft-surface: var(--surface-2);
+  --button-soft-surface-hover: var(--surface-3);
+  --button-soft-ink: var(--ink-body);
+
+  --button-danger-surface: var(--tone-red-ink);
+  --button-danger-surface-hover: var(--tone-red-ink-strong);
+  --button-danger-ink: #ffffff;
+
+  --button-danger-soft-surface: var(--tone-red-surface-subtle);
+  --button-danger-soft-surface-hover: var(--tone-red-surface-soft);
+  --button-danger-soft-ink: var(--tone-red-ink-strong);
+
+  --button-link-ink: var(--link);
+
+  /* La elevación al hacer hover y el rebote al presionar son la firma táctil
+     del sistema. Se guardan como tokens para que todo control comparta la
+     misma sensación. */
+  --button-lift: -1px;
+  --button-press-scale: 0.98;
+
+  /* --- Campo de formulario ------------------------------------------------ */
+  --field-height-sm: var(--control-height-sm);
+  --field-height-md: var(--control-height-md);
+  --field-height-lg: var(--control-height-lg);
+
+  --field-padding-x: 0.875rem;
+  --field-padding-y: 0.625rem; /* textarea y otros campos de altura automática */
+  --field-radius: var(--radius-lg);
+  --field-border-width: 1px;
+  --field-font-size: var(--text-body);
+
+  --field-surface: var(--surface-field);
+  --field-border: var(--line-default);
+  --field-border-hover: var(--line-strong);
+  --field-border-focus: var(--color-primary-500);
+  --field-border-invalid: var(--tone-red-ink);
+  --field-ink: var(--ink-body);
+  --field-ink-placeholder: var(--ink-muted);
+  --field-label-font-size: var(--text-caption);
+  --field-label-ink: var(--ink-body);
+  --field-hint-font-size: var(--text-caption);
+  --field-hint-ink: var(--ink-muted);
+  --field-invalid-ink: var(--tone-red-ink);
+  --field-focus-halo: rgba(59, 130, 246, 0.18);
+  --field-gap: 0.375rem; /* etiqueta -> control -> pista */
+  --field-disabled-opacity: 0.6;
+
+  /* El acento de marca de un control: la palomita de un checkbox, el punto de
+     un radio, el borde de la opción elegida. `accent-color` nativo también
+     lee esto. */
+  /* Dos roles de acento, no uno. `--field-accent` es un RELLENO: el blanco se
+     sienta encima, así que tiene que quedarse en un `-600` saturado en ambos
+     temas. `--control-accent-ink` es TEXTO sobre una superficie, y un azul
+     `-600` sobre una tarjeta oscura mide 3.1:1 — la etiqueta de la pestaña
+     activa era ilegible de noche. En oscuro se convierte en el mismo azul
+     aclarado que ya usa todo enlace. */
+  --field-accent: var(--color-primary-600);
+  --control-accent-ink: var(--color-primary-600);
+  --field-selected-surface: color-mix(in srgb, var(--field-accent) 10%, var(--field-surface));
+  --field-toggle-ink-hover: var(--control-accent-ink);
+  --field-icon-surface: var(--tone-blue-surface-soft);
+  --field-icon-ink: var(--tone-blue-ink);
+
+  /* --- Tarjeta ------------------------------------------------------------ */
+  --card-surface: var(--surface-1);
+  --card-border: var(--line-default);
+  --card-radius: var(--radius-xl);
+  --card-padding: 1.5rem;
+  --card-padding-compact: 1rem;
+  --card-gap: 1rem;
+  --card-shadow: var(--shadow-card);
+  --card-shadow-hover: var(--shadow-elevated);
+
+  /* --- Tabla de datos ------------------------------------------------------- */
+  --table-cell-padding-x: 1.5rem;
+  --table-cell-padding-y: 1rem;
+  --table-cell-font-size: var(--text-body);
+  --table-cell-ink: var(--ink-primary);
+  --table-header-font-size: var(--text-overline);
+  --table-header-ink: var(--ink-secondary);
+  --table-header-surface: var(--surface-canvas);
+  --table-row-surface-hover: rgba(37, 99, 235, 0.02);
+  --table-divider: var(--line-subtle);
+  --table-card-breakpoint: 768px;
+
+  /* --- Gráfico -------------------------------------------------------------- */
+  --chart-height: 18.75rem;
+
+  /* --- Tarjeta de cifra ------------------------------------------------------ */
+  --stat-padding: 1.5rem;
+  --stat-padding-compact: 1rem;
+  --stat-value-size: var(--text-title);
+  --stat-lift: -4px;
+  --stat-progress-height: 0.375rem;
+  --stat-progress-track: var(--surface-2);
+  --stat-progress-fill: var(--color-primary-500);
+  --stat-chart-height: 3.75rem;
+  --stat-badge-size: 3rem;
+
+  /* --- Patrones --------------------------------------------------------------
+     Composiciones y no primitivos, así que sus medidas viven juntas. */
+  --media-card-image-height: 12rem;
+  --media-card-padding: 1.25rem;
+  --media-card-lift: -4px;
+  --strength-caution-ink: var(--tone-yellow-ink);
+  --meter-height: 0.5rem;
+  --meter-track: var(--surface-2);
+
+  --checklist-padding: 1.25rem;
+  --checklist-lift: -2px;
+
+  --schedule-stamp-size: 3.5rem;
+  --schedule-card-padding: 1rem;
+  --schedule-chip-radius: var(--radius-sm);
+
+  --calendar-cell-min-height: 8.5rem;
+  --calendar-cell-padding: 0.625rem;
+  --calendar-cell-entry-gap: 0.25rem;
+  --calendar-day-size: 1.75rem;
+  --calendar-outside-surface: var(--surface-2);
+  --calendar-cell-surface-hover: rgba(37, 99, 235, 0.03);
+  --calendar-today-surface: var(--color-primary-600);
+  --calendar-today-ink: #ffffff;
+
+  /* --- Elemento de actividad --------------------------------------------------- */
+  --activity-badge-size: 2.5rem;
+  --activity-padding: 0.75rem;
+  --activity-surface-hover: rgba(37, 99, 235, 0.03);
+
+  /* --- Línea de tiempo -------------------------------------------------------- */
+  /* La geometría del riel se deriva de los propios tokens del elemento de
+     actividad, en el componente. Aquí solo viven sus dos valores propios. */
+  --timeline-rail-width: 2px;
+  --timeline-rail-color: var(--line-subtle);
+
+  /* --- Grupo de avatares -------------------------------------------------------- */
+  /* Un margen negativo: cada disco se desliza hacia atrás sobre el
+     anterior. */
+  --avatar-group-overlap: -0.5rem;
+  --avatar-group-ring: 2px;
+  --avatar-group-ring-color: var(--surface-1);
+  --avatar-group-more-surface: var(--surface-3);
+  --avatar-group-more-ink: var(--ink-secondary);
+
+  /* --- Divisor -------------------------------------------------------------- */
+  --divider-line: var(--line-default);
+  --divider-thickness: 1px;
+  --divider-gap: 1rem;
+  --divider-label-gap: 0.75rem;
+  --divider-label-ink: var(--ink-muted);
+
+  /* --- Tecla de teclado -------------------------------------------------------- */
+  --kbd-surface: var(--surface-2);
+  --kbd-border: var(--line-default);
+  --kbd-ink: var(--ink-secondary);
+  --kbd-radius: var(--radius-sm);
+  --kbd-min-width: 1.5rem;
+  --kbd-padding-x: 0.375rem;
+  --kbd-padding-y: 0.25rem;
+  --kbd-gap: 0.25rem;
+
+  /* --- Bloque de código --------------------------------------------------------- */
+  --code-surface: var(--surface-2);
+  --code-bar-surface: var(--surface-3);
+  --code-border: var(--line-subtle);
+  --code-ink: var(--ink-primary);
+  --code-radius: var(--radius-lg);
+  --code-padding: 0.875rem;
+  --code-bar-height: 2.5rem;
+
+  /* --- Control deslizante -------------------------------------------------------- */
+  --slider-track: var(--surface-3);
+  --slider-track-height: 0.375rem;
+  --slider-fill: var(--color-primary-600);
+  --slider-thumb-size: 1.125rem;
+  --slider-thumb-surface: var(--surface-1);
+  --slider-thumb-border: var(--color-primary-600);
+  --slider-gap: 0.75rem;
+  --slider-value-width: 4rem;
+
+  /* --- Calificación --------------------------------------------------------------- */
+  --rating-filled: var(--tone-yellow-ink);
+  --rating-empty: var(--line-strong);
+  --rating-gap: 0.125rem;
+
+  /* --- Tarjeta de formulario (panel de acceso centrado) -------------------------------- */
+  --form-card-max-width: 28rem;
+  --form-card-padding: 2rem;
+  --form-card-body-gap: 1.25rem;
+  --form-card-link-ink: var(--control-accent-ink);
+  /* `--line-default`, not `--line-subtle`: medido, el sutil da 1,09:1 contra
+     la superficie de la tarjeta, que no es discreto sino invisible. Una regla
+     cuyo trabajo es separar tiene que leerse. */
+  --form-card-divider-line: var(--line-default);
+  --form-card-radius: var(--radius-xl);
+  --form-card-surface: rgba(255, 255, 255, 0.95);
+  --form-card-border: rgba(255, 255, 255, 0.2);
+  --form-card-blur: 20px;
+  --form-card-logo-size: 3.5rem;
+  --form-card-logo-surface: linear-gradient(
+    to bottom right,
+    var(--color-primary-600),
+    var(--color-primary-800)
+  );
+  --form-card-logo-ink: #ffffff;
+
+  /* --- Modal --------------------------------------------------------------- */
+  --modal-surface: var(--surface-1);
+  --modal-radius: var(--radius-xl);
+  --modal-padding: 1.5rem;
+  --modal-max-width-sm: 24rem;
+  --modal-max-width-md: 32rem;
+  --modal-max-width-lg: 48rem;
+  --modal-max-width-xl: 56rem;
+  --modal-scrim: var(--scrim);
+  --modal-enter-duration: var(--duration-fast);
+
+  /* --- Desplegable ---------------------------------------------------------------- */
+  --dropdown-width: 15rem;
+  --dropdown-surface: var(--surface-1);
+  --dropdown-border: var(--line-subtle);
+  --dropdown-radius: var(--radius-lg);
+  --dropdown-item-radius: var(--radius-md);
+  --dropdown-danger-ink: var(--tone-red-ink);
+  --dropdown-danger-surface: var(--tone-red-surface-subtle);
+  --dropdown-enter-duration: var(--duration-instant);
+  --notice-dot-surface: var(--color-primary-500);
+
+  /* --- Cuadrícula y selectores de fecha ----------------------------------------------- */
+  --date-grid-gap: 0.125rem;
+  --date-grid-day-size: 2rem;
+  --date-grid-today-border: var(--color-primary-500);
+  --date-grid-selected-surface: var(--color-primary-600);
+  --date-grid-selected-ink: #ffffff;
+  --date-grid-range-surface: var(--tone-blue-surface-soft);
+  --date-grid-range-ink: var(--tone-blue-ink);
+  --date-popup-padding: 0.75rem;
+  --date-toggle-space: 2.25rem;
+
+  /* --- Combobox -------------------------------------------------------------- */
+  --combobox-toggle-space: 2.25rem;
+  --combobox-popup-max-height: 18rem;
+  --combobox-popup-padding: 0.25rem;
+  --combobox-option-padding: 0.5rem 0.625rem;
+  --combobox-option-active-surface: var(--surface-3);
+  /* El par de tono suave, no un escalón primitivo: es el vocabulario propio
+     del sistema para un estado teñido, y ya trae un valor de modo oscuro. Un
+     relleno `--color-primary-50` habría sido un bloque casi blanco sentado
+     en un desplegable oscuro. */
+  --combobox-option-selected-surface: var(--tone-blue-surface-soft);
+  --combobox-option-selected-ink: var(--tone-blue-ink);
+
+  /* --- Barra de herramientas de tabla ------------------------------------------------- */
+  --toolbar-gap: 0.75rem;
+  --toolbar-padding: 1rem 0;
+  --toolbar-radius: var(--radius-lg);
+  --toolbar-search-max-width: 22rem;
+  --toolbar-selection-surface: var(--tone-blue-surface-soft);
+  --toolbar-selection-ink: var(--tone-blue-ink);
+
+  /* --- Cajón lateral --------------------------------------------------------------- */
+  --drawer-surface: var(--surface-1);
+  --drawer-padding: 1.25rem;
+  --drawer-enter-duration: var(--duration-fast);
+  --drawer-width-sm: 20rem;
+  --drawer-width-md: 26rem;
+  --drawer-width-lg: 34rem;
+
+  /* --- Tooltip --------------------------------------------------------------------- */
+  --tooltip-surface: var(--surface-3);
+  --tooltip-ink: var(--ink-primary);
+  --tooltip-border: var(--line-subtle);
+  --tooltip-radius: var(--radius-md);
+  --tooltip-max-width: 18rem;
+  --tooltip-enter-duration: var(--duration-instant);
+  --tooltip-rise: 0.25rem;
+
+  /* --- Transición de ruta ------------------------------------------------------ */
+  /* El cross-fade entre rutas. Más corto que la entrada de un modal a
+     propósito: una navegación que quien lee pidió no debe hacerlo esperar
+     para leer. */
+  --view-transition-duration: var(--duration-instant);
+
+  /* --- Insignia y chip ------------------------------------------------------- */
+  --badge-height: 1.5rem;
+  --badge-padding-x: 0.625rem;
+  --badge-radius: var(--radius-full);
+  --badge-font-size: var(--text-caption);
+  --badge-font-weight: 500;
+
+  /* --- Interruptor ----------------------------------------------------------------- */
+  --switch-surface-off: var(--line-strong);
+  --switch-surface-on: var(--field-accent);
+  --switch-knob-surface: #ffffff;
+
+  /* --- Carga de archivo -------------------------------------------------------------- */
+  --upload-badge-ink: var(--control-accent-ink);
+  --upload-error-ink: var(--tone-red-ink);
+  --upload-error-border: var(--tone-red-border);
+  --upload-error-surface: var(--tone-red-surface-subtle);
+
+  /* --- Esqueleto -------------------------------------------------------------- */
+  --skeleton-base: var(--color-secondary-100);
+  --skeleton-highlight: var(--color-secondary-200);
+  --skeleton-radius: var(--radius-md);
+  --skeleton-line-height: 0.75rem;
+  --skeleton-block-height: 6rem;
+  --skeleton-circle-size: 2.5rem;
+  --skeleton-shimmer-duration: 1.5s;
+
+  /* --- Progreso -------------------------------------------------------------- */
+  --progress-track: var(--surface-3);
+  --progress-bar-height: 0.5rem;
+  --progress-ring-size: 4rem;
+  --progress-ring-stroke: 6px;
+
+  /* --- Pestañas -------------------------------------------------------------------- */
+  --tab-padding-x: 1rem;
+  --tab-height: 2.5rem;
+  --tab-indicator-width: 2px;
+  --tab-ink: var(--ink-secondary);
+  --tab-ink-active: var(--control-accent-ink);
+  --tab-surface-hover: var(--surface-2);
+  --tab-pill-surface: var(--tone-blue-surface-soft);
+  --tab-pill-ink: var(--tone-blue-ink);
+
+  /* --- Acordeón -------------------------------------------------------------------- */
+  --accordion-padding-x: 1rem;
+  --accordion-padding-y: 0.875rem;
+  --accordion-surface-hover: var(--surface-2);
+
+  /* --- Indicador de pasos ------------------------------------------------------------ */
+  --stepper-marker-size: 2rem;
+  --stepper-line-thickness: 2px;
+  --stepper-accent: var(--color-primary-600);
+  --stepper-accent-ink: #ffffff;
+
+  /* --- Paginación ------------------------------------------------------------------ */
+  --pagination-item-size: 2rem;
+  --pagination-radius: var(--radius-md);
+
+  /* --- Control segmentado ------------------------------------------------------------ */
+  --segmented-surface: var(--surface-2);
+  --segmented-padding: 0.25rem;
+  --segmented-radius: var(--radius-lg);
+  --segmented-item-radius: var(--radius-md);
+  --segmented-item-surface-active: var(--color-primary-600);
+  --segmented-item-ink-active: #ffffff;
+  --segmented-item-ink: var(--ink-secondary);
+
+  /* --- Avatar --------------------------------------------------------------------- */
+  --avatar-size-sm: 1.75rem;
+  --avatar-size-md: 2.25rem;
+  --avatar-size-lg: 3rem;
+  --avatar-radius: var(--radius-full);
+  --avatar-ink: #ffffff;
+
+  /* --- Armazón de la aplicación ------------------------------------------------
+     Tres componentes distintos tienen que coincidir en estos números, así que
+     son tokens en vez de valores mágicos repetidos en cada hoja de
+     estilos. */
+  --navbar-height: 4rem;
+  --sidebar-width: 16rem;
+  --sidebar-width-collapsed: 5rem;
+  --shell-transition-duration: var(--duration-normal);
+
+  --navbar-surface: var(--surface-1);
+  --navbar-border: var(--line-default);
+  --navbar-control-size: 2.75rem;
+  --navbar-control-radius: var(--radius-lg);
+  --navbar-control-ink: var(--ink-secondary);
+  --navbar-control-surface-hover: var(--surface-3);
+  --navbar-mark-size: 2.25rem;
+  --navbar-mark-surface: linear-gradient(
+    135deg,
+    var(--color-primary-600),
+    var(--color-primary-800)
+  );
+  --navbar-mark-ink: #ffffff;
+  --navbar-dot-surface: #ef4444;
+  --navbar-identity-width: 8rem;
+
+  --sidebar-surface: var(--surface-1);
+  --sidebar-border: var(--line-default);
+  --sidebar-padding: 0.75rem;
+  --sidebar-section-gap: 1rem;
+
+  --sidebar-link-radius: var(--radius-lg);
+  --sidebar-link-padding: 0.75rem 1rem;
+  --sidebar-link-ink: var(--ink-secondary);
+  --sidebar-link-ink-hover: var(--color-primary-600);
+  --sidebar-link-surface-hover: rgba(37, 99, 235, 0.08);
+  --sidebar-link-active-surface: linear-gradient(
+    135deg,
+    var(--color-primary-600),
+    var(--color-primary-700)
+  );
+  --sidebar-link-active-ink: #ffffff;
+  --sidebar-link-active-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+
+  --sidebar-group-ink: var(--color-secondary-700);
+
+  --sidebar-sublink-radius: var(--radius-md);
+  --sidebar-sublink-padding: 0.5rem 0.75rem;
+  --sidebar-sublink-active-surface: var(--color-primary-600);
+  --sidebar-sublink-active-ink: #ffffff;
+  --sidebar-dot-size: 0.375rem;
+
+  --sidebar-guide-line: var(--line-subtle);
+  --sidebar-flyout-width: 15rem;
+  --sidebar-flyout-surface: var(--surface-1);
+  --sidebar-flyout-border: var(--line-default);
+  --sidebar-flyout-shadow: var(--shadow-elevated);
+
+  --showcase-gutter: 1rem;
+  --showcase-gutter-wide: 2rem;
+  --showcase-block-gap: 1.5rem;
+  --showcase-demo-gap: 1rem;
+  --showcase-demo-padding: 1.25rem;
+  /* Dos suelos, porque los componentes no viven todos en el mismo sitio: una
+     tarjeta se apoya en el lienzo, y un campo vive DENTRO de una tarjeta.
+     Pintarlos todos sobre el lienzo hacía que el campo —que es una superficie
+     hundida del mismo color— se viera como un simple contorno. */
+  --showcase-demo-surface: var(--surface-canvas);
+  --showcase-demo-surface-card: var(--surface-1);
+  --showcase-note-surface: var(--surface-2);
+  --showcase-button-surface: var(--surface-2);
+  --showcase-button-surface-hover: var(--surface-3);
+  --showcase-fail-ink: var(--tone-red-ink);
+  --showcase-motion-dot: var(--color-primary-600);
+  --showcase-copied-surface: var(--tone-green-surface-soft);
+  --showcase-copied-ink: var(--tone-green-ink);
+  --showcase-copy-failed-surface: var(--tone-red-surface-soft);
+  --showcase-copy-failed-ink: var(--tone-red-ink);
+  --variant-label-width: 9rem;
+  --variant-row-gap: 1rem;
+
+  --page-header-padding-block: 1.5rem;
+  --page-header-padding-inline: 1rem;
+  --page-header-padding-inline-wide: 2rem;
+
+  /* --- Layout centrado ----------------------------------------------------
+     El fondo de la pantalla de acceso. En modo oscuro el degradado se aplana
+     al color del lienzo y las formas a la deriva se ocultan: un lavado de
+     marca brillante de noche deslumbra, no da la bienvenida. */
+  --centered-backdrop: linear-gradient(
+    135deg,
+    var(--color-primary-900) 0%,
+    var(--color-primary-800) 25%,
+    var(--color-primary-600) 50%,
+    var(--color-primary-500) 100%
+  );
+  --centered-shape-surface: rgba(255, 255, 255, 0.05);
+  --centered-shape-display: block;
+  --centered-panel-width: 28rem;
+
+  /* --- Gráfico -------------------------------------------------------------
+     Un `<canvas>` no hereda CSS, así que `ChartTheme` los lee de vuelta con
+     `getComputedStyle` y se los entrega a Chart.js. Declararlos aquí mantiene
+     el cromo del gráfico dentro del sistema de tokens en vez de como hex
+     literales en un archivo TypeScript. */
+  --chart-tick: var(--ink-secondary);
+  --chart-grid: rgba(226, 232, 240, 0.7);
+  --chart-legend: var(--ink-body);
+  --chart-tooltip-surface: rgba(15, 23, 42, 0.92);
+  --chart-tooltip-title: #ffffff;
+  --chart-tooltip-body: var(--color-secondary-200);
+
+  /* Separa rellenos contiguos —arcos de una dona, segmentos apilados— con un
+     anillo de la superficie que hay detrás. */
+  --chart-mark-border: var(--surface-1);
+
+  /* --- Serie categórica -------------------------------------------------
+     Un orden fijo, asignado por posición y nunca ciclado. Deliberadamente NO
+     los matices de estado: verde, amarillo y rojo significan algo en este
+     sistema, y una serie que caiga en el hueco 3 no debe leerse como
+     "aviso".
+
+     Ambos modos se comprobaron con el validador de visualización de datos en
+     vez de a simple vista — banda de luminosidad, piso de croma, separación
+     para daltonismo de pares contiguos, y contraste contra la superficie del
+     gráfico. El primer intento, construido a partir de las propias rampas de
+     tono, falló: ámbar y naranja salieron a ΔE 0.6 de distancia bajo
+     deuteranopía. */
+  --chart-series-1: #2563eb;
+  --chart-series-2: #c2410c;
+  --chart-series-3: #0d9488;
+  --chart-series-4: #7e22ce;
+  --chart-series-5: #65a30d;
+  --chart-series-6: #be185d;
+
+  /* --- Anillo de foco -------------------------------------------------------------- */
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+  --focus-ring-color: var(--color-primary-500);
+}
+
+/* Los tokens de gráfico son el único grupo de nivel 3 que hay que reescribir
+   para modo oscuro: el tooltip se invierte (una burbuja oscura en una página
+   clara se convierte en una superficie elevada en una oscura) y la
+   cuadrícula necesita una línea más fría y tenue. */
+html.dark {
+  /* Un botón de peligro sólido no puede seguir a `--tone-red-ink`: en modo
+     oscuro ese token es el rosa claro pensado para texto SOBRE una superficie
+     oscura, y letras blancas encima serían ilegibles. Un relleno sólido
+     necesita un rojo saturado. */
+  --button-danger-surface: #dc2626;
+  --button-danger-surface-hover: #b91c1c;
+
+  /* El tinte de marca que eleva una fila al hacer hover es invisible sobre una
+     superficie oscura, así que el token de superficie elevada hace el
+     trabajo en su lugar. */
+  --activity-surface-hover: var(--surface-3);
+  --table-row-surface-hover: var(--surface-2);
+  --calendar-cell-surface-hover: var(--surface-2);
+  --calendar-outside-surface: var(--surface-canvas);
+
+  /* El tinte de marca no se lee sobre un sidebar oscuro; la superficie
+     elevada y la tinta de enlace cargan el hover en su lugar. */
+  --control-accent-ink: var(--link);
+
+  --sidebar-link-surface-hover: var(--surface-3);
+  --sidebar-link-ink-hover: var(--link);
+  --sidebar-group-ink: var(--color-secondary-200);
+
+  --centered-backdrop: var(--surface-canvas);
+  --centered-shape-display: none;
+
+  /* El panel esmerilado es blanco-sobre-foto en modo claro; sobre un lienzo
+     oscuro tiene que convertirse en una superficie elevada opaca o el texto
+     se sienta sobre una neblina brillante. */
+  --form-card-surface: var(--surface-1);
+  --form-card-border: var(--line-default);
+
+  --stat-progress-track: var(--surface-3);
+
+  /* Sobre una tarjeta oscura el esqueleto no puede ser un bloque gris claro:
+     deslumbraría más brillante que el contenido que representa. */
+  --skeleton-base: var(--surface-2);
+  --skeleton-highlight: var(--surface-3);
+
+  --chart-grid: rgba(148, 163, 184, 0.16);
+  --chart-tooltip-surface: var(--surface-3);
+  --chart-tooltip-title: var(--ink-primary);
+  --chart-tooltip-body: var(--color-secondary-300);
+  --chart-mark-border: var(--surface-1);
+
+  /* El oscuro se elige, no se invierte: la banda del validador para una
+     superficie oscura es L 0.48-0.67, que es *más oscura* que la clara.
+     Escalones más claros resplandecen. */
+  --chart-series-1: #4f8ef7;
+  --chart-series-2: #d97706;
+  --chart-series-3: #0d9488;
+  --chart-series-4: #8b5cf6;
+  --chart-series-5: #65a30d;
+  --chart-series-6: #db2777;
+}

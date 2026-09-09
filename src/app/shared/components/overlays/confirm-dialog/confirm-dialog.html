@@ -1,0 +1,40 @@
+<!--
+  The backdrop is a mouse shortcut, not a control: closing by keyboard is
+  already covered by Escape on the component host.
+-->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<div
+  class="modal-overlay overlay"
+  [class.is-open]="open()"
+  [attr.aria-hidden]="open() ? null : 'true'"
+  (click)="onOverlayClick($event)"
+>
+  <div
+    #panel
+    class="modal-panel panel"
+    role="alertdialog"
+    aria-modal="true"
+    [attr.aria-labelledby]="titleId"
+    [attr.aria-describedby]="messageId"
+    [attr.data-tone]="hue()"
+    tabindex="-1"
+    (keydown)="onTab($event)"
+  >
+    <span class="panel__badge tone-soft">
+      <app-icon [name]="icon()" [size]="28" />
+    </span>
+
+    <h2 class="panel__title" [id]="titleId">{{ title() }}</h2>
+    <p class="panel__message" [id]="messageId">{{ message() }}</p>
+
+    <div class="panel__actions">
+      <app-button #cancelAction variant="ghost" (pressed)="cancel()">
+        {{ cancelLabel() }}
+      </app-button>
+      <app-button [variant]="confirmVariant()" (pressed)="confirm()">
+        {{ confirmLabel() }}
+      </app-button>
+    </div>
+  </div>
+</div>

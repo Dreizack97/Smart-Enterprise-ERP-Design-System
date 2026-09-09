@@ -1,0 +1,40 @@
+<ol class="stepper" [class]="'stepper--' + orientation()" [attr.aria-label]="label()">
+  @for (step of steps(); track step.label; let i = $index; let last = $last) {
+    <li
+      class="step"
+      [attr.data-state]="state(i)"
+      [attr.aria-current]="state(i) === 'current' ? 'step' : null"
+    >
+      <span class="step__rail">
+        <span
+          class="step__line step__line--before"
+          [class.step__line--travelled]="isTravelled(i)"
+          [class.step__line--hidden]="i === 0"
+        ></span>
+
+        <span class="step__marker">
+          @if (state(i) === 'done') {
+            <app-icon name="check" [size]="14" />
+          } @else {
+            {{ i + 1 }}
+          }
+        </span>
+
+        <span
+          class="step__line step__line--after"
+          [class.step__line--travelled]="isTravelled(i + 1)"
+          [class.step__line--hidden]="last"
+        ></span>
+      </span>
+
+      <span class="step__text">
+        <span class="step__label">{{ step.label }}</span>
+        @if (step.description; as detail) {
+          <span class="step__description">{{ detail }}</span>
+        }
+      </span>
+    </li>
+  }
+</ol>
+
+<p class="sr-only" aria-live="polite">{{ summary() }}</p>

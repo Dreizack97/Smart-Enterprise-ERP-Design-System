@@ -1,0 +1,15 @@
+<label class="checkbox" [for]="checkboxId()">
+  <input
+    #box
+    class="checkbox__box focus-ring"
+    [class]="'checkbox__box--' + size()"
+    [id]="checkboxId()"
+    type="checkbox"
+    [checked]="checked()"
+    [disabled]="disabled()"
+    (change)="onChange($event)"
+  />
+  @if (label(); as text) {
+    <span class="checkbox__label" [class.sr-only]="labelHidden()">{{ text }}</span>
+  }
+</label>

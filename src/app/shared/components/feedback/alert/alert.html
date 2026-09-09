@@ -1,0 +1,21 @@
+<div class="alert tone-subtle" [attr.role]="role()" [attr.data-tone]="hue()">
+  <app-icon class="alert__icon" [name]="icon()" [size]="18" />
+
+  <div class="alert__body">
+    @if (title(); as text) {
+      <p class="alert__title">{{ text }}</p>
+    }
+    <div class="alert__content"><ng-content /></div>
+  </div>
+
+  @if (dismissible()) {
+    <button
+      type="button"
+      class="alert__close focus-ring"
+      aria-label="Cerrar aviso"
+      (click)="dismissed.emit()"
+    >
+      <app-icon name="x" [size]="16" />
+    </button>
+  }
+</div>

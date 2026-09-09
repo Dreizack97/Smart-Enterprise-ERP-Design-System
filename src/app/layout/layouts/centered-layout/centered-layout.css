@@ -1,0 +1,68 @@
+:host {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: var(--centered-backdrop);
+}
+
+.centered__shape {
+  position: absolute;
+  display: var(--centered-shape-display);
+  border-radius: var(--radius-full);
+  background-color: var(--centered-shape-surface);
+  pointer-events: none;
+  animation: centered-drift 20s infinite ease-in-out;
+}
+
+.centered__shape--1 {
+  top: -6.25rem;
+  left: -6.25rem;
+  width: 25rem;
+  height: 25rem;
+  animation-delay: 0s;
+}
+
+.centered__shape--2 {
+  right: -3.125rem;
+  bottom: -3.125rem;
+  width: 18.75rem;
+  height: 18.75rem;
+  animation-delay: 5s;
+}
+
+.centered__shape--3 {
+  top: 50%;
+  left: 50%;
+  width: 12.5rem;
+  height: 12.5rem;
+  animation-delay: 10s;
+}
+
+.centered__panel {
+  z-index: 10;
+  width: 100%;
+  max-width: var(--centered-panel-width);
+}
+
+@keyframes centered-drift {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-1.875rem) rotate(180deg);
+  }
+}
+
+/* Una deriva de 20 segundos es decoración, y la decoración es lo primero
+   que se va cuando alguien ha pedido menos movimiento. */
+@media (prefers-reduced-motion: reduce) {
+  .centered__shape {
+    animation: none;
+  }
+}

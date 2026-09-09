@@ -1,0 +1,43 @@
+<!--
+  The backdrop is a mouse shortcut, not a control: closing by keyboard is
+  already covered by Escape on the component host. Giving it keyboard or focus
+  handlers would put it in the tab order, which is the opposite of what a modal
+  dialog needs.
+-->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<div
+  class="modal-overlay overlay"
+  [class.is-open]="open()"
+  [attr.aria-hidden]="open() ? null : 'true'"
+  (click)="onOverlayClick($event)"
+>
+  <div
+    #panel
+    class="modal-panel panel"
+    [class]="'panel--' + size()"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-labelledby]="titleId"
+    tabindex="-1"
+    (keydown)="onTab($event)"
+  >
+    <header class="panel__header">
+      <h2 class="panel__title" [id]="titleId">{{ title() }}</h2>
+      @if (dismissible()) {
+        <button
+          type="button"
+          class="panel__close focus-ring"
+          aria-label="Cerrar"
+          (click)="requestClose()"
+        >
+          <app-icon name="x" [size]="18" />
+        </button>
+      }
+    </header>
+
+    <div class="panel__body"><ng-content /></div>
+
+    <footer class="panel__footer"><ng-content select="[footer]" /></footer>
+  </div>
+</div>

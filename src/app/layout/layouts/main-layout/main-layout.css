@@ -1,0 +1,58 @@
+:host {
+  display: block;
+}
+
+/* La barra es fija, así que el contenido paga por su altura; el sidebar
+   también es fijo, así que en escritorio el contenido reserva su ancho y
+   desliza ese margen cuando el rail se colapsa.
+
+   Estas dos reglas solían ser `body.sidebar-collapsed .app-main` en una hoja
+   de estilos global, alcanzando a través de tres componentes. Ambos
+   elementos viven en esta plantilla, así que la clase del rail se sienta en
+   este host en su lugar y el selector que cruza el árbol desaparece. */
+.shell__main {
+  min-height: 100vh;
+  padding-top: var(--navbar-height);
+  transition: margin-left var(--shell-transition-duration) var(--ease-out-quart);
+}
+
+@media (min-width: 1024px) {
+  .shell__main {
+    margin-left: var(--sidebar-width);
+  }
+
+  :host(.shell--rail) .shell__main {
+    margin-left: var(--sidebar-width-collapsed);
+  }
+}
+
+.shell__scrim {
+  position: fixed;
+  z-index: 40;
+  inset: 0;
+  background-color: var(--scrim);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--duration-fast) var(--ease-out-quart),
+    visibility var(--duration-fast) var(--ease-out-quart);
+}
+
+.shell__scrim--active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* El drawer solo existe bajo el breakpoint, así que su scrim tampoco. */
+@media (min-width: 1024px) {
+  .shell__scrim {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shell__main,
+  .shell__scrim {
+    transition: none;
+  }
+}

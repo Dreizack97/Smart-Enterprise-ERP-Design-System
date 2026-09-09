@@ -1,0 +1,17 @@
+:host {
+  display: block;
+}
+
+.page__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--showcase-block-gap);
+  padding: var(--showcase-block-gap) var(--showcase-gutter) 2.5rem;
+}
+
+@media (min-width: 1024px) {
+  .page__body {
+    padding-right: var(--showcase-gutter-wide);
+    padding-left: var(--showcase-gutter-wide);
+  }
+}

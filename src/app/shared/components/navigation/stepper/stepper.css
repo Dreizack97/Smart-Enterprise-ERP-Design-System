@@ -1,0 +1,156 @@
+:host {
+  display: block;
+}
+
+.stepper {
+  display: flex;
+}
+
+/* =======================================================================
+   Marcador y conector — compartidos por ambas orientaciones
+   -----------------------------------------------------------------------
+   Los tres estados se expresan una sola vez, indexados por `data-state`, en
+   vez de tres mapas de clases en TypeScript. Así la línea y el círculo no
+   pueden contar historias distintas sobre el mismo paso.
+   ======================================================================= */
+
+.step__marker {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: var(--stepper-marker-size);
+  height: var(--stepper-marker-size);
+  border: 2px solid var(--line-default);
+  border-radius: var(--radius-full);
+  background-color: var(--surface-1);
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  font-weight: 600;
+}
+
+.step[data-state='done'] .step__marker {
+  border-color: var(--stepper-accent);
+  background-color: var(--stepper-accent);
+  color: var(--stepper-accent-ink);
+}
+
+.step[data-state='current'] .step__marker {
+  border-color: var(--stepper-accent);
+  color: var(--stepper-accent);
+}
+
+.step__line {
+  background-color: var(--line-default);
+}
+
+.step__line--travelled {
+  background-color: var(--stepper-accent);
+}
+
+/* El primer paso no tiene línea antes y el último ninguna después, pero las
+   cajas igual tienen que ocupar su espacio o los marcadores dejan de
+   alinearse. */
+.step__line--hidden {
+  visibility: hidden;
+}
+
+.step__label {
+  display: block;
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--ink-primary);
+}
+
+.step[data-state='pending'] .step__label {
+  color: var(--ink-muted);
+}
+
+.step__description {
+  display: block;
+  margin-top: 0.125rem;
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+}
+
+/* =======================================================================
+   Horizontal — marcadores en fila, texto centrado debajo
+   ======================================================================= */
+
+.stepper--horizontal {
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.stepper--horizontal .step {
+  display: flex;
+  flex: 1;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.stepper--horizontal .step__rail {
+  display: flex;
+  align-items: center;
+}
+
+.stepper--horizontal .step__line {
+  display: none;
+  height: var(--stepper-line-thickness);
+  flex: 1;
+}
+
+@media (min-width: 640px) {
+  .stepper--horizontal {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 0;
+  }
+
+  .stepper--horizontal .step {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: center;
+  }
+
+  .stepper--horizontal .step__rail {
+    width: 100%;
+  }
+
+  .stepper--horizontal .step__line {
+    display: block;
+  }
+}
+
+/* =======================================================================
+   Vertical — una columna, la línea corriendo por el costado
+   ======================================================================= */
+
+.stepper--vertical {
+  flex-direction: column;
+}
+
+.stepper--vertical .step {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.stepper--vertical .step__rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: stretch;
+}
+
+.stepper--vertical .step__line {
+  width: var(--stepper-line-thickness);
+  flex: 1;
+  min-height: 0.75rem;
+}
+
+.stepper--vertical .step__text {
+  padding-bottom: 1.25rem;
+}

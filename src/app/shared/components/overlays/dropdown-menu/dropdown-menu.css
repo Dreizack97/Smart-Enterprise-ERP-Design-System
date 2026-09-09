@@ -1,0 +1,114 @@
+:host {
+  display: block;
+  position: relative;
+}
+
+/* Fijo, con `left` / `top` escritos por el componente desde la caja del
+   disparador. Un posicionamiento absoluto lo anclaría a este host, cuyo
+   ancho no tiene relación con el disparador, y cualquier ancestro con
+   `overflow: hidden` lo recortaría. */
+.dropdown {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 50;
+  width: var(--dropdown-width);
+  max-width: calc(100vw - 1.5rem);
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--dropdown-border);
+  border-radius: var(--dropdown-radius);
+  background-color: var(--dropdown-surface);
+  box-shadow: var(--shadow-xl);
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    transform var(--dropdown-enter-duration) var(--ease-out-quart),
+    opacity var(--dropdown-enter-duration) var(--ease-out-quart);
+}
+
+/* El panel debe verse como si creciera desde su disparador, así que el
+   origen sigue a donde la lógica de colocación lo haya puesto. */
+.dropdown[data-placement='bottom-start'] {
+  transform-origin: top left;
+}
+
+.dropdown[data-placement='bottom-end'] {
+  transform-origin: top right;
+}
+
+.dropdown[data-placement='top-start'] {
+  transform-origin: bottom left;
+}
+
+.dropdown[data-placement='top-end'] {
+  transform-origin: bottom right;
+}
+
+/* Se mantiene en el DOM mientras está cerrado para que la salida pueda
+   animar; `visibility` es lo que lo saca del orden de tabulación y del
+   árbol de accesibilidad, algo que `opacity: 0` por sí solo no haría. */
+.dropdown--closed {
+  opacity: 0;
+  transform: scale(0.95);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.dropdown__list {
+  padding: 0.25rem;
+}
+
+.dropdown__item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--dropdown-item-radius);
+  text-align: start;
+  font-size: var(--text-body);
+  color: var(--ink-secondary);
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-out-quart),
+    color var(--duration-fast) var(--ease-out-quart);
+}
+
+.dropdown__item:hover:not(:disabled) {
+  background-color: var(--surface-3);
+}
+
+.dropdown__item:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.dropdown__item--danger {
+  color: var(--dropdown-danger-ink);
+}
+
+.dropdown__item--danger:hover:not(:disabled) {
+  background-color: var(--dropdown-danger-surface);
+}
+
+.dropdown__separator {
+  height: 1px;
+  margin-block: 0.25rem;
+  background-color: var(--line-subtle);
+}
+
+/* Un slot sin llenar no debe añadir su propio padding. */
+.dropdown__slot:empty {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dropdown {
+    transition-duration: 1ms;
+  }
+
+  .dropdown--closed {
+    transform: none;
+  }
+}

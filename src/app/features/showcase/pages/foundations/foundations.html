@@ -1,0 +1,271 @@
+<app-showcase-page
+  title="Fundamentos"
+  subtitle="Los tres niveles de token, leídos del documento y no repetidos aquí"
+>
+  <app-showcase-block
+    title="Rampas primitivas"
+    anchor="color"
+    description="Nivel 1: valores en bruto, sin significado. Ningún componente los lee directamente."
+    layout="stack"
+  >
+    @for (ramp of [primaryRamp(), secondaryRamp(), accentRamp()]; track $index) {
+      <div class="ramp">
+        @for (swatch of ramp; track swatch.name) {
+          <div class="ramp__step">
+            <button
+              class="ramp__chip"
+              [appCopyToken]="swatch.name"
+              [style.background-color]="swatch.value"
+            >
+              <span class="sr-only">Copiar {{ swatch.name }}</span>
+            </button>
+            <span class="ramp__label">{{ swatch.step }}</span>
+            <span class="ramp__value">{{ swatch.value }}</span>
+          </div>
+        } @empty {
+          <p class="missing">No se pudo leer esta rampa del documento.</p>
+        }
+      </div>
+    }
+
+    <p note>
+      Generadas recorriendo las hojas de estilo cargadas, no escritas en la página. Añadir un paso a
+      una rampa lo hace aparecer aquí sin tocar el catálogo.
+    </p>
+
+    <p note>
+      <strong>Pulsa cualquier muestra de esta página para copiar su token.</strong> Es la única
+      operación que se hace con una muestra: llevarse su nombre a una hoja de estilos. Si el
+      navegador deniega el portapapeles, la muestra lo dice en lugar de fingir que copió.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="Superficies y líneas"
+    description="Nivel 2: la elevación es luminosidad, no sombra. Conmuta el tema desde la barra superior para verlas."
+    layout="stack"
+  >
+    <div class="swatches">
+      @for (surface of surfaces(); track surface.name) {
+        <div class="swatches__item">
+          <button
+            class="swatches__box"
+            [appCopyToken]="surface.name"
+            [style.background-color]="surface.value"
+          >
+            <span class="sr-only">Copiar {{ surface.name }}</span>
+          </button>
+          <code class="swatches__name">{{ surface.name }}</code>
+          <span class="swatches__value">{{ surface.value }}</span>
+        </div>
+      }
+      @for (line of lines(); track line.name) {
+        <div class="swatches__item">
+          <button
+            class="swatches__box swatches__box--line"
+            [appCopyToken]="line.name"
+            [style.border-color]="line.value"
+          >
+            <span class="sr-only">Copiar {{ line.name }}</span>
+          </button>
+          <code class="swatches__name">{{ line.name }}</code>
+          <span class="swatches__value">{{ line.value }}</span>
+        </div>
+      } @empty {
+        <p class="missing">No se pudieron leer las líneas del documento.</p>
+      }
+    </div>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="Tinta y contraste"
+    description="Cada rol, medido en el navegador contra --surface-1. El número no es una anotación: es el valor."
+    layout="stack"
+  >
+    <app-variant-grid>
+      @for (ink of inks(); track ink.name) {
+        <app-variant-row [label]="ink.name" [note]="ink.value">
+          <button class="ink__sample" [appCopyToken]="ink.name" [style.color]="ink.value">
+            Facturación del trimestre cerrada
+          </button>
+          <span class="ink__ratio" [class.ink__ratio--fail]="!ink.passes">
+            {{ ink.ratio }}:1 {{ ink.passes ? 'AA' : 'bajo AA' }}
+          </span>
+        </app-variant-row>
+      } @empty {
+        <p class="missing">No se pudieron leer los roles de tinta del documento.</p>
+      }
+    </app-variant-grid>
+
+    <p note>
+      Los tonos translúcidos se componen sobre la superficie antes de medir: tratar un
+      <code>rgba()</code> como opaco informa de un contraste que nadie ve. Un rol por debajo de
+      4,5:1 se marca, no se esconde.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="Tonos"
+    description="Un matiz es parte del dato, no del tema: una factura pagada es verde en claro y en oscuro."
+    layout="stack"
+  >
+    <app-variant-grid>
+      @for (tone of tones; track tone) {
+        <app-variant-row [label]="tone">
+          <span class="tone-soft tone__chip" [attr.data-tone]="tone">soft</span>
+          <span class="tone-subtle tone__chip" [attr.data-tone]="tone">subtle</span>
+          <span class="tone-text tone__chip" [attr.data-tone]="tone">text</span>
+          <span class="tone-border tone__chip tone__chip--outline" [attr.data-tone]="tone"
+            >border</span
+          >
+        </app-variant-row>
+      }
+    </app-variant-grid>
+
+    <p note>
+      Un componente nunca nombra un matiz en su hoja: pone <code>data-tone</code> y una de las
+      clases <code>.tone-*</code>. El valor de cada tema sale del token.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="Paleta de datos"
+    description="Seis series categóricas, validadas por script en ambos temas: ΔE ≥ 8 bajo deuteranopía y protanopía."
+    layout="stack"
+  >
+    <div class="ramp">
+      @for (series of seriesRamp(); track series.name) {
+        <div class="ramp__step">
+          <button
+            class="ramp__chip"
+            [appCopyToken]="series.name"
+            [style.background-color]="series.value"
+          >
+            <span class="sr-only">Copiar {{ series.name }}</span>
+          </button>
+          <span class="ramp__label">{{ series.step }}</span>
+          <span class="ramp__value">{{ series.value }}</span>
+        </div>
+      } @empty {
+        <p class="missing">No se pudo leer la paleta de datos del documento.</p>
+      }
+    </div>
+
+    <p note>
+      Deliberadamente distinta de los tonos de estado: verde, amarillo y rojo significan algo aquí,
+      y una serie que caiga en el hueco 3 no debe leerse como «aviso».
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="Tipografía"
+    anchor="tipografia"
+    description="Siete roles y nada más. La escala por defecto de Tailwind está vaciada: text-sm o text-xl no existen."
+    layout="stack"
+  >
+    <app-variant-grid>
+      @for (role of typeRoles(); track role.token) {
+        <app-variant-row [label]="role.label" [note]="role.size + ' / ' + role.lineHeight">
+          <button class="type__sample" [appCopyToken]="role.token" [style.font-size]="role.size">
+            {{ role.sample }}
+          </button>
+        </app-variant-row>
+      }
+    </app-variant-grid>
+
+    <p note>
+      Los tamaños son los que el navegador resuelve, no los que esta página crea. Cambiar
+      <code>--size-text-500</code> mueve la muestra y la cifra a la vez.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="Radios y elevación"
+    anchor="forma"
+    description="Una sombra sube un elemento en claro; en oscuro lo sube la luminosidad de la superficie."
+    layout="stack"
+  >
+    <div class="ramp">
+      @for (radius of radii(); track radius.name) {
+        <div class="ramp__step">
+          <button
+            class="ramp__chip ramp__chip--radius"
+            [appCopyToken]="radius.name"
+            [style.border-radius]="radius.value"
+          >
+            <span class="sr-only">Copiar {{ radius.name }}</span>
+          </button>
+          <span class="ramp__label">{{ radius.step }}</span>
+          <span class="ramp__value">{{ radius.value }}</span>
+        </div>
+      } @empty {
+        <p class="missing">No se pudieron leer los radios del documento.</p>
+      }
+    </div>
+
+    <div class="elevation">
+      @for (shadow of shadows(); track shadow.name) {
+        <button
+          class="elevation__card"
+          [appCopyToken]="shadow.name"
+          [style.box-shadow]="shadow.value"
+        >
+          <code class="elevation__name">{{ shadow.step }}</code>
+        </button>
+      } @empty {
+        <p class="missing">No se pudieron leer las sombras del documento.</p>
+      }
+    </div>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="Movimiento"
+    description="Cuatro duraciones y una curva. Toda transición del sistema sale de aquí."
+    layout="stack"
+  >
+    <app-variant-grid>
+      @for (duration of durations(); track duration.name) {
+        <app-variant-row [label]="duration.step" [note]="duration.value">
+          <span class="motion__track">
+            <span
+              class="motion__dot"
+              [style.transition-duration]="duration.value"
+              [class.motion__dot--out]="motionRun() % 2 === 1"
+            ></span>
+          </span>
+        </app-variant-row>
+      } @empty {
+        <p class="missing">No se pudieron leer las duraciones del documento.</p>
+      }
+    </app-variant-grid>
+
+    <button type="button" class="motion__replay focus-ring" (click)="replayMotion()">
+      Reproducir
+    </button>
+
+    <p note>
+      La curva es <code>--ease-out-quart</code> en todo el sistema. Cada componente respeta además
+      <code>prefers-reduced-motion</code>: quien lo pide no ve ninguna de estas transiciones.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="Iconografía"
+    anchor="iconografia"
+    description="El vocabulario completo. Generado desde ICON_NAMES, así que registrar un icono y olvidarse de mostrarlo es imposible."
+    layout="stack"
+  >
+    <div class="icons">
+      @for (name of icons; track name) {
+        <figure class="icons__item">
+          <app-icon [name]="name" [size]="20" />
+          <figcaption class="icons__name">{{ name }}</figcaption>
+        </figure>
+      }
+    </div>
+
+    <p note>
+      {{ icons.length }} iconos registrados. Lucide es tree-shakable: solo viaja lo que se registra.
+    </p>
+  </app-showcase-block>
+</app-showcase-page>

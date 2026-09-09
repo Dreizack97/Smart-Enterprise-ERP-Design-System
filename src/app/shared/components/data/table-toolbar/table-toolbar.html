@@ -1,0 +1,27 @@
+@if (selecting()) {
+  <div class="toolbar toolbar--selection">
+    <p class="toolbar__count" aria-live="polite">{{ selectionLabel() }}</p>
+
+    <div class="toolbar__group">
+      <ng-content select="[bulk]" />
+
+      <app-button variant="ghost" icon="x" (pressed)="selectionCleared.emit()">
+        Quitar selección
+      </app-button>
+    </div>
+  </div>
+} @else {
+  <div class="toolbar">
+    <div class="toolbar__search"><ng-content select="[search]" /></div>
+
+    <div class="toolbar__group toolbar__group--filters">
+      <ng-content select="[filters]" />
+
+      @if (filtered()) {
+        <app-button variant="ghost" icon="x" (pressed)="cleared.emit()">Limpiar</app-button>
+      }
+    </div>
+
+    <div class="toolbar__group toolbar__group--actions"><ng-content select="[actions]" /></div>
+  </div>
+}

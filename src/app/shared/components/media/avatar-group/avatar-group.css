@@ -1,0 +1,45 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Cada disco se desliza sobre el anterior. El anillo es el color de la
+   superficie, así que la superposición se lee como profundidad en vez de
+   dos formas fundiéndose — y viene de un token, así que es el color correcto
+   en ambos temas. */
+.group__slot {
+  display: inline-flex;
+  border-radius: var(--radius-full);
+  box-shadow: 0 0 0 var(--avatar-group-ring) var(--avatar-group-ring-color);
+}
+
+.group__slot + .group__slot {
+  margin-inline-start: var(--avatar-group-overlap);
+}
+
+.group__more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--avatar-group-more-surface);
+  color: var(--avatar-group-more-ink);
+  font-weight: 500;
+}
+
+.group__more--sm {
+  width: var(--avatar-size-sm);
+  height: var(--avatar-size-sm);
+  font-size: var(--text-overline);
+}
+
+.group__more--md {
+  width: var(--avatar-size-md);
+  height: var(--avatar-size-md);
+  font-size: var(--text-caption);
+}
+
+.group__more--lg {
+  width: var(--avatar-size-lg);
+  height: var(--avatar-size-lg);
+  font-size: var(--text-body);
+}

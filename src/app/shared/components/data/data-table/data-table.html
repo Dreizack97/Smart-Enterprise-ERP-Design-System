@@ -1,0 +1,105 @@
+@if (error()) {
+  <ng-content select="[error]" />
+} @else if (loading()) {
+  <ng-content select="[loading]" />
+} @else if (rows().length === 0) {
+  <div class="table__empty">
+    <ng-content select="[empty]" />
+  </div>
+} @else {
+  @if (columnMenu()) {
+    <div class="table__toolbar">
+      <app-dropdown-menu
+        #columnsMenu
+        variant="panel"
+        width="14rem"
+        placement="bottom-end"
+        label="Columnas visibles"
+      >
+        <app-button
+          trigger
+          variant="ghost"
+          size="sm"
+          icon="layout-grid"
+          [attr.aria-haspopup]="'dialog'"
+          [attr.aria-expanded]="columnsMenu.open()"
+          (pressed)="columnsMenu.toggle()"
+        >
+          Columnas
+        </app-button>
+        <ul class="table__columns">
+          @for (column of toggleableColumns(); track column.id) {
+            <li class="table__column-option">
+              <app-checkbox
+                [label]="headerLabel(column)"
+                [checked]="column.getIsVisible()"
+                (checkedChange)="column.toggleVisibility($event)"
+              />
+            </li>
+          }
+        </ul>
+      </app-dropdown-menu>
+    </div>
+  }
+
+  <div class="table__scroll">
+    <table class="table">
+      @if (caption(); as text) {
+        <caption class="sr-only">
+          {{
+            text
+          }}
+        </caption>
+      }
+      <thead>
+        <tr>
+          @for (header of headers(); track header.id) {
+            <th
+              scope="col"
+              class="table__header"
+              [class]="header.column.columnDef.meta?.headerClass ?? ''"
+              [class.table__header--end]="header.column.columnDef.meta?.alignEnd"
+              [attr.aria-sort]="ariaSort(header.column)"
+            >
+              @if (header.column.getCanSort()) {
+                <button
+                  type="button"
+                  class="table__sort focus-ring"
+                  (click)="header.column.toggleSorting()"
+                >
+                  {{ headerLabel(header.column) }}
+                  <app-icon [name]="sortIcon(header.column)" [size]="14" />
+                </button>
+              } @else {
+                {{ headerLabel(header.column) }}
+              }
+            </th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of visibleRows(); track row.id) {
+          <tr class="table__row">
+            @for (cell of row.getVisibleCells(); track cell.id) {
+              <td
+                class="table__cell"
+                [class]="cell.column.columnDef.meta?.cellClass ?? ''"
+                [class.table__cell--end]="cell.column.columnDef.meta?.alignEnd"
+                [attr.data-label]="headerLabel(cell.column)"
+              >
+                @if (cellTemplate(cell.column.id); as custom) {
+                  <ng-container
+                    [ngTemplateOutlet]="custom"
+                    [ngTemplateOutletContext]="{ $implicit: row.original, row: row.original }"
+                  />
+                } @else {
+                  {{ cell.renderValue() }}
+                }
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

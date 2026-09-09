@@ -1,0 +1,84 @@
+:host {
+  display: block;
+}
+
+.schedule {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: var(--schedule-card-padding);
+  border-radius: var(--card-radius);
+  background-color: var(--card-surface);
+  box-shadow: var(--card-shadow);
+  transition:
+    transform var(--duration-fast) var(--ease-out-quart),
+    box-shadow var(--duration-fast) var(--ease-out-quart);
+}
+
+.schedule:hover {
+  transform: translateY(var(--checklist-lift));
+  box-shadow: var(--shadow-md);
+}
+
+.schedule__stamp {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: var(--schedule-stamp-size);
+  height: var(--schedule-stamp-size);
+  border-radius: var(--radius-lg);
+}
+
+.schedule__stamp-top {
+  font-size: var(--text-overline);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.schedule__stamp-figure {
+  /* Cifras tabulares: una columna de sellos mantiene sus números en un
+     mismo eje. */
+  font-family: var(--font-mono);
+  font-size: var(--text-subheading);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.schedule__body {
+  min-width: 0;
+  flex: 1;
+}
+
+.schedule__title {
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--ink-primary);
+}
+
+.schedule__time {
+  font-size: var(--text-caption);
+  color: var(--ink-secondary);
+}
+
+.schedule__description {
+  margin-top: 0.25rem;
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+}
+
+.schedule__actions:empty {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .schedule {
+    transition: none;
+  }
+
+  .schedule:hover {
+    transform: none;
+  }
+}

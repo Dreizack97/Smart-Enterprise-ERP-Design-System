@@ -1,0 +1,40 @@
+<article class="media" [attr.data-tone]="tone()">
+  <div class="media__frame">
+    <img class="media__image" [src]="image()" [alt]="title()" />
+    @if (badgeLabel(); as badge) {
+      <span class="media__badge tone-soft">{{ badge }}</span>
+    }
+  </div>
+
+  <div class="media__body">
+    @if (overline(); as label) {
+      <p class="media__overline">{{ label }}</p>
+    }
+    <h3 class="media__title">{{ title() }}</h3>
+    @if (description(); as text) {
+      <p class="media__description">{{ text }}</p>
+    }
+
+    @if (figure() || secondaryFigure()) {
+      <div class="media__figures">
+        <span class="media__figure">{{ figure() }}</span>
+        <span class="media__secondary">{{ secondaryFigure() }}</span>
+      </div>
+    }
+
+    @if (hasMeter()) {
+      <div
+        class="media__track"
+        role="progressbar"
+        [attr.aria-label]="resolvedMeterLabel()"
+        [attr.aria-valuenow]="clampedMeter()"
+        aria-valuemin="0"
+        aria-valuemax="100"
+      >
+        <span class="media__fill" [style.width.%]="clampedMeter()"></span>
+      </div>
+    }
+
+    <div class="media__actions"><ng-content select="[actions]" /></div>
+  </div>
+</article>

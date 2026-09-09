@@ -1,0 +1,35 @@
+@let entries = meta();
+
+<article class="checklist">
+  <app-checkbox
+    class="checklist__box"
+    [(checked)]="done"
+    [label]="'Marcar como completada: ' + title()"
+    [labelHidden]="true"
+    size="md"
+  />
+
+  <div class="checklist__body">
+    <div class="checklist__head">
+      <h3 class="checklist__title" [class.checklist__title--done]="done()">{{ title() }}</h3>
+      @if (badgeLabel(); as badge) {
+        <app-badge [tone]="badgeTone()">{{ badge }}</app-badge>
+      }
+    </div>
+
+    @if (description(); as text) {
+      <p class="checklist__description">{{ text }}</p>
+    }
+
+    @if (entries.length > 0) {
+      <div class="checklist__meta">
+        @for (entry of entries; track entry.text) {
+          <span class="checklist__meta-item">
+            <app-icon [name]="entry.icon" [size]="14" />
+            {{ entry.text }}
+          </span>
+        }
+      </div>
+    }
+  </div>
+</article>

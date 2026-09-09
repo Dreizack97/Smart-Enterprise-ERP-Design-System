@@ -1,0 +1,21 @@
+<button
+  class="btn focus-ring"
+  [class]="'btn--' + variant() + ' btn--' + size()"
+  [class.btn--full]="fullWidth()"
+  [class.btn--loading]="loading()"
+  [type]="type()"
+  [disabled]="inactive()"
+  [attr.aria-label]="ariaLabel() || null"
+  [attr.aria-busy]="loading() ? 'true' : null"
+  (click)="onClick($event)"
+>
+  @if (loading()) {
+    <span class="btn__spinner" aria-hidden="true"></span>
+  } @else if (icon(); as leading) {
+    <app-icon [name]="leading" [size]="iconSize()" />
+  }
+  <span class="btn__label"><ng-content /></span>
+  @if (iconAfter(); as trailing) {
+    <app-icon [name]="trailing" [size]="iconSize()" />
+  }
+</button>

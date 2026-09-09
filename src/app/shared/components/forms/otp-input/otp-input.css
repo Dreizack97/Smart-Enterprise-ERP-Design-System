@@ -1,0 +1,44 @@
+:host {
+  display: block;
+}
+
+/* El tracking amplio es lo que hace que un solo campo se lea como una fila
+   de casillas: los dígitos se separan visualmente sin renunciar al
+   autocompletado ni al pegado. */
+.otp {
+  display: block;
+  width: 100%;
+  max-width: 17.5rem;
+  margin-inline: auto;
+  height: var(--field-height-lg);
+  border: var(--field-border-width) solid var(--field-border);
+  border-radius: var(--field-radius);
+  background-color: var(--field-surface);
+  color: var(--ink-primary);
+  font-family: var(--font-mono);
+  font-size: var(--text-title);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.5em;
+  text-align: center;
+  /* Compensa el letter-space final para que los dígitos se sienten centrados,
+     no medio carácter a la izquierda del centro. */
+  text-indent: 0.5em;
+  outline: none;
+  transition:
+    border-color var(--duration-fast) var(--ease-out-quart),
+    box-shadow var(--duration-fast) var(--ease-out-quart);
+}
+
+.otp:focus {
+  border-color: var(--field-border-focus);
+  box-shadow: 0 0 0 3px var(--field-focus-halo);
+}
+
+.otp:disabled {
+  cursor: not-allowed;
+  opacity: var(--field-disabled-opacity);
+}
+
+.otp::placeholder {
+  color: var(--field-ink-placeholder);
+}

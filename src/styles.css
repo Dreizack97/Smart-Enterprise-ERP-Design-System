@@ -1,0 +1,41 @@
+/* =======================================================================
+   Hoja de estilos global — Smart Enterprise ERP · Sistema de Diseño
+   -----------------------------------------------------------------------
+   El orden importa. Tailwind primero: las reglas de `shell.css` se sientan
+   deliberadamente fuera de `@layer` para ganarle a `@layer utilities`, y eso
+   solo funciona si Tailwind ya se declaró.
+
+   Los tres archivos de tokens son los niveles descritos en la documentación:
+   primitivo alimenta a semántico, semántico alimenta a componente, y un
+   componente solo puede leer el último.
+   ======================================================================= */
+
+@import './styles/fonts.css';
+@import 'tailwindcss';
+@import './styles/tokens/primitive.css';
+@import './styles/tokens/semantic.css';
+@import './styles/tokens/component.css';
+@import './styles/base.css';
+@import './styles/shell.css';
+
+/* =======================================================================
+   Utilidades del sistema siempre disponibles
+   -----------------------------------------------------------------------
+   Tailwind solo emite las clases que encuentra en el código fuente. Un
+   sistema de diseño tiene que entregar su vocabulario completo, incluso
+   donde ninguna pantalla usa todavía un token dado, o la primera persona que
+   escriba uno obtiene silencio en vez de un estilo.
+
+   La lista de seguridad de matices crudos que el original cargaba aquí ya no
+   existe: los matices ya no se escriben como `bg-green-100` sino como
+   `data-tone` más una clase `.tone-*`, así que no queda nada que mantener
+   vivo.
+   ======================================================================= */
+
+@source inline("shadow-{soft,card,elevated}");
+@source inline("animate-{fade-in,slide-in,scale-in,pulse-slow}");
+@source inline("bg-surface-{canvas,1,2,3,field,inset}");
+@source inline("border-line-{subtle,default,strong}");
+@source inline("text-ink-{strong,primary,body,secondary,muted}");
+@source inline("text-link bg-scrim");
+@source inline("text-{display,title,heading,subheading,body,caption,overline}");

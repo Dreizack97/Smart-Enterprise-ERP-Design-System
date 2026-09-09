@@ -1,0 +1,16 @@
+@for (name of shown(); track name) {
+  <span class="group__slot">
+    <app-avatar [name]="name" [size]="size()" [label]="name" />
+  </span>
+}
+
+@if (hidden(); as rest) {
+  <span
+    class="group__slot group__more"
+    [class]="'group__more--' + size()"
+    role="img"
+    [attr.aria-label]="rest + ' más: ' + hiddenNames()"
+    [title]="hiddenNames()"
+    >+{{ rest }}</span
+  >
+}

@@ -1,0 +1,16 @@
+<label class="sr-only" [for]="inputId()">{{ label() }}</label>
+<input
+  class="otp focus-ring"
+  [id]="inputId()"
+  type="text"
+  inputmode="numeric"
+  pattern="[0-9]*"
+  autocomplete="one-time-code"
+  [attr.maxlength]="length()"
+  [value]="value()"
+  [placeholder]="placeholder()"
+  [disabled]="disabled()"
+  [attr.aria-label]="label()"
+  (input)="onInput($event)"
+/>
+<span class="sr-only" aria-live="polite">{{ progress() }}</span>

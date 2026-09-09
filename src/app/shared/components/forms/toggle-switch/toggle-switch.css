@@ -1,0 +1,89 @@
+:host {
+  display: inline-flex;
+}
+
+/* El control y su texto se leen como una sola cosa, así que se sientan en
+   una línea con un espacio que el ojo lee como «esto pertenece junto». */
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+/* Mismo rol tipográfico y tinta que la etiqueta del checkbox: dos controles
+   que responden el mismo tipo de pregunta no deberían etiquetarse con dos
+   voces distintas. */
+.switch__label {
+  font-size: var(--text-body);
+  color: var(--ink-secondary);
+}
+
+/* Toda la fila se atenúa, no solo la pista: una etiqueta brillante junto a
+   un switch desvanecido se lee como una etiqueta que todavía es
+   editable. */
+.switch--disabled .switch__label {
+  opacity: var(--field-disabled-opacity);
+}
+
+.toggle {
+  --toggle-track-width: 3rem;
+  --toggle-track-height: 1.5rem;
+  --toggle-knob-size: 1rem;
+  --toggle-inset: 0.25rem;
+
+  position: relative;
+  width: var(--toggle-track-width);
+  height: var(--toggle-track-height);
+  border-radius: var(--radius-full);
+  background: var(--switch-surface-off);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-out-quart);
+}
+
+.toggle--sm {
+  --toggle-track-width: 2.25rem;
+  --toggle-track-height: 1.25rem;
+  --toggle-knob-size: 0.75rem;
+  --toggle-inset: 0.25rem;
+}
+
+.toggle--lg {
+  --toggle-track-width: 3.5rem;
+  --toggle-track-height: 1.75rem;
+  --toggle-knob-size: 1.25rem;
+  --toggle-inset: 0.25rem;
+}
+
+.toggle[aria-checked='true'] {
+  background: var(--switch-surface-on);
+}
+
+.toggle:disabled {
+  cursor: not-allowed;
+  opacity: var(--field-disabled-opacity);
+}
+
+.toggle__knob {
+  position: absolute;
+  top: var(--toggle-inset);
+  inset-inline-start: var(--toggle-inset);
+  width: var(--toggle-knob-size);
+  height: var(--toggle-knob-size);
+  border-radius: var(--radius-full);
+  background: var(--switch-knob-surface);
+  transition: transform var(--duration-fast) var(--ease-out-quart);
+}
+
+/* El recorrido se deriva, no está fijo: cambia un tamaño arriba y la perilla
+   igual cae exactamente en el margen lejano. */
+.toggle[aria-checked='true'] .toggle__knob {
+  transform: translateX(
+    calc(var(--toggle-track-width) - var(--toggle-knob-size) - var(--toggle-inset) * 2)
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toggle__knob {
+    transition: none;
+  }
+}

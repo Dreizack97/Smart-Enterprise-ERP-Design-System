@@ -1,0 +1,284 @@
+<app-page-header title="Mi perfil" subtitle="Cuenta, acceso y preferencias de la sesión">
+  <app-breadcrumb breadcrumb [items]="trail" />
+
+  @if (dirty()) {
+    <app-badge actions tone="yellow">Cambios sin guardar</app-badge>
+  }
+  <app-button
+    actions
+    variant="secondary"
+    size="sm"
+    icon="rotate-ccw"
+    [disabled]="!dirty()"
+    (pressed)="discard()"
+  >
+    Descartar
+  </app-button>
+  <app-button
+    actions
+    size="sm"
+    icon="check"
+    [disabled]="!dirty()"
+    [loading]="saving()"
+    (pressed)="save()"
+  >
+    Guardar cambios
+  </app-button>
+</app-page-header>
+
+<div class="profile">
+  <app-section-card title="Identidad" subtitle="Cómo te ve el resto de la organización">
+    <div class="identity">
+      <app-file-upload
+        class="identity__photo"
+        [(value)]="photo"
+        label="Foto de perfil"
+        hint="JPG o PNG, hasta 2 MB."
+        [fallbackInitials]="initials()"
+      />
+
+      <div class="identity__facts">
+        <p class="identity__name">{{ form.fullName() }}</p>
+        <p class="identity__mail">{{ form.email() }}</p>
+
+        <div class="identity__tags">
+          <app-status-badge tone="success" label="Cuenta activa" />
+          <app-badge tone="purple">Supervisión</app-badge>
+          <app-badge tone="neutral">Almacén central</app-badge>
+        </div>
+      </div>
+
+      <dl class="identity__meta">
+        @for (fact of accountFacts; track fact.label) {
+          <div class="identity__fact">
+            <dt class="identity__fact-label">{{ fact.label }}</dt>
+            <dd class="identity__fact-value">{{ fact.value }}</dd>
+          </div>
+        }
+      </dl>
+    </div>
+  </app-section-card>
+
+  <app-tabs [tabs]="tabs" [(selected)]="tab" label="Secciones del perfil">
+    <app-tab-panel value="datos">
+      <app-section-card
+        title="Datos personales"
+        subtitle="Lo que la organización ve de ti en el directorio"
+        titleSize="lg"
+      >
+        <div class="card-stack">
+          <div class="field-grid">
+            <app-input label="Nombre completo" [(value)]="form.fullName" required />
+            <app-input label="Correo corporativo" type="email" [(value)]="form.email" required />
+            <app-input
+              label="Teléfono"
+              type="tel"
+              [(value)]="form.phone"
+              hint="Diez dígitos, sin lada."
+            />
+            <app-select label="Área" [(value)]="form.area" [options]="areas" />
+            <app-select label="Zona horaria" [(value)]="form.timezone" [options]="timezones" />
+            <app-date-picker
+              label="Fecha de ingreso"
+              [(value)]="form.since"
+              hint="Se escribe como 31/12/2026."
+            />
+          </div>
+
+          <app-textarea
+            label="Nota interna"
+            [(value)]="form.note"
+            [rows]="3"
+            [maxLength]="160"
+            hint="La ve quien consulte tu ficha en el directorio."
+          />
+        </div>
+      </app-section-card>
+    </app-tab-panel>
+
+    <app-tab-panel value="seguridad">
+      <div class="card-stack">
+        <app-section-card
+          title="Contraseña"
+          subtitle="La última vez que cambió fue el 2 de septiembre"
+          titleSize="lg"
+        >
+          <div class="card-stack">
+            <div class="field-grid field-grid--pair">
+              <app-password-input
+                label="Contraseña actual"
+                [(value)]="currentPassword"
+                autocomplete="current-password"
+              />
+              <app-password-input
+                label="Contraseña nueva"
+                [(value)]="newPassword"
+                autocomplete="new-password"
+              />
+            </div>
+
+            @if (newPassword()) {
+              <app-password-strength-meter
+                [password]="newPassword()"
+                [userInputs]="ownWords()"
+              />
+            }
+
+            <div class="card-actions">
+              <app-button
+                variant="secondary"
+                size="sm"
+                icon="key"
+                [disabled]="!canUpdatePassword()"
+                (pressed)="updatePassword()"
+              >
+                Actualizar contraseña
+              </app-button>
+            </div>
+          </div>
+        </app-section-card>
+
+        <app-section-card
+          title="Verificación en dos pasos"
+          subtitle="Un código además de la contraseña, cada vez que entras desde un equipo nuevo"
+          titleSize="lg"
+        >
+          <div class="card-stack">
+            <app-toggle-switch
+              label="Pedir un código al iniciar sesión"
+              [(checked)]="twoFactor"
+              (checkedChange)="onTwoFactorChange($event)"
+            />
+
+            @if (twoFactor()) {
+              <app-alert tone="info" title="Falta confirmar">
+                Mandamos un código de seis dígitos a
+                <strong>{{ form.email() }}</strong>
+                . Escríbelo para terminar de activarla.
+              </app-alert>
+
+              <app-otp-input
+                [(value)]="code"
+                [length]="6"
+                label="Código de verificación"
+                (complete)="onCodeComplete()"
+              />
+
+              <app-resend-timer
+                [cooldownSeconds]="45"
+                [resending]="resending()"
+                [resetSignal]="resendReset()"
+                (resend)="onResend()"
+              />
+            } @else {
+              <p class="note">
+                Sin ella, tu contraseña es lo único entre tu cuenta y quien la adivine.
+              </p>
+            }
+          </div>
+        </app-section-card>
+
+        <app-section-card
+          title="Sesiones abiertas"
+          subtitle="Cierra cualquiera que no reconozcas"
+          titleSize="lg"
+          [flush]="true"
+        >
+          <app-data-table
+            [columns]="sessionColumns"
+            [rows]="sessions()"
+            [trackBy]="trackSession"
+            caption="Dispositivos con la sesión abierta en esta cuenta"
+          >
+            <ng-template appTableCell="state" [appTableCellOf]="sessions()" let-session>
+              @if (session.current) {
+                <app-status-badge tone="success" label="Este dispositivo" />
+              } @else {
+                <app-button
+                  variant="ghost"
+                  size="sm"
+                  icon="log-out"
+                  (pressed)="closeSession(session)"
+                >
+                  Cerrar
+                </app-button>
+              }
+            </ng-template>
+          </app-data-table>
+        </app-section-card>
+      </div>
+    </app-tab-panel>
+
+    <app-tab-panel value="preferencias">
+      <div class="card-stack">
+        <app-section-card
+          title="Apariencia"
+          subtitle="El único ajuste de esta pantalla que sí tiene efecto"
+          titleSize="lg"
+        >
+          <app-radio-group
+            class="theme-choice"
+            label="Tema"
+            labelHidden
+            [options]="themeOptions"
+            [value]="theme.theme()"
+            (valueChange)="setTheme($event)"
+          />
+        </app-section-card>
+
+        <app-section-card
+          title="Avisos"
+          subtitle="Qué te llega por correo y qué se queda en la campana"
+          titleSize="lg"
+        >
+          <div class="switches">
+            @for (notice of notices; track notice.key) {
+              <app-toggle-switch
+                [label]="notice.label"
+                [checked]="notice.enabled()"
+                (checkedChange)="notice.enabled.set($event)"
+              />
+            }
+          </div>
+        </app-section-card>
+      </div>
+    </app-tab-panel>
+
+    <app-tab-panel value="actividad">
+      <div class="card-stack">
+        <app-section-card
+          title="Movimientos de la cuenta"
+          subtitle="Los últimos cinco. El historial completo lo guarda auditoría"
+          titleSize="lg"
+        >
+          <app-timeline [entries]="history" label="Actividad reciente de la cuenta" />
+        </app-section-card>
+
+        <app-section-card title="Zona de riesgo" titleSize="lg">
+          <div class="danger">
+            <div class="danger__text">
+              <p class="danger__title">Desactivar la cuenta</p>
+              <p class="note">
+                Deja de poder entrar y libera su licencia. El historial y los movimientos se
+                conservan; solo un administrador puede reactivarla.
+              </p>
+            </div>
+
+            <app-button variant="soft-danger" size="sm" icon="trash-2" (pressed)="askDeactivate()">
+              Desactivar
+            </app-button>
+          </div>
+        </app-section-card>
+      </div>
+    </app-tab-panel>
+  </app-tabs>
+</div>
+
+<app-confirm-dialog
+  [(open)]="deactivateOpen"
+  title="¿Desactivar la cuenta?"
+  message="Lucía Fernández Herrera dejará de poder entrar y su licencia quedará libre. Solo un administrador puede revertirlo."
+  confirmLabel="Desactivar"
+  cancelLabel="Conservar la cuenta"
+  (confirmed)="onDeactivated()"
+/>

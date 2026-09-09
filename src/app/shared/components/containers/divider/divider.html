@@ -1,0 +1,9 @@
+@if (label(); as text) {
+  <div class="divider" role="separator" [attr.aria-orientation]="orientation()">
+    <span class="divider__line" aria-hidden="true"></span>
+    <span class="divider__label">{{ text }}</span>
+    <span class="divider__line" aria-hidden="true"></span>
+  </div>
+} @else {
+  <hr class="divider__rule" />
+}

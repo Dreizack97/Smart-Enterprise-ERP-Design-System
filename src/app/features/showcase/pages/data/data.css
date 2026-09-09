@@ -1,0 +1,41 @@
+.data__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+app-data-table {
+  display: block;
+  width: 100%;
+}
+
+app-chart-canvas {
+  display: block;
+  min-width: 0;
+}
+
+.data__client {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.data__client-name {
+  font-weight: 500;
+  color: var(--ink-primary);
+}
+
+.data__loading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.5rem;
+}
+
+/* Los dos botones que impulsan la demostración de la barra de herramientas.
+   Son los controles de la demostración, no parte del componente. */
+.data__toolbar-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}

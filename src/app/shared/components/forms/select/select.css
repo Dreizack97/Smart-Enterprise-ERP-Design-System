@@ -1,0 +1,16 @@
+:host {
+  display: block;
+}
+
+.select-wrap {
+  position: relative;
+  display: flex;
+}
+
+/* La flecha nativa se reemplaza por el icono del sistema: cada navegador
+   dibuja la suya, y junto a nuestros campos todas se ven como una pieza
+   ajena. */
+.select-wrap__control {
+  appearance: none;
+  padding-inline-end: calc(var(--field-padding-x) * 2 + 1rem);
+}

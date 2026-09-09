@@ -1,0 +1,75 @@
+:host {
+  display: block;
+}
+
+/* El estado se lee del ARIA que `ngAccordionTrigger` mantiene, no de una
+   clase propia: así lo que se ve y lo que se anuncia no pueden
+   desalinearse. */
+.trigger {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: var(--accordion-padding-y) var(--accordion-padding-x);
+  text-align: start;
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--ink-primary);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-out-quart);
+}
+
+.trigger:hover:not([aria-disabled='true']) {
+  background-color: var(--accordion-surface-hover);
+}
+
+.trigger[aria-disabled='true'] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.trigger__label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.trigger__chevron {
+  flex-shrink: 0;
+  color: var(--ink-muted);
+  transition: transform var(--duration-fast) var(--ease-out-quart);
+}
+
+.trigger[aria-expanded='true'] .trigger__chevron {
+  transform: rotate(180deg);
+}
+
+.panel {
+  padding: 0 var(--accordion-padding-x) var(--accordion-padding-x);
+  font-size: var(--text-body);
+  color: var(--ink-secondary);
+}
+
+/* El mismo defecto que `tab-panel` ya corrigió, y la misma corrección.
+   `ngAccordionContent` difiere la plantilla, así que un panel cerrado
+   conserva su caja y pierde su contenido — sin quedar adentro nada más que
+   el padding inferior. Medido en 16px bajo cada disparador cerrado: el
+   relleno del hover se detenía ahí y una franja blanca seguía hasta la línea
+   del siguiente elemento, que se lee como un hueco que alguien olvidó
+   cerrar. En una lista larga son 16px por fila de nada.
+
+   `inert` es la señal propia de la librería para «este panel no está
+   abierto», así que es de ahí de donde hay que partir: ninguna segunda
+   fuente de verdad sobre qué elemento está expandido. `display: none` en vez
+   de anular el padding, para que un borde o un `min-height` agregado aquí
+   después no traiga de vuelta el espacio muerto en silencio. */
+.panel[inert] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trigger__chevron {
+    transition: none;
+  }
+}

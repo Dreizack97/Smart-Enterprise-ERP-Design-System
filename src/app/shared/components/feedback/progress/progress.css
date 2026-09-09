@@ -1,0 +1,72 @@
+:host {
+  display: block;
+}
+
+.progress-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.progress-track {
+  flex: 1;
+  height: var(--progress-bar-height);
+  overflow: hidden;
+  border-radius: var(--radius-full);
+  background-color: var(--progress-track);
+}
+
+.progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-full);
+  background-color: var(--tone-ink);
+  transition: width var(--duration-slow) var(--ease-out-quart);
+}
+
+.progress-value {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  color: var(--ink-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.progress-ring-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-ring {
+  width: var(--progress-ring-size);
+  height: var(--progress-ring-size);
+  transform: rotate(-90deg);
+}
+
+.progress-ring__track {
+  stroke: var(--progress-track);
+  stroke-width: var(--progress-ring-stroke);
+}
+
+.progress-ring__fill {
+  stroke: var(--tone-ink);
+  stroke-width: var(--progress-ring-stroke);
+  transition: stroke-dashoffset var(--duration-slow) var(--ease-out-quart);
+}
+
+.progress-ring__value {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--ink-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress-fill,
+  .progress-ring__fill {
+    transition: none;
+  }
+}

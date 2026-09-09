@@ -1,0 +1,14 @@
+<div class="activity" [attr.data-tone]="tone()">
+  <span class="activity__badge tone-soft">
+    <app-icon [name]="icon()" />
+  </span>
+  <div class="activity__body">
+    <p class="activity__title">{{ title() }}</p>
+    @if (description(); as text) {
+      <p class="activity__description">{{ text }}</p>
+    }
+    @if (time(); as stamp) {
+      <time class="activity__time">{{ stamp }}</time>
+    }
+  </div>
+</div>

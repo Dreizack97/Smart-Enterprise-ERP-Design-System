@@ -1,0 +1,22 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+/* Dos columnas: la etiqueta a un ancho fijo para que cada fila se alinee, y
+   la demostración tomando el resto. Bajo el breakpoint la etiqueta se mueve
+   arriba de su ejemplo, porque 9 rem de etiqueta más una tarjeta no caben en
+   un teléfono. */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--variant-row-gap);
+  align-items: center;
+}
+
+@media (min-width: 640px) {
+  .grid {
+    grid-template-columns: var(--variant-label-width) minmax(0, 1fr);
+    column-gap: 1.5rem;
+  }
+}

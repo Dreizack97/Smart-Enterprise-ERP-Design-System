@@ -1,0 +1,115 @@
+<app-showcase-page
+  title="Shell"
+  subtitle="El armazón de la aplicación. La única familia que el catálogo no puede meter en una caja"
+>
+  <app-showcase-block
+    title="navbar · sidebar · main-layout"
+    anchor="marco"
+    description="No hay demo porque la demo ya está en pantalla: la barra de arriba y el panel de la izquierda son estos componentes."
+    layout="stack"
+    surface="card"
+  >
+    <p class="shell__text">
+      <code>navbar</code> y <code>sidebar</code> son <code>position: fixed</code> y ocupan la
+      ventana entera. Una copia dentro de una tarjeta sería una copia, no el componente, y empezaría
+      a divergir el primer día. Así que esta ficha señala el original:
+    </p>
+
+    <ul class="shell__list">
+      <li>
+        <strong>El rail.</strong> Pulsa el chevron de la barra superior. El panel pasa de 16 rem a 5
+        rem, el contenido acompaña su margen y los submenús dejan de ser acordeón para convertirse
+        en un desplegable lateral que abre con el ratón <em>y con el teclado</em>.
+      </li>
+      <li>
+        <strong>El cajón.</strong> Estrecha la ventana por debajo de 1024 px. El chevron se
+        sustituye por el botón de menú y el panel entra deslizando sobre el contenido, con un velo
+        detrás.
+      </li>
+      <li>
+        <strong>El rastro activo.</strong> Entra por URL a <code>/superposiciones/menus</code>: la
+        rama se despliega sola hasta el tercer nivel.
+      </li>
+    </ul>
+
+    <p note>
+      Nada del armazón cruza el árbol de componentes. En el original la geometría vivía en una hoja
+      global y el rail se propagaba con una clase en <code>&lt;body&gt;</code>: unas cuarenta reglas
+      del tipo <code>body.sidebar-collapsed .sidebar-link span</code> alcanzaban elementos de tres
+      componentes distintos. Aquí <strong>el host es la barra y el host es el panel</strong>, y
+      <code>open</code> y <code>rail</code> viajan como <code>input()</code>.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="sidebar · en un marco"
+    description="Se puede montar aparte, con su propio estado, precisamente porque no lee ninguna tienda."
+    layout="stack"
+  >
+    <div class="shell__frame" [class.shell__frame--rail]="demoRail()">
+      <app-sidebar [sections]="sections" [rail]="demoRail()" [open]="true" />
+    </div>
+
+    <app-button variant="soft" size="sm" icon="chevron-left" (pressed)="toggleDemoRail()">
+      {{ demoRail() ? 'Expandir este panel' : 'Contraer este panel' }}
+    </app-button>
+
+    <p note>
+      Este panel no es el de la aplicación: tiene su propio árbol y su propio
+      <code>rail</code>, y el de la izquierda no se entera. Eso es posible porque la Fase 4 sacó
+      <code>open</code> y <code>rail</code> de <code>LayoutStore</code> y los convirtió en entradas.
+      Un componente de presentación que lee una tienda solo se puede enseñar en el estado en el que
+      la aplicación esté en ese momento.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="page-header"
+    anchor="encabezado"
+    description="Encabezado de pantalla: migas, título, descriptor y las acciones principales."
+    layout="stack"
+    surface="card"
+  >
+    <div class="shell__header-demo">
+      <app-page-header title="Pedidos del mes" subtitle="238 pedidos · 12 pendientes de facturar">
+        <app-breadcrumb breadcrumb [items]="trail" />
+        <app-button actions variant="secondary" size="sm" icon="download">Exportar</app-button>
+        <app-button actions size="sm" icon="plus">Nuevo pedido</app-button>
+      </app-page-header>
+    </div>
+
+    <div class="shell__header-demo">
+      <app-page-header title="Sin migas ni acciones" />
+    </div>
+
+    <p note>
+      Las migas van por ranura y no por entrada para que cada pantalla decida si las necesita: en
+      una de primer nivel, una ruta de un escalón solo añade ruido. Las dos ranuras se colapsan
+      cuando están vacías, así que el segundo ejemplo no reserva sitio para nada.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="centered-layout"
+    anchor="centrado"
+    description="El marco de las pantallas que son un panel sobre un fondo de marca."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="ruta" note="pantalla completa">
+        <app-button variant="secondary" icon="lock" routerLink="/acceso">
+          Ábrelo en /acceso
+        </app-button>
+      </app-variant-row>
+    </app-variant-grid>
+
+    <p note>
+      Se llamaba <code>auth-layout</code>. Nada en él es autenticación: es un panel centrado sobre
+      un campo de color, y las pantallas de alta, de enlace caducado o de mantenimiento quieren el
+      mismo marco. Nombrarlo por la primera pantalla que lo usó es lo que impide que lo reutilice la
+      segunda. En oscuro el degradado se aplana al lienzo y las formas a la deriva desaparecen: un
+      lavado de marca brillante de noche es deslumbramiento, no bienvenida.
+    </p>
+  </app-showcase-block>
+</app-showcase-page>

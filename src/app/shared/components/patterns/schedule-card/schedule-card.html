@@ -1,0 +1,18 @@
+<article class="schedule">
+  <div class="schedule__stamp tone-soft" [attr.data-tone]="tone()">
+    <span class="schedule__stamp-top">{{ stampTop() }}</span>
+    <span class="schedule__stamp-figure">{{ stampBottom() }}</span>
+  </div>
+
+  <div class="schedule__body">
+    <h4 class="schedule__title">{{ title() }}</h4>
+    @if (time(); as timeText) {
+      <p class="schedule__time">{{ timeText }}</p>
+    }
+    @if (description(); as text) {
+      <p class="schedule__description">{{ text }}</p>
+    }
+  </div>
+
+  <div class="schedule__actions"><ng-content select="[actions]" /></div>
+</article>

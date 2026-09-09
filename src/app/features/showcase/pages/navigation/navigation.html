@@ -1,0 +1,191 @@
+<app-showcase-page
+  title="Navegación"
+  subtitle="Moverse por la aplicación y por el contenido de una pantalla, sin perder de vista dónde se está"
+>
+  <app-showcase-block
+    title="breadcrumb"
+    anchor="ubicacion"
+    description="El camino hasta aquí. El último escalón nunca es enlace y lleva aria-current='page'."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="tres niveles">
+        <app-breadcrumb [items]="trail" />
+      </app-variant-row>
+      <app-variant-row label="dos niveles">
+        <app-breadcrumb [items]="shortTrail" />
+      </app-variant-row>
+    </app-variant-grid>
+
+    <p note>
+      Enlazar a la página en la que ya estás no lleva a ninguna parte, así que el último escalón es
+      texto. Con un solo nivel no se dibuja: una ruta de un escalón solo añade ruido.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="tabs · tab-panel"
+    anchor="secciones"
+    description="Secciones de una misma pantalla. Los paneles se proyectan dentro para que el ARIA los empareje."
+    layout="stack"
+    surface="card"
+  >
+    <app-tabs [tabs]="tabs" [(selected)]="selectedTab" label="Ficha del cliente">
+      <app-tab-panel value="general">
+        <p class="navigation__panel">
+          Industrias Vega, S.A. de C.V. · Alta el 3 de febrero de 2024 · Ejecutivo asignado: Lucía
+          Fernández.
+        </p>
+      </app-tab-panel>
+      <app-tab-panel value="fiscal">
+        <p class="navigation__panel">
+          RFC IVE240203K1A · Régimen general de ley · Uso de CFDI: gastos en general.
+        </p>
+      </app-tab-panel>
+      <app-tab-panel value="contactos">
+        <p class="navigation__panel">
+          Tres contactos registrados: compras, almacén y dirección financiera.
+        </p>
+      </app-tab-panel>
+      <app-tab-panel value="historial">
+        <p class="navigation__panel">Sin movimientos.</p>
+      </app-tab-panel>
+    </app-tabs>
+
+    <app-variant-grid>
+      <app-variant-row label="solo texto" note="sin icono ni insignia">
+        <app-tabs [tabs]="plainTabs" [(selected)]="selectedPlainTab" label="Vista del listado">
+          <app-tab-panel value="abiertas">
+            <p class="navigation__panel">14 facturas abiertas por 486.200 pesos.</p>
+          </app-tab-panel>
+          <app-tab-panel value="pagadas">
+            <p class="navigation__panel">92 facturas pagadas en el periodo.</p>
+          </app-tab-panel>
+          <app-tab-panel value="canceladas">
+            <p class="navigation__panel">3 facturas canceladas.</p>
+          </app-tab-panel>
+        </app-tabs>
+      </app-variant-row>
+      <app-variant-row label="disabled" note="el grupo entero">
+        <app-tabs
+          [tabs]="plainTabs"
+          selected="abiertas"
+          label="Vista del listado, bloqueada"
+          disabled
+        >
+          <app-tab-panel value="abiertas">
+            <p class="navigation__panel">Sin permiso para consultar la cartera.</p>
+          </app-tab-panel>
+        </app-tabs>
+      </app-variant-row>
+    </app-variant-grid>
+
+    <p note>
+      «Historial» llega deshabilitada y el teclado la salta. En el original el panel se renderizaba
+      <strong>fuera</strong> del contenedor de pestañas, así que el emparejamiento
+      <code>aria-controls</code> nunca ocurría: se veía bien y no existía para un lector de
+      pantalla.
+    </p>
+
+    <p note>
+      Una pestaña suelta y el grupo entero se deshabilitan en <strong>elementos distintos</strong>:
+      la primera lleva <code>aria-disabled</code> ella misma y el grupo lo lleva la lista. Solo
+      estaba escrito el primer selector, así que una barra entera podía estar bloqueada —fuera del
+      orden de tabulación, sin responder— y verse exactamente igual que una en uso. Salió al montar
+      esta matriz.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="accordion · accordion-item"
+    description="Revelado progresivo. Para preguntas frecuentes u opciones avanzadas, nunca para navegar."
+    layout="stack"
+    surface="card"
+  >
+    <app-accordion>
+      <app-accordion-item label="¿Cómo se calcula el crédito disponible?" icon="dollar-sign">
+        Es el límite autorizado menos la suma de las facturas abiertas y los pedidos en preparación.
+        Se recalcula al confirmar cada pedido.
+      </app-accordion-item>
+      <app-accordion-item label="¿Puedo facturar a un domicilio distinto?" icon="briefcase">
+        Sí. El domicilio de entrega y el fiscal son campos independientes en el alta del pedido.
+      </app-accordion-item>
+      <app-accordion-item label="¿Cuándo se cierra el periodo?">
+        El último día hábil del mes. Sin icono: cuando ninguna sección tiene uno, la columna
+        desaparece y los títulos se alinean con el borde.
+      </app-accordion-item>
+      <app-accordion-item label="Sección no disponible" icon="lock" disabled>
+        Este contenido requiere un permiso que la cuenta actual no tiene.
+      </app-accordion-item>
+    </app-accordion>
+
+    <p note>
+      El grupo llega por <code>hostDirectives</code>, no desde la plantilla:
+      <code>ng-content</code> no cambia el inyector, así que las secciones —declaradas por quien usa
+      el componente— solo alcanzan lo que provee el propio <code>&lt;app-accordion&gt;</code>.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="stepper"
+    anchor="recorrido"
+    description="Un proceso con principio y final. Dice dónde se está y cuánto queda, no solo el paso actual."
+    layout="stack"
+    surface="card"
+  >
+    <app-stepper [steps]="steps" [current]="step()" label="Alta de cliente" />
+
+    <app-stepper
+      [steps]="steps"
+      [current]="step()"
+      orientation="vertical"
+      label="Alta de cliente, en vertical"
+    />
+
+    <app-button variant="soft" size="sm" icon="arrow-right" (pressed)="advance()">
+      Siguiente paso
+    </app-button>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="pagination"
+    description="Para recorrer un listado largo. El resumen dice cuántos hay, que es la pregunta real."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="interactiva" [note]="'página ' + page() + ' de ' + pageCount">
+        <app-pagination [(page)]="page" [pageCount]="pageCount" [summary]="pageSummary()" />
+      </app-variant-row>
+      <app-variant-row label="primera" note="«anterior» deshabilitado">
+        <app-pagination [page]="1" [pageCount]="12" summary="1–20 de 238 clientes" />
+      </app-variant-row>
+      <app-variant-row label="última" note="«siguiente» deshabilitado">
+        <app-pagination [page]="12" [pageCount]="12" summary="221–238 de 238 clientes" />
+      </app-variant-row>
+      <app-variant-row label="pocas páginas" note="sin elipsis">
+        <app-pagination [page]="2" [pageCount]="3" summary="7–12 de 14 pedidos" />
+      </app-variant-row>
+      <app-variant-row label="muchas páginas" note="elipsis a los dos lados">
+        <app-pagination [page]="97" [pageCount]="200" summary="1.921–1.940 de 4.000 movimientos" />
+      </app-variant-row>
+      <app-variant-row label="una sola" note="queda el resumen, no la navegación">
+        <app-pagination [page]="1" [pageCount]="1" summary="6 de 6 almacenes" />
+      </app-variant-row>
+    </app-variant-grid>
+
+    <p note>
+      La ventana de páginas se calcula alrededor de la actual y siempre deja visibles la primera y
+      la última: sin eso, saltar al final de un listado de 200 páginas exige pulsar «siguiente»
+      hasta llegar.
+    </p>
+
+    <p note>
+      Con una sola página se dibuja el resumen y nada más. Antes aparecía un «1» solitario entre dos
+      flechas que nunca podían pulsarse: tres controles diciendo la misma nada. El comentario del
+      componente ya lo daba por hecho —«con una sola, no ofrece navegación»— y el código no lo
+      hacía; se vio al montar esta matriz.
+    </p>
+  </app-showcase-block>
+</app-showcase-page>

@@ -1,0 +1,17 @@
+:host {
+  display: block;
+}
+
+.resend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-caption);
+  color: var(--ink-secondary);
+}
+
+/* Cifras tabulares para que la línea no tiemble mientras el conteo baja. */
+.resend__count {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}

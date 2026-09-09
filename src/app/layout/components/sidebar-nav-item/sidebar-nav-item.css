@@ -1,0 +1,238 @@
+/* El nodo renderiza un `<li>`, que tiene que ser hijo directo del `<ul>` que
+   lo envuelve para que la lista se siga leyendo como lista para un lector de
+   pantalla. `display: contents` quita la propia caja del componente del
+   layout para que así sea. */
+:host {
+  display: contents;
+}
+
+.nav__link,
+.nav__toggle {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: var(--sidebar-link-radius);
+  padding: var(--sidebar-link-padding);
+  color: var(--sidebar-link-ink);
+  transition:
+    background-color var(--duration-instant) var(--ease-out-quart),
+    box-shadow var(--duration-instant) var(--ease-out-quart),
+    color var(--duration-instant) var(--ease-out-quart);
+}
+
+/* Sin `font-size` a nivel raíz a propósito: el enlace hereda los 16 px del
+   documento, que es lo que le da un área táctil de 48 px. Fijarlo a 14 px
+   encogía la fila a 45 px en el original. */
+.nav__toggle {
+  font-weight: 500;
+  color: var(--sidebar-group-ink);
+}
+
+.nav__link:hover,
+.nav__toggle:hover {
+  background-color: var(--sidebar-link-surface-hover);
+  color: var(--sidebar-link-ink-hover);
+}
+
+.nav__toggle.nav--trail {
+  color: var(--sidebar-link-ink-hover);
+}
+
+.nav__link.nav--active {
+  background: var(--sidebar-link-active-surface);
+  color: var(--sidebar-link-active-ink);
+  box-shadow: var(--sidebar-link-active-shadow);
+}
+
+/* Visible pero inerte: anuncia una sección que todavía no existe. */
+.nav__link--pending {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.nav__link--pending:hover {
+  background-color: transparent;
+  color: var(--sidebar-link-ink);
+}
+
+.nav__label {
+  min-width: 0;
+  flex: 1;
+  text-align: left;
+}
+
+.nav__chevron {
+  margin-left: auto;
+  transition: transform var(--duration-fast) var(--ease-out-quart);
+}
+
+.nav__toggle[aria-expanded='true'] .nav__chevron {
+  transform: rotate(180deg);
+}
+
+/* Niveles anidados: tipografía más pequeña, padding más ajustado, un punto
+   al inicio en vez de un icono. */
+.nav__link--nested,
+.nav__toggle--nested {
+  gap: 0.625rem;
+  border-radius: var(--sidebar-sublink-radius);
+  padding: var(--sidebar-sublink-padding);
+  font-size: var(--text-caption);
+  font-weight: 500;
+}
+
+.nav__link--nested.nav--active {
+  background: var(--sidebar-sublink-active-surface);
+  color: var(--sidebar-sublink-active-ink);
+  font-weight: 600;
+  box-shadow: none;
+}
+
+.nav__dot {
+  width: var(--sidebar-dot-size);
+  height: var(--sidebar-dot-size);
+  flex-shrink: 0;
+  border-radius: var(--radius-full);
+  background-color: currentcolor;
+  opacity: 0.45;
+}
+
+.nav--active .nav__dot {
+  opacity: 1;
+}
+
+/* El panel colapsable anima `grid-template-rows` de 0fr a 1fr, para que
+   nunca haya que medir una altura en JavaScript. */
+.nav__submenu {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--duration-normal) var(--ease-out-quart);
+}
+
+.nav__submenu-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.nav__submenu[data-open='true'] {
+  grid-template-rows: 1fr;
+}
+
+/* Línea guía y sangría, un nivel a la vez. */
+.nav__subtree {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  margin-top: 0.25rem;
+  margin-left: 1.4rem;
+  padding-left: 0.5rem;
+  border-left: 1px solid var(--sidebar-guide-line);
+}
+
+/* Solo se muestra en modo rail, donde el flyout necesita su propio encabezado. */
+.nav__flyout-title {
+  display: none;
+  padding: 0 0.5rem 0.5rem;
+  font-size: var(--text-overline);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-muted);
+}
+
+/* =========================================================================
+   Rail: solo iconos, y el submenú se convierte en un flyout.
+
+   Cada selector de abajo desciende de `:host(.nav--rail)` a través del
+   combinador HIJO, deliberadamente. Este componente se renderiza
+   recursivamente, así que un nodo anidado es otra instancia del MISMO
+   componente — y la encapsulación emulada de Angular estampa cada instancia
+   con los mismos atributos `_ngcontent`/`_nghost`. Un selector descendiente
+   escrito desde el host por lo tanto llega directo a través de las
+   instancias anidadas, que es lo que hacía que las propias entradas del
+   flyout perdieran sus etiquetas: `.nav--rail .nav__label` coincidía también
+   con las etiquetas de los hijos, no solo con las de esta fila.
+
+   La encapsulación aísla a los componentes entre sí. No aísla a un
+   componente de sí mismo.
+
+   Solo escritorio — bajo el breakpoint el sidebar es un drawer y nunca un
+   rail, así que la bandera se ignora ahí en vez de resguardarse en
+   TypeScript.
+   ========================================================================= */
+@media (min-width: 1024px) {
+  :host(.nav--rail) > .nav__item > .nav__link,
+  :host(.nav--rail) > .nav__group > .nav__toggle {
+    justify-content: center;
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  /* Seguro como descendiente: la etiqueta y el chevron de una fila viven
+     DENTRO del propio `<a>` o `<button>` de esa fila, y los nodos anidados
+     cuelgan del submenú en su lugar. */
+  :host(.nav--rail) > .nav__item > .nav__link .nav__label,
+  :host(.nav--rail) > .nav__group > .nav__toggle .nav__label,
+  :host(.nav--rail) > .nav__group > .nav__toggle .nav__chevron {
+    display: none;
+  }
+
+  :host(.nav--rail) > .nav__group {
+    position: relative;
+  }
+
+  :host(.nav--rail) > .nav__group > .nav__submenu {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    z-index: 60;
+    width: var(--sidebar-flyout-width);
+    margin-left: 0.5rem;
+    /* Forzado a abierto: en el rail el panel se revela por hover o foco, no
+       por el propio estado del acordeón. */
+    grid-template-rows: 1fr;
+    padding: 0.5rem;
+    border: 1px solid var(--sidebar-flyout-border);
+    border-radius: var(--radius-lg);
+    background-color: var(--sidebar-flyout-surface);
+    box-shadow: var(--sidebar-flyout-shadow);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-0.5rem);
+    transition:
+      opacity var(--duration-instant) var(--ease-out-quart),
+      transform var(--duration-instant) var(--ease-out-quart),
+      visibility var(--duration-instant) var(--ease-out-quart);
+  }
+
+  /* Hover O foco adentro: el flyout se abre desde el teclado sin una línea
+     de JavaScript. */
+  :host(.nav--rail) > .nav__group:hover > .nav__submenu,
+  :host(.nav--rail) > .nav__group:focus-within > .nav__submenu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+  }
+
+  :host(.nav--rail) > .nav__group > .nav__submenu > .nav__submenu-inner > .nav__flyout-title {
+    display: block;
+  }
+
+  /* Dentro del flyout el árbol está solo, así que descarta la línea guía que
+     solo tiene sentido como sangría bajo una fila padre visible. */
+  :host(.nav--rail) > .nav__group > .nav__submenu > .nav__submenu-inner > .nav__subtree {
+    margin-left: 0;
+    padding-left: 0;
+    border-left: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav__link,
+  .nav__toggle,
+  .nav__chevron,
+  .nav__submenu {
+    transition: none;
+  }
+}

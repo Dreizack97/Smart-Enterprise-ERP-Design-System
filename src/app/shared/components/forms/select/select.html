@@ -1,0 +1,47 @@
+<app-field
+  [label]="label()"
+  [controlId]="selectId()"
+  [required]="required()"
+  [hint]="hint()"
+  [error]="message()"
+  [errorId]="errorId()"
+>
+  <div class="select-wrap">
+    <select
+      class="field-control select-wrap__control"
+      [class]="'field-control--' + size()"
+      [id]="selectId()"
+      [value]="value()"
+      [disabled]="disabled()"
+      [required]="required()"
+      [attr.name]="name() || null"
+      [attr.aria-label]="!label() && ariaLabel() ? ariaLabel() : null"
+      [attr.aria-invalid]="message() ? 'true' : null"
+      [attr.aria-describedby]="message() ? errorId() : null"
+      (change)="onChange($event)"
+      (blur)="onBlur()"
+    >
+      @if (placeholder(); as hintText) {
+        <option value="" disabled>{{ hintText }}</option>
+      }
+      @for (group of groups(); track group.label) {
+        @if (group.label) {
+          <optgroup [label]="group.label">
+            @for (option of group.options; track option.value) {
+              <option [value]="option.value" [disabled]="!!option.disabled">
+                {{ option.label }}
+              </option>
+            }
+          </optgroup>
+        } @else {
+          @for (option of group.options; track option.value) {
+            <option [value]="option.value" [disabled]="!!option.disabled">
+              {{ option.label }}
+            </option>
+          }
+        }
+      }
+    </select>
+    <span class="field-affix field-affix--end"><app-icon name="chevron-down" /></span>
+  </div>
+</app-field>

@@ -1,0 +1,46 @@
+:host {
+  display: block;
+}
+
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+/* La única diferencia con un estado vacío: la insignia lleva el matiz de
+   peligro, porque este vacío es un fallo y no una ausencia. */
+.state__badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: var(--radius-full);
+  color: var(--tone-ink);
+}
+
+.state__title {
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--ink-primary);
+}
+
+.state__description {
+  max-width: 24rem;
+  font-size: var(--text-body);
+  color: var(--ink-muted);
+}
+
+.state__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}

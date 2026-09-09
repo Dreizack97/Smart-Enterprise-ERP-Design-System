@@ -1,0 +1,50 @@
+<app-field
+  [label]="label()"
+  [controlId]="groupId()"
+  [labelHidden]="labelHidden()"
+  [labelAsText]="true"
+  [required]="required()"
+  [hint]="hint()"
+  [error]="message()"
+  [errorId]="errorId()"
+>
+  <div
+    class="radio-group"
+    role="radiogroup"
+    [attr.aria-labelledby]="label() ? labelId() : null"
+    [attr.aria-invalid]="message() ? 'true' : null"
+    [attr.aria-describedby]="message() ? errorId() : null"
+  >
+    @for (option of options(); track option.value) {
+      <label class="radio-option">
+        <input
+          class="radio-option__input focus-ring"
+          [id]="optionId(option.value)"
+          type="radio"
+          [name]="groupId()"
+          [value]="option.value"
+          [checked]="value() === option.value"
+          [disabled]="disabled() || !!option.disabled"
+          (change)="onChange(option.value)"
+          (blur)="onBlur()"
+        />
+
+        @if (option.icon; as name) {
+          <span class="radio-option__icon"><app-icon [name]="name" [size]="20" /></span>
+        }
+
+        <span class="radio-option__body">
+          <span class="radio-option__head">
+            <span class="radio-option__label">{{ option.label }}</span>
+            @if (option.badge; as badge) {
+              <span class="radio-option__badge tone-soft" data-tone="green">{{ badge }}</span>
+            }
+          </span>
+          @if (option.description; as detail) {
+            <span class="radio-option__description">{{ detail }}</span>
+          }
+        </span>
+      </label>
+    }
+  </div>
+</app-field>

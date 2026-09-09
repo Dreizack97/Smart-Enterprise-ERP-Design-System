@@ -1,0 +1,30 @@
+@let text = label();
+@let message = error();
+
+<div class="field">
+  @if (text) {
+    @if (labelAsText()) {
+      <span class="field__label" [id]="controlId() + '-label'" [class.sr-only]="labelHidden()">
+        {{ text }}
+        @if (required()) {
+          <span class="field__required" aria-hidden="true">*</span>
+        }
+      </span>
+    } @else {
+      <label class="field__label" [for]="controlId()" [class.sr-only]="labelHidden()">
+        {{ text }}
+        @if (required()) {
+          <span class="field__required" aria-hidden="true">*</span>
+        }
+      </label>
+    }
+  }
+
+  <ng-content />
+
+  @if (message) {
+    <span class="field__error" [id]="errorId()" role="alert">{{ message }}</span>
+  } @else if (hint(); as help) {
+    <span class="field__hint">{{ help }}</span>
+  }
+</div>

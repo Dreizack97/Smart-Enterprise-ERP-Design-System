@@ -1,0 +1,28 @@
+<app-navbar
+  [railCollapsed]="layout.sidebarCollapsed()"
+  (drawerToggled)="layout.toggleDrawer()"
+  (railToggled)="layout.toggleCollapsed()"
+  (searchChanged)="onSearch($event)"
+  (signedOut)="onSignOut()"
+  (profileOpened)="onProfileOpened()"
+  (notificationOpened)="onNotificationOpened($event)"
+/>
+
+<app-sidebar
+  [sections]="sections"
+  [open]="layout.sidebarOpen()"
+  [rail]="layout.sidebarCollapsed()"
+/>
+
+<!-- Closes the drawer on a tap outside. Decorative: the same action is on the
+     menu button, and Escape is not needed because the drawer traps nothing. -->
+<div
+  class="shell__scrim"
+  [class.shell__scrim--active]="layout.sidebarOpen()"
+  aria-hidden="true"
+  (click)="layout.closeDrawer()"
+></div>
+
+<main class="shell__main">
+  <router-outlet />
+</main>

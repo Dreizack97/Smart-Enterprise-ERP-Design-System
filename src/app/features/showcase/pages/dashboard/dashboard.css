@@ -1,0 +1,57 @@
+/* Los propios márgenes de la página, igualando `showcase-page` para que una
+   plantilla y una página del catálogo se sienten en la misma
+   cuadrícula. */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--showcase-block-gap);
+  padding: var(--showcase-block-gap) var(--showcase-gutter) 2.5rem;
+}
+
+@media (min-width: 1024px) {
+  .panel {
+    padding-right: var(--showcase-gutter-wide);
+    padding-left: var(--showcase-gutter-wide);
+  }
+}
+
+/* `auto-fit` y no un número fijo: cuatro cifras en una pantalla ancha, dos
+   en una tablet, una en un teléfono, sin un breakpoint para cada una. */
+.panel__kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr));
+  gap: var(--showcase-block-gap);
+}
+
+.panel__charts,
+.panel__lower {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--showcase-block-gap);
+}
+
+/* Dos tercios para la serie a través del tiempo, un tercio para la
+   división: la forma de los datos decide la proporción, no la
+   cuadrícula. */
+@media (min-width: 1024px) {
+  .panel__charts {
+    grid-template-columns: 2fr 1fr;
+  }
+
+  .panel__lower {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+.panel__aside {
+  display: flex;
+  flex-direction: column;
+  gap: var(--showcase-block-gap);
+}
+
+app-section-card,
+app-stat-card,
+app-chart-canvas {
+  display: block;
+  min-width: 0;
+}

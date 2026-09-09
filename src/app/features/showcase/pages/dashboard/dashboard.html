@@ -1,0 +1,77 @@
+<app-page-header
+  title="Panel de control"
+  subtitle="Almacén central · datos al 8 de septiembre de 2026"
+>
+  <app-breadcrumb breadcrumb [items]="trail" />
+  <app-segmented-control
+    actions
+    [(value)]="range"
+    [options]="rangeOptions"
+    label="Rango del panel"
+    size="sm"
+  />
+  <app-button actions variant="secondary" size="sm" icon="download" (pressed)="export()">
+    Exportar
+  </app-button>
+</app-page-header>
+
+<div class="panel">
+  <section class="panel__kpis" aria-label="Indicadores del periodo">
+    @for (kpi of kpis(); track kpi.label) {
+      <app-stat-card
+        [label]="kpi.label"
+        [value]="kpi.value"
+        [icon]="kpi.icon"
+        [tone]="kpi.tone"
+        [note]="kpi.note"
+        [noteTrend]="kpi.trend"
+      />
+    }
+  </section>
+
+  <section class="panel__charts">
+    <app-section-card title="Facturación" subtitle="En miles de pesos" titleSize="lg">
+      <app-chart-canvas [config]="revenue()" [summary]="revenueSummary()" height="17rem" />
+    </app-section-card>
+
+    <app-section-card title="Reparto por canal" titleSize="lg">
+      <app-chart-canvas [config]="split()" [summary]="splitSummary()" height="17rem" />
+    </app-section-card>
+  </section>
+
+  <section class="panel__lower">
+    <app-section-card title="Actividad reciente" titleSize="lg">
+      <app-timeline [entries]="feed" label="Actividad reciente del almacén" />
+    </app-section-card>
+
+    <div class="panel__aside">
+      <app-stat-card
+        variant="report"
+        label="Presupuesto ejercido"
+        value="92 %"
+        icon="chart-column"
+        tone="orange"
+        note="quedan 8 días del periodo"
+        [progress]="92"
+      />
+      <app-stat-card
+        variant="tile"
+        label="Pedidos sin surtir"
+        value="38"
+        icon="package-open"
+        tone="yellow"
+        note="12 con más de 48 h"
+        noteTrend="up"
+      />
+      <app-stat-card
+        variant="tile"
+        label="Cobros vencidos"
+        value="$186.400"
+        icon="circle-alert"
+        tone="red"
+        note="7 facturas"
+        noteTrend="up"
+      />
+    </div>
+  </section>
+</div>

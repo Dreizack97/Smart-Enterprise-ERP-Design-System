@@ -1,0 +1,29 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--kbd-gap);
+}
+
+.kbd {
+  display: inline-flex;
+  min-width: var(--kbd-min-width);
+  align-items: center;
+  justify-content: center;
+  padding: var(--kbd-padding-y) var(--kbd-padding-x);
+  border: 1px solid var(--kbd-border);
+  /* El borde inferior es un segundo borde y no una sombra: tiene que
+     sobrevivir al modo de colores forzados, donde las sombras se
+     descartan y la tecla se aplanaría. */
+  border-bottom-width: 2px;
+  border-radius: var(--kbd-radius);
+  background-color: var(--kbd-surface);
+  color: var(--kbd-ink);
+  font-family: var(--font-mono);
+  font-size: var(--text-overline);
+  line-height: 1;
+}
+
+.kbd__separator {
+  color: var(--ink-muted);
+  font-size: var(--text-caption);
+}

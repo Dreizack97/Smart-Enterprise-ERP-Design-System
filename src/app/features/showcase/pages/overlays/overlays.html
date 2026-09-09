@@ -1,0 +1,266 @@
+<app-showcase-page
+  title="Superposiciones"
+  subtitle="Todo lo que se dibuja encima: diálogos, menús, ayudas y la bandeja de avisos"
+>
+  <app-showcase-block
+    title="modal"
+    anchor="dialogos"
+    description="Interrumpe para pedir algo que no cabe en la página. El foco entra dentro y no se escapa."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="open" note="con pie de acciones">
+        <app-button (pressed)="modalOpen.set(true)">Editar pedido</app-button>
+      </app-variant-row>
+      <app-variant-row label="anidado" note="modal sobre modal">
+        <app-button variant="secondary" (pressed)="nestedOpen.set(true)">
+          Abrir dos niveles
+        </app-button>
+      </app-variant-row>
+    </app-variant-grid>
+
+    <app-modal [(open)]="modalOpen" title="Editar pedido PED-2481" size="md">
+      <app-input [(value)]="reference" label="Referencia del cliente" name="reference" />
+      <app-button footer variant="ghost" (pressed)="modalOpen.set(false)">Cancelar</app-button>
+      <app-button footer (pressed)="modalOpen.set(false)">Guardar</app-button>
+    </app-modal>
+
+    <app-modal [(open)]="nestedOpen" title="Primer nivel" size="lg">
+      <p class="overlays__text">
+        Este modal abre un diálogo de confirmación encima. Al cerrar el segundo, la página debe
+        seguir bloqueada porque el primero continúa abierto.
+      </p>
+      <app-button footer variant="danger" (pressed)="confirmOpen.set(true)">
+        Eliminar el pedido
+      </app-button>
+      <app-button footer variant="ghost" (pressed)="nestedOpen.set(false)">Cerrar</app-button>
+    </app-modal>
+
+    <p note>
+      El bloqueo del desplazamiento lleva contador de referencias. En el original cada diálogo
+      conmutaba la clase por su cuenta, así que con dos abiertos —un confirm lanzado desde un modal—
+      <strong>el primero en cerrarse desbloqueaba la página</strong> con el otro todavía arriba.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="confirm-dialog"
+    description="Una sola pregunta, con la consecuencia escrita. El tono decide si el botón es destructivo."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="danger" note="acción irreversible">
+        <app-button variant="soft-danger" (pressed)="confirmOpen.set(true)">
+          Eliminar pedido
+        </app-button>
+      </app-variant-row>
+      <app-variant-row label="warning" note="reversible, pero con alcance">
+        <app-button variant="soft" (pressed)="warningOpen.set(true)">
+          Enviar a todo el equipo
+        </app-button>
+      </app-variant-row>
+    </app-variant-grid>
+
+    <app-confirm-dialog
+      [(open)]="confirmOpen"
+      title="Eliminar el pedido PED-2481"
+      message="Se borrarán también sus líneas y su historial de estados. Esta acción no se puede deshacer."
+      confirmLabel="Eliminar"
+      (confirmed)="onConfirm()"
+      (cancelled)="onCancel()"
+    />
+
+    <app-confirm-dialog
+      [(open)]="warningOpen"
+      title="Enviar a todo el equipo"
+      message="El aviso llegará a las 42 personas del almacén central. Podrás retirarlo después."
+      confirmLabel="Enviar"
+      icon="send"
+      tone="warning"
+      (confirmed)="onConfirm()"
+      (cancelled)="onCancel()"
+    />
+
+    <p note>
+      El original pintaba siempre el botón rojo, incluso para confirmaciones reversibles. Un
+      <code>warning</code> ofrece ahora un botón <code>primary</code>: si todo es destructivo, nada
+      lo parece.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="dropdown-menu"
+    anchor="menus"
+    description="Acciones de una fila. Se coloca según el hueco real en pantalla, no siempre a la derecha."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row
+        label="menu"
+        [note]="lastChoice() ? 'última: ' + lastChoice() : 'sin elegir'"
+      >
+        <app-dropdown-menu
+          #menu
+          [(open)]="menuOpen"
+          [items]="actions"
+          label="Acciones del pedido"
+          (selected)="onChoose($event)"
+        >
+          <app-button
+            trigger
+            variant="secondary"
+            iconAfter="chevron-down"
+            [attr.aria-expanded]="menuOpen()"
+            aria-haspopup="menu"
+            (pressed)="menu.toggle()"
+          >
+            Acciones
+          </app-button>
+        </app-dropdown-menu>
+      </app-variant-row>
+
+      <app-variant-row label="panel" note="contenido libre">
+        <app-dropdown-menu
+          #tray
+          [(open)]="panelOpen"
+          variant="panel"
+          width="22rem"
+          placement="bottom-end"
+          label="Notificaciones"
+        >
+          <app-button
+            trigger
+            variant="secondary"
+            icon="bell"
+            [attr.aria-expanded]="panelOpen()"
+            aria-haspopup="dialog"
+            (pressed)="tray.toggle()"
+          >
+            Avisos
+          </app-button>
+          <app-notification-list
+            [items]="feed.all()"
+            (selected)="onNotificationSelected($event)"
+            (markAllRead)="feed.markAllRead()"
+          />
+        </app-dropdown-menu>
+      </app-variant-row>
+    </app-variant-grid>
+
+    <p note>
+      «Cancelar pedido» llega deshabilitada y «Eliminar» en rojo. La etiqueta «última» se actualiza
+      con cada elección: <code>selected</code> es un <code>output()</code>, no un
+      <code>model()</code> —con un modelo, elegir dos veces lo mismo no emitía nada—.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="notification-list"
+    description="La bandeja: qué pasó, cuándo, y si ya se leyó. Vive dentro de un panel, no suelta."
+    layout="stack"
+    surface="card"
+  >
+    <app-notification-list
+      [items]="feed.all()"
+      (selected)="onNotificationSelected($event)"
+      (markAllRead)="feed.markAllRead()"
+    />
+
+    <app-button variant="ghost" size="sm" icon="rotate-ccw" (pressed)="resetFeed()">
+      Restaurar los avisos de ejemplo
+    </app-button>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="tooltip"
+    description="Aclara un control que ya tiene etiqueta. Nunca lleva información que no esté en otro sitio."
+    layout="row"
+    surface="card"
+  >
+    <app-button
+      appTooltip="Genera la factura con los datos fiscales del cliente"
+      variant="secondary"
+    >
+      Facturar
+    </app-button>
+
+    <app-button
+      appTooltip="Ajustes del pedido"
+      tooltipPlacement="bottom"
+      variant="ghost"
+      icon="settings"
+      ariaLabel="Configuración"
+    />
+
+    <span class="overlays__hint" appTooltip="También funciona sobre texto corriente">
+      Un elemento cualquiera
+    </span>
+
+    <p note>
+      La directiva resuelve un ancla real cuando el host es un componente con
+      <code>display: contents</code>: sin eso el globo se posicionaba contra el
+      <code>&lt;body&gt;</code> —513 px de desvío medido—, <code>mouseenter</code> no llegaba nunca
+      y el <code>aria-describedby</code> aterrizaba en un envoltorio sin rol.
+    </p>
+
+    <p note>
+      El globo vive en el <code>&lt;body&gt;</code> y se coloca con la misma primitiva que el
+      desplegable. Antes era hijo del ancla y estaba colocado en absoluto, y eso tenía dos defectos
+      que solo aparecen donde de verdad se ponen las ayudas: cualquier antepasado con
+      <code>overflow: hidden</code> —una tarjeta, el envoltorio de la tabla, el rail lateral— lo
+      recortaba, y junto al borde derecho de la ventana se salía de la pantalla. Ahora vuelca al
+      lado contrario cuando no cabe y queda dentro del viewport: medido a 420 px de ancho, el globo
+      de 288 px se ajusta a 8 px del borde en vez de desbordar.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="drawer"
+    anchor="paneles"
+    description="El mismo trabajo que un modal, con una diferencia que decide cuándo usarlo: deja ver la página que hay al lado."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="end" note="el borde donde termina la lectura">
+        <app-button variant="secondary" (pressed)="detailDrawer.set(true)">
+          Abrir detalle
+        </app-button>
+      </app-variant-row>
+      <app-variant-row label="start" note="para filtros o navegación">
+        <app-button variant="secondary" (pressed)="filterDrawer.set(true)">
+          Abrir filtros
+        </app-button>
+      </app-variant-row>
+    </app-variant-grid>
+
+    <app-drawer [(open)]="detailDrawer" title="Detalle del pedido" size="md">
+      <p class="overlays__text">
+        PED-2481 · Industrias Vega · 12 líneas. La lista de la que vienes sigue ahí al lado, que es
+        justo lo que un cajón hace y un modal no.
+      </p>
+      <app-button footer variant="ghost" (pressed)="detailDrawer.set(false)">Cerrar</app-button>
+      <app-button footer icon="pencil" (pressed)="detailDrawer.set(false)">Editar</app-button>
+    </app-drawer>
+
+    <app-drawer [(open)]="filterDrawer" title="Filtros" side="start" size="sm">
+      <p class="overlays__text">Un cajón por el otro borde, para lo que acompaña a la pantalla.</p>
+    </app-drawer>
+
+    <p note>
+      Es <code>aria-modal</code> igualmente: la interacción sigue confinada dentro. Lo que se ve al
+      lado es para no perder el sitio, no para trabajar en dos cosas a la vez.
+    </p>
+
+    <p note>
+      La trampa de foco, el bloqueo de desplazamiento, <code>Escape</code> y la devolución del foco
+      no están escritos aquí: son <code>useDialog</code>, compartido con <code>modal</code> y
+      <code>confirm-dialog</code>. Extraerlo destapó que <code>confirm-dialog</code>
+      <strong>no atrapaba el foco</strong>: el tabulador se salía de un diálogo
+      <code>aria-modal</code> hacia la página que estaba tapando.
+    </p>
+  </app-showcase-block>
+</app-showcase-page>

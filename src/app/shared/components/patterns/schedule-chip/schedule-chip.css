@@ -1,0 +1,32 @@
+:host {
+  display: block;
+}
+
+.chip {
+  overflow: hidden;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--schedule-chip-radius);
+  font-size: var(--text-overline);
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  /* El letter-spacing es del rol overline, y cuesta un ancho que la celda no
+     tiene; un chip es una etiqueta, no un encabezado. */
+  letter-spacing: normal;
+  text-transform: none;
+  transition: transform var(--duration-instant) var(--ease-out-quart);
+}
+
+.chip:hover {
+  transform: scale(1.02);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chip {
+    transition: none;
+  }
+
+  .chip:hover {
+    transform: none;
+  }
+}

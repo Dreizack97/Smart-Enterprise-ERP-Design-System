@@ -1,0 +1,60 @@
+<ng-content select="[trigger]" />
+
+<div
+  #panel
+  class="dropdown"
+  [class.dropdown--closed]="!open()"
+  [style.width]="width() || null"
+  [attr.data-placement]="resolvedPlacement()"
+  [attr.role]="ariaRole()"
+  [attr.aria-label]="label() || null"
+>
+  <div class="dropdown__slot"><ng-content select="[header]" /></div>
+
+  @if (items().length > 0) {
+    <div class="dropdown__list">
+      @for (entry of items(); track $index) {
+        @if (isItem(entry)) {
+          @if (entry.href) {
+            <a
+              #menuEntry
+              role="menuitem"
+              class="dropdown__item focus-ring"
+              [class.dropdown__item--danger]="entry.danger"
+              [href]="entry.href"
+              (keydown)="onKeydown($event)"
+              (click)="choose(entry)"
+            >
+              @if (entry.icon; as name) {
+                <app-icon [name]="name" />
+              }
+              {{ entry.label }}
+            </a>
+          } @else {
+            <button
+              #menuEntry
+              type="button"
+              role="menuitem"
+              class="dropdown__item focus-ring"
+              [class.dropdown__item--danger]="entry.danger"
+              [disabled]="!!entry.disabled"
+              (keydown)="onKeydown($event)"
+              (click)="choose(entry)"
+            >
+              @if (entry.icon; as name) {
+                <app-icon [name]="name" />
+              }
+              {{ entry.label }}
+            </button>
+          }
+        } @else {
+          <div class="dropdown__separator" role="separator"></div>
+        }
+      }
+    </div>
+  }
+
+  <ng-content />
+
+  <div class="dropdown__slot"><ng-content select="[footer]" /></div>
+</div>

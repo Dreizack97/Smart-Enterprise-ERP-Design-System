@@ -1,0 +1,330 @@
+<app-showcase-page
+  title="Contenedores y multimedia"
+  subtitle="Lo que envuelve al contenido, y las piezas que identifican a una persona o a un hecho"
+>
+  <app-showcase-block
+    title="section-card"
+    anchor="tarjetas"
+    description="El contenedor por defecto de una sección. Se apoya en el lienzo, no dentro de otra tarjeta."
+    layout="stack"
+  >
+    <app-section-card title="Clientes activos" subtitle="Últimos treinta días">
+      <p class="containers__text">
+        El cuerpo es una ranura libre: una tabla, una lista o un párrafo como este.
+      </p>
+      <app-button actions variant="ghost" size="sm" icon="download">Exportar</app-button>
+    </app-section-card>
+
+    <app-section-card title="Con título menor" titleSize="lg">
+      <p class="containers__text">
+        <code>titleSize="lg"</code> para una tarjeta secundaria dentro de una rejilla.
+      </p>
+    </app-section-card>
+
+    <app-section-card title="Sin relleno" subtitle="Para una tabla a sangre" [flush]="true">
+      <p class="containers__flush">
+        Con <code>flush</code> el cuerpo pierde el relleno y las esquinas recortan lo que haya
+        dentro: es lo que necesita una tabla que llega hasta el borde.
+      </p>
+    </app-section-card>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="stat-card"
+    description="Una cifra y su contexto. Tres disposiciones de la misma anatomía: etiqueta, cifra y nota."
+    layout="stack"
+  >
+    <app-variant-grid>
+      @for (variant of statVariants; track variant) {
+        <app-variant-row [label]="variant">
+          <app-stat-card
+            [variant]="variant"
+            label="Facturación del mes"
+            value="$1.284.900"
+            icon="dollar-sign"
+            tone="green"
+            note="12,4 % más que agosto"
+            noteTrend="up"
+          />
+        </app-variant-row>
+      }
+      <app-variant-row label="noteTrend" note="up · down · flat">
+        <app-stat-card
+          label="Pedidos"
+          value="482"
+          icon="shopping-cart"
+          tone="blue"
+          note="+8 %"
+          noteTrend="up"
+        />
+        <app-stat-card
+          label="Devoluciones"
+          value="14"
+          icon="rotate-ccw"
+          tone="red"
+          note="−3 %"
+          noteTrend="down"
+        />
+        <app-stat-card label="Clientes" value="238" icon="users" tone="purple" note="sin cambios" />
+      </app-variant-row>
+      <app-variant-row label="progress" note="con medidor">
+        <app-stat-card
+          variant="report"
+          label="Presupuesto ejercido"
+          value="92 %"
+          icon="chart-column"
+          tone="orange"
+          note="quedan 8 días"
+          [progress]="92"
+        />
+      </app-variant-row>
+    </app-variant-grid>
+
+    <p note>
+      Eran tres componentes —<code>stat-card</code>, <code>summary-tile</code> y
+      <code>report-card</code>— con la misma anatomía repetida. Cada uno declaraba su propio tamaño
+      de cifra, así que la coherencia dependía de que nadie tocara uno de los tres.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="form-card"
+    description="La forma que toma un formulario corto cuando es lo único en la pantalla."
+    layout="stack"
+  >
+    <app-form-card
+      brand="Smart Enterprise"
+      tagline="Sistema de gestión empresarial"
+      [headingLevel]="2"
+    >
+      <app-input
+        label="Correo corporativo"
+        type="email"
+        icon="mail"
+        placeholder="nombre@empresa.mx"
+      />
+      <app-button variant="primary" size="lg" fullWidth>Entrar</app-button>
+      <p footer class="containers__footer">Se llamaba <code>auth-card</code>.</p>
+    </app-form-card>
+
+    <app-form-card brand="Almacén Norte" logoIcon="package" tagline="" [headingLevel]="2">
+      <app-input label="Clave de operador" icon="user" placeholder="OP-0142" />
+      <app-button variant="primary" size="lg" fullWidth>Fichar entrada</app-button>
+    </app-form-card>
+
+    <p note>
+      La segunda lleva otro <code>logoIcon</code>, otra marca y ningún lema: la cabecera se encoge
+      —133 px a 108 px— en lugar de dejar un hueco. Tampoco tiene pie, porque el pie es una ranura y
+      una ranura vacía no reserva espacio.
+    </p>
+
+    <p note>
+      Nada en ella era propio de autenticación, así que dejó de llamarse por la primera pantalla que
+      la usó. El panel esmerilado del original se tradujo a tokens: en oscuro es una superficie
+      opaca, no una neblina brillante.
+    </p>
+
+    <p note>
+      Las dos de aquí llevan <code>headingLevel="2"</code>. La marca era un
+      <code>&lt;h1&gt;</code> fijo, que es lo correcto cuando la tarjeta <em>es</em> la pantalla y
+      un error en cualquier otro sitio: esta página tenía tres encabezados de primer nivel y la
+      lista de encabezados de un lector de pantalla dejaba de describir jerarquía alguna.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="icon"
+    anchor="identidad"
+    description="Envoltorio de Lucide con el tamaño y el trazo del sistema. La etiqueta decide si es decorativo."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="size" note="14 · 16 · 20 · 24">
+        <app-icon name="package" [size]="14" />
+        <app-icon name="package" [size]="16" />
+        <app-icon name="package" [size]="20" />
+        <app-icon name="package" [size]="24" />
+      </app-variant-row>
+      <app-variant-row label="strokeWidth" note="1.5 · 2 · 2.5">
+        <app-icon name="chart-line" [size]="24" [strokeWidth]="1.5" />
+        <app-icon name="chart-line" [size]="24" [strokeWidth]="2" />
+        <app-icon name="chart-line" [size]="24" [strokeWidth]="2.5" />
+      </app-variant-row>
+      <app-variant-row label="label" note="con nombre = role img">
+        <app-icon name="triangle-alert" [size]="24" label="Aviso de inventario" />
+        <app-icon name="triangle-alert" [size]="24" />
+      </app-variant-row>
+    </app-variant-grid>
+
+    <p note>
+      Sin <code>label</code> el icono es decorativo y se oculta al lector de pantalla; con etiqueta
+      pasa a <code>role="img"</code>. El vocabulario completo está en Fundamentos.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="avatar"
+    description="Iniciales sobre un disco de color derivado del nombre. No se descarga ninguna imagen."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      @for (size of sizes; track size) {
+        <app-variant-row [label]="size">
+          @for (person of people; track person) {
+            <app-avatar [name]="person" [size]="size" />
+          }
+        </app-variant-row>
+      }
+    </app-variant-grid>
+
+    <p note>
+      El original pedía las imágenes a <code>ui-avatars.com</code>: un sistema de diseño no debería
+      depender de un tercero para pintar una tabla, ni filtrarle una lista de clientes. La
+      luminosidad del matiz se <strong>resuelve</strong> por tono hasta que las iniciales blancas
+      llegan a 4,5:1 — comprobado en los 360 matices, peor caso 4,67:1.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="activity-item"
+    anchor="cronologia"
+    description="Una fila del registro de actividad: qué pasó, con qué matiz y cuándo."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      @for (entry of activity; track entry.tone) {
+        <app-variant-row [label]="entry.tone">
+          <app-activity-item
+            [icon]="entry.icon"
+            [tone]="entry.tone"
+            [title]="entry.title"
+            [description]="entry.description"
+            [time]="entry.time"
+          />
+        </app-variant-row>
+      }
+      <app-variant-row label="sin descripción" note="solo título y hora">
+        <app-activity-item icon="lock" tone="neutral" title="Sesión cerrada" time="hace 2 días" />
+      </app-variant-row>
+      <app-variant-row label="sin hora" note="cuando el orden ya la implica">
+        <app-activity-item
+          icon="upload"
+          tone="blue"
+          title="Documento adjuntado"
+          description="Constancia de situación fiscal, 240 kB."
+        />
+      </app-variant-row>
+    </app-variant-grid>
+
+    <p note>
+      Comparte el vocabulario de matices con la bandeja de avisos: es la misma idea visual, una
+      colocada en la página y la otra dentro de un panel.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="divider"
+    description="Una regla entre dos bloques, con una palabra en medio si hace falta."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="horizontal">
+        <app-divider />
+      </app-variant-row>
+      <app-variant-row label="label" note="la forma que motivó el componente">
+        <app-divider label="o continúa con" />
+      </app-variant-row>
+      <app-variant-row label="vertical" note="entre dos controles de una fila">
+        <span class="containers__inline">
+          <app-button variant="ghost" size="sm">Editar</app-button>
+          <app-divider orientation="vertical" />
+          <app-button variant="ghost" size="sm">Duplicar</app-button>
+          <app-divider orientation="vertical" />
+          <app-button variant="ghost" size="sm">Eliminar</app-button>
+        </span>
+      </app-variant-row>
+    </app-variant-grid>
+
+    <p note>
+      Sin etiqueta es un <code>&lt;hr&gt;</code>, que es el elemento que ya significa «corte
+      temático». Con etiqueta no puede serlo —un <code>&lt;hr&gt;</code> no admite texto dentro—,
+      así que pasa a <code>role="separator"</code> y la etiqueta es su nombre accesible.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="avatar-group"
+    description="Las personas de algo, en el ancho de dos avatares. Quien no cabe, se cuenta."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      @for (size of sizes; track size) {
+        <app-variant-row [label]="size">
+          <app-avatar-group [names]="team" [size]="size" label="Asignados a la tarea" />
+        </app-variant-row>
+      }
+      <app-variant-row label="max" note="tres visibles">
+        <app-avatar-group [names]="team" [max]="3" label="Asignados a la tarea" />
+      </app-variant-row>
+      <app-variant-row label="sin excedente" note="caben todos">
+        <app-avatar-group [names]="team.slice(0, 3)" label="Asignados a la tarea" />
+      </app-variant-row>
+    </app-variant-grid>
+
+    <p note>
+      El «+2» no es un callejón sin salida: lleva los nombres que faltan como título y como nombre
+      accesible. Un número suelto no dice a quién se refiere.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="timeline"
+    description="La misma unidad visual que el registro de actividad, más la línea que dice que es una secuencia."
+    layout="stack"
+    surface="card"
+  >
+    <app-timeline [entries]="history" label="Historial del pedido" />
+
+    <p note>
+      La línea va de un disco al siguiente, nunca por detrás de uno. Con una sola línea de fondo se
+      transparentaba a través de los iconos: <code>.tone-soft</code> es translúcido en el tema
+      oscuro. Por eso las entradas son una entrada del componente y no contenido proyectado — el
+      encapsulado de estilos deja fuera de alcance lo que se proyecta.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="kbd · code-block"
+    anchor="tecnico"
+    description="Las dos piezas tipográficas que la propia documentación necesita."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="combinación">
+        <app-kbd [keys]="['Ctrl', 'K']" />
+      </app-variant-row>
+      <app-variant-row label="una sola tecla">
+        <app-kbd [keys]="['Esc']" />
+      </app-variant-row>
+      <app-variant-row label="separator" note="una secuencia, no una combinación">
+        <app-kbd [keys]="['G', 'I']" separator="luego" />
+      </app-variant-row>
+    </app-variant-grid>
+
+    <app-code-block [code]="snippet" language="html" />
+
+    <app-code-block code="npm run audit" language="bash" [copyable]="false" />
+
+    <p note>
+      Sin coloreado de sintaxis, a propósito: colorear exige un analizador por lenguaje y una
+      segunda paleta que mantener en sintonía con los tokens. Lo que de verdad faltaba era el botón
+      de copiar, y si el navegador deniega el portapapeles lo dice en vez de fingir.
+    </p>
+  </app-showcase-block>
+</app-showcase-page>

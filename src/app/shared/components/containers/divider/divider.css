@@ -1,0 +1,53 @@
+:host(.divider--horizontal) {
+  display: block;
+  width: 100%;
+}
+
+/* Una línea vertical se estira hasta la fila donde se coloque en vez de
+   declarar su propia altura: dentro de una fila flex, `align-self: stretch`
+   la hace exactamente tan alta como su hermano más alto, que es lo que un
+   separador entre dos controles debe ser. */
+:host(.divider--vertical) {
+  display: inline-block;
+  align-self: stretch;
+  min-height: 1em;
+}
+
+.divider__rule {
+  border: 0;
+  background-color: var(--divider-line);
+}
+
+:host(.divider--horizontal) .divider__rule {
+  width: 100%;
+  height: var(--divider-thickness);
+  margin-block: var(--divider-gap);
+}
+
+:host(.divider--vertical) .divider__rule {
+  width: var(--divider-thickness);
+  height: 100%;
+  margin-inline: var(--divider-gap);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: var(--divider-label-gap);
+  margin-block: var(--divider-gap);
+}
+
+/* Ambas líneas toman el espacio sobrante por igual, para que la etiqueta se
+   siente en el medio sin importar su longitud — ningún porcentaje que
+   mantener en sincronía con el texto. */
+.divider__line {
+  height: var(--divider-thickness);
+  flex: 1;
+  background-color: var(--divider-line);
+}
+
+.divider__label {
+  color: var(--divider-label-ink);
+  font-size: var(--text-caption);
+  white-space: nowrap;
+}

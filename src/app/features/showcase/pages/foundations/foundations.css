@@ -1,0 +1,291 @@
+/* Una rampa hace scroll dentro de sí misma en vez de envolver: once pasos se
+   leen como un solo degradado solo mientras se mantengan en una línea. */
+/* Una lista generada que vuelve vacía lo dice. Un hueco silencioso se lee
+   como una decisión de diseño; esto se lee como el fallo que es. */
+.missing {
+  font-size: var(--text-caption);
+  color: var(--showcase-fail-ink);
+}
+
+/* `overflow-x: auto` obliga a que `overflow-y` se calcule también como
+   `auto` (CSS 2.1 §11.1.1: un eje no-`visible` arrastra al otro fuera de
+   `visible`), así que esto recorta en cada borde, no solo en los lados que
+   hacen scroll. El anillo de hover/foco del chip se pinta 4px fuera de su
+   caja de borde (`--focus-ring-width` + `--focus-ring-offset`), y el chip
+   superior izquierdo de cada fila se sienta pegado contra la propia esquina
+   superior izquierda de esta caja — sin padding entre ellos — así que su
+   anillo se cortaba justo donde debía redondear la esquina. El padding
+   empuja la caja de recorte hacia afuera esos mismos 4px en cada borde; el
+   margen negativo correspondiente mantiene la fila misma exactamente donde
+   estaba. Abajo se deja tal cual: su padding ya tenía ese margen, por
+   casualidad. */
+.ramp {
+  display: flex;
+  overflow-x: auto;
+  width: 100%;
+  gap: 0.5rem;
+  padding: 0.25rem 0.25rem 0.25rem;
+  margin: -0.25rem -0.25rem 0;
+}
+
+.ramp__step {
+  display: flex;
+  min-width: 4.5rem;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.ramp__chip {
+  height: 3rem;
+  border: 1px solid var(--line-subtle);
+  border-radius: var(--radius-md);
+}
+
+/* Cuadrado, para que la esquina sea legible. En una barra ancha un radio de
+   0.375rem y uno de 0.5rem se ven idénticos. */
+.ramp__chip--radius {
+  height: auto;
+  max-width: 4.5rem;
+  aspect-ratio: 1;
+  background-color: var(--surface-3);
+}
+
+.ramp__label {
+  font-family: var(--font-mono);
+  font-size: var(--text-overline);
+  font-weight: 600;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--ink-primary);
+}
+
+.ramp__value {
+  font-family: var(--font-mono);
+  font-size: var(--text-overline);
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--ink-muted);
+}
+
+.swatches {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(auto-fill, minmax(min(11rem, 100%), 1fr));
+  gap: 1rem;
+}
+
+.swatches__item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.swatches__box {
+  height: 3.5rem;
+  border: 1px solid var(--line-subtle);
+  border-radius: var(--radius-md);
+}
+
+/* Un token de línea no tiene nada que rellenar, así que la muestra lo
+   enseña como el borde que es, en el ancho en que en verdad se dibuja. */
+.swatches__box--line {
+  border-width: 2px;
+  background-color: var(--surface-1);
+}
+
+.swatches__name {
+  font-family: var(--font-mono);
+  font-size: var(--text-overline);
+  font-weight: 600;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--ink-primary);
+}
+
+.swatches__value {
+  font-size: var(--text-overline);
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--ink-muted);
+}
+
+.ink__sample {
+  border: 0;
+  background: none;
+  font-size: var(--text-body);
+}
+
+.ink__ratio {
+  font-family: var(--font-mono);
+  font-size: var(--text-overline);
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--ink-muted);
+}
+
+.ink__ratio--fail {
+  color: var(--showcase-fail-ink);
+}
+
+.tone__chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--radius-full);
+  padding: 0.25rem 0.625rem;
+  font-size: var(--text-overline);
+  font-weight: 600;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+/* Solo ancho y estilo, nunca el color: `.tone-border` en `shell.css` es
+   quien lo pinta, y un atajo `border:` aquí también fijaría `border-color`
+   — con mayor especificidad, así que el rol no mostraría nada en
+   silencio. */
+.tone__chip--outline {
+  border-width: 1px;
+  border-style: solid;
+}
+
+.type__sample {
+  min-width: 0;
+  border: 0;
+  background: none;
+  color: var(--ink-primary);
+}
+
+.elevation {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(auto-fill, minmax(min(9rem, 100%), 1fr));
+  gap: 1.25rem;
+  padding: 0.5rem;
+}
+
+.elevation__card {
+  display: flex;
+  border: 0;
+  height: 4.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-lg);
+  background-color: var(--surface-1);
+}
+
+.elevation__name {
+  font-family: var(--font-mono);
+  font-size: var(--text-overline);
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--ink-secondary);
+}
+
+.motion__track {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 18rem;
+  height: 1.5rem;
+  border-radius: var(--radius-full);
+  background-color: var(--surface-3);
+}
+
+.motion__dot {
+  position: absolute;
+  top: 0.25rem;
+  left: 0.25rem;
+  width: 1rem;
+  height: 1rem;
+  border-radius: var(--radius-full);
+  background-color: var(--showcase-motion-dot);
+  /* `left`, no `transform`: un porcentaje en `translateX` se resuelve contra
+     el punto, así que el recorrido tendría que repetir los 18rem de la
+     pista — y en el momento en que la pista es más angosta que eso, el
+     punto se sale de ella. Un porcentaje en `left` se resuelve contra la
+     pista, así que la demostración es correcta a cualquier ancho. */
+  transition-property: left;
+  transition-timing-function: var(--ease-out-quart);
+}
+
+.motion__dot--out {
+  left: calc(100% - 1.25rem);
+}
+
+.motion__replay {
+  align-self: flex-start;
+  border-radius: var(--radius-full);
+  padding: 0.375rem 0.875rem;
+  background-color: var(--showcase-button-surface);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--ink-secondary);
+}
+
+.motion__replay:hover {
+  background-color: var(--showcase-button-surface-hover);
+  color: var(--ink-primary);
+}
+
+.icons {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(auto-fill, minmax(min(6.5rem, 100%), 1fr));
+  gap: 0.75rem;
+}
+
+.icons__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: var(--radius-lg);
+  padding: 0.75rem 0.25rem;
+  background-color: var(--surface-1);
+  color: var(--ink-secondary);
+}
+
+.icons__name {
+  overflow: hidden;
+  max-width: 100%;
+  font-family: var(--font-mono);
+  font-size: var(--text-overline);
+  letter-spacing: normal;
+  text-transform: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ink-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion__dot {
+    transition: none;
+  }
+}
+
+/* =======================================================================
+   Muestras presionables
+   -----------------------------------------------------------------------
+   `copyable` lo fija la directiva `appCopyToken`, no las plantillas, así que
+   una muestra que copia siempre se ve presionable. Cada una de ellas es un
+   `<button>` real y ya tiene el teclado, el rol y el anillo de foco; estas
+   reglas solo le quitan el chrome que trae un botón.
+
+   El borde y el fondo se reinician en la propia regla de cada muestra
+   arriba, en vez de aquí: los chips de color y la tarjeta de elevación
+   tienen los suyos que conservar, y un reinicio general solo significaría
+   escribirlos dos veces.
+   ======================================================================= */
+
+.copyable {
+  position: relative;
+  padding: 0;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.copyable:hover {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}

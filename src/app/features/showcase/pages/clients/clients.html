@@ -1,0 +1,116 @@
+<app-page-header title="Clientes" subtitle="Cartera del almacén central">
+  <app-breadcrumb breadcrumb [items]="trail" />
+  <app-button actions variant="secondary" size="sm" icon="download">Exportar</app-button>
+  <app-button actions size="sm" icon="user-plus">Nuevo cliente</app-button>
+</app-page-header>
+
+<div class="list">
+  <app-section-card title="Cartera" [subtitle]="summary()" [flush]="true">
+    <app-table-toolbar
+      label="Filtros de la cartera"
+      [filtered]="hasFilters()"
+      (cleared)="clearFilters()"
+    >
+      <app-search-input
+        search
+        [(value)]="query"
+        variant="field"
+        placeholder="Buscar por nombre, correo o ciudad…"
+        label="Buscar clientes"
+      />
+      <app-select
+        filters
+        [(value)]="status"
+        [options]="statusOptions"
+        ariaLabel="Filtrar por estado"
+      />
+      <app-select filters [(value)]="city" [options]="cityOptions" ariaLabel="Filtrar por ciudad" />
+    </app-table-toolbar>
+
+    <app-data-table
+      [columns]="columns"
+      [rows]="rows()"
+      [trackBy]="trackClient"
+      [columnMenu]="true"
+      caption="Listado de clientes con ciudad, fecha de alta, importe facturado y estado"
+      [initialSort]="{ columnId: 'name', direction: 'asc' }"
+      (sortChange)="onSortChange($event)"
+    >
+      <ng-template appTableCell="name" [appTableCellOf]="rows()" let-client>
+        <button type="button" class="list__client focus-ring" (click)="openDetail(client)">
+          <app-avatar [name]="client.name" size="sm" />
+          <span class="list__client-text">
+            <span class="list__client-name">{{ client.name }}</span>
+            <span class="list__client-mail">{{ client.contact }}</span>
+          </span>
+        </button>
+      </ng-template>
+
+      <ng-template appTableCell="status" [appTableCellOf]="rows()" let-client>
+        <app-status-badge [tone]="client.status" [label]="client.statusLabel" />
+      </ng-template>
+
+      <ng-template appTableCell="actions" [appTableCellOf]="rows()" let-client>
+        <app-dropdown-menu
+          #rowMenu
+          [items]="rowActions"
+          placement="bottom-end"
+          [label]="'Acciones de ' + client.name"
+          (selected)="onRowAction(client, $event)"
+        >
+          <app-button
+            trigger
+            variant="ghost"
+            size="sm"
+            icon="ellipsis-vertical"
+            [ariaLabel]="'Acciones de ' + client.name"
+            (pressed)="rowMenu.toggle()"
+          />
+        </app-dropdown-menu>
+      </ng-template>
+
+      <app-empty-state
+        empty
+        icon="search"
+        title="Ningún cliente coincide"
+        description="Prueba con otro término o quita alguno de los filtros."
+      />
+    </app-data-table>
+
+    @if (filtered().length > 0) {
+      <div class="list__footer">
+        <app-pagination [(page)]="page" [pageCount]="pageCount()" [summary]="summary()" />
+      </div>
+    }
+  </app-section-card>
+</div>
+
+<app-drawer [(open)]="detailOpen" [title]="selected()?.name ?? 'Detalle'" size="md">
+  @if (selected(); as client) {
+    <dl class="detail">
+      <div class="detail__row">
+        <dt>Contacto</dt>
+        <dd>{{ client.contact }}</dd>
+      </div>
+      <div class="detail__row">
+        <dt>Ciudad</dt>
+        <dd>{{ client.city }}</dd>
+      </div>
+      <div class="detail__row">
+        <dt>Alta</dt>
+        <dd>{{ client.since }}</dd>
+      </div>
+      <div class="detail__row">
+        <dt>Facturado</dt>
+        <dd class="detail__amount">{{ formatAmount(client.amount) }}</dd>
+      </div>
+      <div class="detail__row">
+        <dt>Estado</dt>
+        <dd><app-status-badge [tone]="client.status" [label]="client.statusLabel" /></dd>
+      </div>
+    </dl>
+  }
+
+  <app-button footer variant="ghost" (pressed)="detailOpen.set(false)">Cerrar</app-button>
+  <app-button footer icon="pencil" (pressed)="detailOpen.set(false)">Editar</app-button>
+</app-drawer>

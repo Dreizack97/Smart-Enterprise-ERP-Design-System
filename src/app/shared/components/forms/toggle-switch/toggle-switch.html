@@ -1,0 +1,16 @@
+<span class="switch" [class.switch--disabled]="disabled()">
+  <button
+    type="button"
+    role="switch"
+    class="toggle focus-ring"
+    [class]="'toggle--' + size()"
+    [attr.aria-checked]="checked()"
+    [attr.aria-labelledby]="labelId()"
+    [disabled]="disabled()"
+    (click)="toggle()"
+  >
+    <span class="toggle__knob"></span>
+  </button>
+
+  <span class="switch__label" [id]="labelId()" [class.sr-only]="labelHidden()">{{ label() }}</span>
+</span>

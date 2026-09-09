@@ -1,0 +1,21 @@
+:host {
+  display: block;
+}
+
+.number-wrap {
+  position: relative;
+  display: flex;
+}
+
+/* Cifras tabulares para que una columna de importes se alinee en el punto decimal. */
+.number-wrap__control {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Libre del spinner nativo, que se sienta justo al final del campo. */
+.number-wrap__suffix {
+  inset-inline-end: calc(var(--field-padding-x) + 1.25rem);
+  font-size: var(--text-caption);
+  line-height: 1;
+}

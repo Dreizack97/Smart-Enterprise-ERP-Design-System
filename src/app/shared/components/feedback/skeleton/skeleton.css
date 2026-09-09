@@ -1,0 +1,57 @@
+:host {
+  display: block;
+}
+
+.skeleton {
+  display: block;
+  width: 100%;
+  border-radius: var(--skeleton-radius);
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 25%,
+    var(--skeleton-highlight) 50%,
+    var(--skeleton-base) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer var(--skeleton-shimmer-duration) infinite linear;
+}
+
+.skeleton--text {
+  height: var(--skeleton-line-height);
+  border-radius: var(--radius-sm);
+}
+
+.skeleton--block {
+  height: var(--skeleton-block-height);
+  border-radius: var(--radius-xl);
+}
+
+.skeleton--circle {
+  width: var(--skeleton-circle-size);
+  height: var(--skeleton-circle-size);
+  border-radius: var(--radius-full);
+}
+
+.skeleton--short {
+  width: 66%;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Un brillo que barre es exactamente el tipo de movimiento que dispara
+   incomodidad vestibular, así que se detiene en vez de solo bajar la
+   velocidad. El relleno plano se sigue leyendo como marcador de
+   posición. */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+    background: var(--skeleton-base);
+  }
+}

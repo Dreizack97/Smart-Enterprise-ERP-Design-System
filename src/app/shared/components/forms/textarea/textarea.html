@@ -1,0 +1,34 @@
+<app-field
+  [label]="label()"
+  [controlId]="textareaId()"
+  [required]="required()"
+  [hint]="hint()"
+  [error]="message()"
+  [errorId]="errorId()"
+>
+  <textarea
+    class="field-control"
+    [id]="textareaId()"
+    [rows]="rows()"
+    [value]="value()"
+    [placeholder]="placeholder()"
+    [disabled]="disabled()"
+    [required]="required()"
+    [attr.name]="name() || null"
+    [attr.aria-label]="!label() && ariaLabel() ? ariaLabel() : null"
+    [attr.maxlength]="maxLength() || null"
+    [attr.aria-invalid]="message() ? 'true' : null"
+    [attr.aria-describedby]="message() ? errorId() : null"
+    (input)="onInput($event)"
+    (blur)="onBlur()"
+  ></textarea>
+  @if (counter(); as count) {
+    <span
+      class="textarea__counter"
+      [class.textarea__counter--near]="nearLimit()"
+      aria-live="polite"
+    >
+      {{ count }}
+    </span>
+  }
+</app-field>

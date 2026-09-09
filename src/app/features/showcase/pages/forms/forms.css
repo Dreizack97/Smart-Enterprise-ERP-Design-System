@@ -1,0 +1,45 @@
+/* Los controles se estiran a la fila en vez de sentarse en su ancho de
+   contenido: una columna de campos de distintos anchos se lee como un
+   accidente. */
+app-input,
+app-select,
+app-number-input,
+app-search-input,
+app-password-input,
+app-combobox,
+app-date-picker,
+app-date-range-picker,
+app-textarea {
+  display: block;
+  width: 100%;
+  max-width: 24rem;
+}
+
+app-textarea,
+app-radio-group,
+app-password-strength-meter {
+  max-width: 32rem;
+}
+
+.forms__note {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  color: var(--ink-secondary);
+}
+
+/* El bloque de contraseña empareja un control con su medidor dentro de una
+   sola fila de variante; sin esto se sientan uno junto al otro y el medidor
+   deja de leerse como perteneciente al campo de arriba. */
+.forms__pair {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+/* Sustituye a un control real en el bloque `field`, que proyecta uno en vez
+   de poseerlo. */
+.forms__group {
+  font-size: var(--text-body);
+  color: var(--ink-secondary);
+}

@@ -1,0 +1,45 @@
+@if (variant() === 'bar') {
+  <div class="progress-row" [attr.data-tone]="hue()">
+    <div
+      class="progress-track"
+      role="progressbar"
+      [attr.aria-label]="label()"
+      [attr.aria-valuenow]="percentage()"
+      aria-valuemin="0"
+      aria-valuemax="100"
+    >
+      <span class="progress-fill" [style.width.%]="percentage()"></span>
+    </div>
+    @if (showValue()) {
+      <span class="progress-value">{{ percentage() }}%</span>
+    }
+  </div>
+} @else {
+  <div
+    class="progress-ring-wrap"
+    [attr.data-tone]="hue()"
+    role="progressbar"
+    [attr.aria-label]="label()"
+    [attr.aria-valuenow]="percentage()"
+    aria-valuemin="0"
+    aria-valuemax="100"
+  >
+    <!-- Rotated so the sweep starts at the top rather than at three o'clock. -->
+    <svg class="progress-ring" viewBox="0 0 64 64" aria-hidden="true">
+      <circle class="progress-ring__track" cx="32" cy="32" [attr.r]="radius" fill="none" />
+      <circle
+        class="progress-ring__fill"
+        cx="32"
+        cy="32"
+        [attr.r]="radius"
+        fill="none"
+        stroke-linecap="round"
+        [attr.stroke-dasharray]="circumference"
+        [attr.stroke-dashoffset]="offset()"
+      />
+    </svg>
+    @if (showValue()) {
+      <span class="progress-ring__value">{{ percentage() }}%</span>
+    }
+  </div>
+}

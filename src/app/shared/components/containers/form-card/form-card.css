@@ -1,0 +1,74 @@
+:host {
+  display: block;
+  width: 100%;
+  max-width: var(--form-card-max-width);
+}
+
+/* Esmerilado sobre el fondo de marca del layout en modo claro; una
+   superficie elevada opaca en oscuro, donde una neblina blanca translúcida
+   se tragaría el texto. Ambos valores vienen del token, así que esta regla
+   nunca necesita una rama de tema. */
+.form-card {
+  width: 100%;
+  padding: var(--form-card-padding);
+  border: 1px solid var(--form-card-border);
+  border-radius: var(--form-card-radius);
+  background: var(--form-card-surface);
+  backdrop-filter: blur(var(--form-card-blur));
+  -webkit-backdrop-filter: blur(var(--form-card-blur));
+  box-shadow: var(--shadow-2xl);
+}
+
+.form-card__head {
+  text-align: center;
+}
+
+.form-card__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--form-card-logo-size);
+  height: var(--form-card-logo-size);
+  margin-inline: auto;
+  border-radius: var(--radius-2xl);
+  background: var(--form-card-logo-surface);
+  color: var(--form-card-logo-ink);
+  box-shadow: var(--shadow-lg);
+}
+
+.form-card__brand {
+  margin-top: 1rem;
+  font-size: var(--text-title);
+  font-weight: 700;
+  color: var(--ink-primary);
+}
+
+.form-card__tagline {
+  margin-top: 0.25rem;
+  font-size: var(--text-body);
+  color: var(--ink-secondary);
+}
+
+/* Una columna con su propio ritmo, porque esta tarjeta tiene una forma de
+   contenido CONOCIDA: un formulario corto es, por definición, controles
+   apilados. Dejado como un bloque simple, el campo y el botón de debajo se
+   tocaban, y cada pantalla de inicio de sesión habría tenido que inventar su
+   propio espaciado.
+
+   `section-card` deliberadamente NO hace esto: su cuerpo recibe una tabla, un
+   párrafo o un grid, y un hueco ahí separaría cosas que nunca debían
+   separarse. */
+.form-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--form-card-body-gap);
+  margin-top: 2rem;
+}
+
+.form-card__footer {
+  margin-top: 1.5rem;
+}
+
+.form-card__footer:empty {
+  display: none;
+}

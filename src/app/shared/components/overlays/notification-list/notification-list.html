@@ -1,0 +1,45 @@
+@let notices = items();
+
+<div class="tray__header">
+  <h2 class="tray__heading">{{ heading() }}</h2>
+  @if (unreadCount() > 0) {
+    <button type="button" class="tray__mark focus-ring" (click)="markAllRead.emit()">
+      Marcar todas
+    </button>
+  }
+</div>
+
+@if (notices.length === 0) {
+  <p class="tray__empty">{{ emptyLabel() }}</p>
+} @else {
+  <ul class="tray__list">
+    @for (item of notices; track item.id) {
+      <li>
+        <button
+          type="button"
+          class="notice focus-ring"
+          [attr.data-tone]="item.tone"
+          (click)="selected.emit(item)"
+        >
+          <span class="notice__badge tone-soft">
+            <app-icon [name]="item.icon" [size]="14" />
+          </span>
+
+          <span class="notice__body">
+            <span class="notice__title">{{ item.title }}</span>
+            <span class="notice__description">{{ item.description }}</span>
+            <span class="notice__time">{{ item.time }}</span>
+          </span>
+
+          @if (!item.read) {
+            <span class="notice__dot">
+              <span class="sr-only">Sin leer</span>
+            </span>
+          }
+        </button>
+      </li>
+    }
+  </ul>
+}
+
+<div class="tray__slot"><ng-content select="[footer]" /></div>

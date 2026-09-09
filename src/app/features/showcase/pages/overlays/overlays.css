@@ -1,0 +1,20 @@
+app-notification-list {
+  display: block;
+  width: 100%;
+  max-width: 26rem;
+}
+
+.overlays__text {
+  font-size: var(--text-body);
+  color: var(--ink-secondary);
+}
+
+/* Un elemento simple que carga el tooltip, para mostrar que la directiva no
+   está atada a un componente propio. */
+.overlays__hint {
+  font-size: var(--text-body);
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+  color: var(--ink-secondary);
+  cursor: help;
+}

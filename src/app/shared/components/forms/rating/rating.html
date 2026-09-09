@@ -1,0 +1,32 @@
+@if (readonly()) {
+  <span class="rating" role="img" [attr.aria-label]="(label() ? label() + ': ' : '') + summary()">
+    @for (star of stars(); track star) {
+      <span class="rating__star" [class.rating__star--on]="star <= value()" aria-hidden="true">
+        <app-icon name="star" [size]="starSize()" />
+      </span>
+    }
+  </span>
+} @else {
+  <span class="rating" role="radiogroup" [attr.aria-labelledby]="label() ? labelId() : null">
+    @if (label(); as text) {
+      <span class="sr-only" [id]="labelId()">{{ text }}</span>
+    }
+
+    @for (star of stars(); track star) {
+      <label class="rating__star" [class.rating__star--on]="star <= value()">
+        <input
+          type="radio"
+          class="sr-only rating__input"
+          [id]="optionId(star)"
+          [name]="groupId()"
+          [value]="star"
+          [checked]="star === value()"
+          [disabled]="disabled()"
+          (change)="select(star)"
+        />
+        <span class="sr-only">{{ star }} de {{ max() }}</span>
+        <app-icon name="star" [size]="starSize()" />
+      </label>
+    }
+  </span>
+}

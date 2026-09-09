@@ -1,0 +1,15 @@
+/* Las alertas y los dos estados son bloques de ancho completo: pertenecen
+   al contenido que interrumpen, así que toman su medida. */
+app-alert,
+app-empty-state,
+app-error-state {
+  display: block;
+  width: 100%;
+}
+
+app-progress,
+app-skeleton {
+  display: block;
+  width: 100%;
+  max-width: 22rem;
+}

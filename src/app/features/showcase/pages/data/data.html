@@ -1,0 +1,162 @@
+<app-showcase-page
+  title="Datos"
+  subtitle="Tabla y gráficos. Ordenar en español y colorear en los dos temas no son detalles: son el trabajo"
+>
+  <app-showcase-block
+    title="data-table"
+    anchor="tabla"
+    description="Ordenación, columnas ocultables y plantillas de celda. El modelo de filas es TanStack; el marcado es nuestro."
+    layout="stack"
+    surface="card"
+  >
+    <div class="data__toolbar">
+      <app-button variant="soft" size="sm" icon="rotate-ccw" (pressed)="reload()">
+        Simular carga
+      </app-button>
+      <app-button variant="soft-danger" size="sm" icon="triangle-alert" (pressed)="toggleError()">
+        {{ failed() ? 'Quitar el error' : 'Simular error' }}
+      </app-button>
+    </div>
+
+    <app-data-table
+      [columns]="columns"
+      [rows]="clients"
+      [trackBy]="trackClient"
+      [columnMenu]="true"
+      [loading]="loading()"
+      [error]="failed()"
+      caption="Listado de clientes con ciudad, importe facturado y estado"
+      [initialSort]="{ columnId: 'name', direction: 'asc' }"
+    >
+      <ng-template appTableCell="status" [appTableCellOf]="clients" let-client>
+        <app-status-badge [tone]="client.status" [label]="client.statusLabel" />
+      </ng-template>
+
+      <ng-template appTableCell="name" [appTableCellOf]="clients" let-client>
+        <span class="data__client">
+          <app-avatar [name]="client.name" size="sm" />
+          <span class="data__client-name">{{ client.name }}</span>
+        </span>
+      </ng-template>
+
+      <div loading class="data__loading">
+        @for (row of [1, 2, 3, 4]; track row) {
+          <app-skeleton [lines]="1" />
+        }
+      </div>
+
+      <app-error-state
+        error
+        description="No se pudo consultar el listado de clientes."
+        (retry)="reload()"
+      />
+    </app-data-table>
+
+    <p note>
+      Ordena «Angel Moreno» junto a «Ángela Ruiz» y «Pedido 9» antes que «Pedido 10»: la comparación
+      es <code>Intl.Collator</code> en español, no de cadenas. El importe ordena por su valor y no
+      por el texto formateado — «$1.250,00» como cadena va antes que «$980,50».
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="data-table · sin resultados"
+    description="Un listado vacío explica por qué lo está y qué hacer, en vez de mostrar una tabla sin filas."
+    layout="stack"
+    surface="card"
+  >
+    <app-data-table [columns]="columns" [rows]="emptyClients" caption="Listado vacío">
+      <app-empty-state
+        empty
+        icon="search"
+        title="Sin clientes"
+        description="Ningún cliente coincide con el filtro actual."
+      />
+    </app-data-table>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="chart-canvas"
+    anchor="graficos"
+    description="Chart.js con la paleta del sistema. Un <canvas> no hereda CSS, así que el color se le da en código."
+    layout="grid"
+    surface="card"
+  >
+    <app-chart-canvas
+      [config]="revenue"
+      summary="Ingresos mensuales de enero a junio: 12, 19, 14, 22, 18 y 26 millones de pesos."
+    />
+    <app-chart-canvas
+      [config]="split"
+      height="18.75rem"
+      summary="Reparto por canal: directo 48 %, distribuidor 31 %, marketplace 21 %."
+    />
+    <app-chart-canvas
+      [config]="trend"
+      height="18.75rem"
+      summary="Pedidos de enero a junio: 42, 51, 47, 63, 58 y 72. Devoluciones: 6, 4, 8, 5, 3 y 4."
+    />
+
+    <p note>
+      Cada gráfico lleva un <code>summary</code> que se lee como texto: un lienzo es un mapa de
+      píxeles y no tiene contenido que anunciar. Las seis series categóricas se validaron por script
+      en ambos temas —ΔE ≥ 8 bajo deuteranopía y protanopía— y son deliberadamente distintas de los
+      tonos de estado.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="table-toolbar"
+    description="La fila que hay encima de una tabla: lo que la estrecha, y lo que actúa sobre ella."
+    layout="stack"
+    surface="card"
+  >
+    <app-table-toolbar
+      label="Filtros de la demostración"
+      [filtered]="toolbarFiltered()"
+      [selectedCount]="toolbarSelection()"
+      (cleared)="toolbarFiltered.set(false)"
+      (selectionCleared)="toolbarSelection.set(0)"
+    >
+      <app-search-input
+        search
+        [(value)]="toolbarQuery"
+        variant="field"
+        placeholder="Buscar en la tabla…"
+        label="Buscar"
+      />
+      <app-select
+        filters
+        [(value)]="toolbarStatus"
+        [options]="toolbarStatuses"
+        ariaLabel="Filtrar por estado"
+      />
+      <app-button actions variant="secondary" icon="download">Exportar</app-button>
+
+      <app-button bulk variant="danger" icon="trash-2">Eliminar</app-button>
+      <app-button bulk variant="secondary" icon="download">Exportar selección</app-button>
+    </app-table-toolbar>
+
+    <div class="data__toolbar-controls">
+      <app-button variant="soft" size="sm" (pressed)="toolbarFiltered.set(!toolbarFiltered())">
+        Simular filtro activo
+      </app-button>
+      <app-button
+        variant="soft"
+        size="sm"
+        (pressed)="toolbarSelection.set(toolbarSelection() ? 0 : 4)"
+      >
+        Simular selección
+      </app-button>
+    </div>
+
+    <p note>
+      Lo que el componente absorbe no son los controles —cambian en cada pantalla y se proyectan—
+      sino las tres decisiones que se repetían: <strong>cuándo aparece «Limpiar»</strong> (un botón
+      permanente sobre una lista sin filtrar es una acción sin nada que hacer),
+      <strong>dónde viven las acciones masivas</strong> (la misma franja, no una segunda barra que
+      empuja la tabla hacia abajo) y <strong>que los dos estados se excluyen</strong>: mientras hay
+      selección, filtrar no es lo que nadie está haciendo.
+    </p>
+  </app-showcase-block>
+</app-showcase-page>

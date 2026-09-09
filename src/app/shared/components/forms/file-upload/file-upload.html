@@ -1,0 +1,134 @@
+@let message = activeError();
+@let file = selected();
+
+<div class="upload">
+  <!-- Mechanism, not control: the visible buttons trigger it. Out of the tab
+       order because it is `sr-only` and nothing would show focus landing here. -->
+  <input
+    #fileInput
+    class="sr-only"
+    type="file"
+    tabindex="-1"
+    [id]="inputId()"
+    [attr.name]="name() || null"
+    [accept]="accept()"
+    [disabled]="disabled()"
+    [required]="required()"
+    [attr.aria-label]="label()"
+    [attr.aria-describedby]="message ? errorId() : hintId()"
+    (change)="onFileChange($event)"
+  />
+
+  @if (variant() === 'avatar') {
+    <div class="avatar-upload">
+      <div
+        class="avatar-upload__disc"
+        [class.avatar-upload__disc--dragging]="dragging()"
+        [class.avatar-upload__disc--invalid]="message"
+        (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave($event)"
+        (drop)="onDrop($event)"
+      >
+        @if (hasPreview()) {
+          <img class="avatar-upload__image" [src]="value()" alt="Vista previa" />
+        } @else if (fallbackInitials(); as initials) {
+          <span class="avatar-upload__initials">{{ initials }}</span>
+        } @else {
+          <app-icon name="user" [size]="36" />
+        }
+
+        <button
+          type="button"
+          class="avatar-upload__pick focus-ring"
+          [attr.aria-label]="hasFile() ? 'Cambiar imagen' : 'Subir imagen'"
+          [disabled]="disabled()"
+          (click)="openPicker()"
+        >
+          <app-icon name="camera" [size]="15" />
+        </button>
+
+        @if (hasFile() && !disabled()) {
+          <button
+            type="button"
+            class="avatar-upload__remove focus-ring"
+            aria-label="Quitar imagen"
+            (click)="clear($event)"
+          >
+            <app-icon name="trash-2" [size]="12" />
+          </button>
+        }
+      </div>
+
+      <div class="avatar-upload__side">
+        <span class="upload__label">{{ label() }}</span>
+        @if (hint(); as help) {
+          <span class="upload__hint" [id]="hintId()">{{ help }}</span>
+        }
+      </div>
+    </div>
+  } @else {
+    <label class="upload__label" [for]="inputId()">{{ label() }}</label>
+
+    @if (hasFile()) {
+      <div class="preview">
+        @if (hasPreview()) {
+          <img class="preview__image" [src]="value()" alt="Vista previa" />
+        } @else if (file) {
+          <div class="preview__file">
+            <span class="preview__file-icon"><app-icon name="package" [size]="22" /></span>
+            <span class="preview__file-meta">
+              <span class="preview__file-name">{{ file.name }}</span>
+              <span class="preview__file-size">{{ sizeLabel() }}</span>
+            </span>
+          </div>
+        }
+
+        <div class="preview__actions">
+          <button type="button" class="preview__action focus-ring" (click)="openPicker()">
+            <app-icon name="upload" [size]="14" />
+            <span>Cambiar</span>
+          </button>
+          <button
+            type="button"
+            class="preview__action preview__action--danger focus-ring"
+            (click)="clear($event)"
+          >
+            <app-icon name="trash-2" [size]="14" />
+            <span>Eliminar</span>
+          </button>
+        </div>
+      </div>
+    } @else {
+      <button
+        type="button"
+        class="dropzone focus-ring"
+        [class.dropzone--dragging]="dragging()"
+        [class.dropzone--invalid]="message"
+        [disabled]="disabled()"
+        (click)="openPicker()"
+        (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave($event)"
+        (drop)="onDrop($event)"
+      >
+        <span class="dropzone__badge"><app-icon name="upload" [size]="22" /></span>
+        <span class="dropzone__title">
+          <span class="dropzone__cta">Haz clic para subir</span> o arrastra y suelta
+        </span>
+        @if (hint(); as help) {
+          <span class="upload__hint" [id]="hintId()">{{ help }}</span>
+        }
+      </button>
+    }
+  }
+
+  @if (reading()) {
+    <p class="upload__status" aria-live="polite">Leyendo el archivo…</p>
+  }
+
+  @if (message) {
+    <p class="upload__error" [id]="errorId()" role="alert">
+      <app-icon name="triangle-alert" [size]="14" />
+      <span>{{ message }}</span>
+    </p>
+  }
+</div>

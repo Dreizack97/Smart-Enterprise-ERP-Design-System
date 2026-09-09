@@ -1,0 +1,136 @@
+:host {
+  display: block;
+}
+
+.media {
+  overflow: hidden;
+  height: 100%;
+  border-radius: var(--radius-2xl);
+  background-color: var(--card-surface);
+  box-shadow: var(--card-shadow);
+  transition:
+    transform var(--duration-fast) var(--ease-out-quart),
+    box-shadow var(--duration-fast) var(--ease-out-quart);
+}
+
+.media:hover {
+  transform: translateY(var(--media-card-lift));
+  box-shadow: var(--shadow-xl);
+}
+
+.media__frame {
+  position: relative;
+  height: var(--media-card-image-height);
+  background-color: var(--surface-2);
+}
+
+.media__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.media__badge {
+  position: absolute;
+  top: 0.75rem;
+  inset-inline-end: 0.75rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--badge-radius);
+  font-size: var(--text-caption);
+  font-weight: 500;
+}
+
+.media__body {
+  padding: var(--media-card-padding);
+}
+
+.media__overline {
+  font-size: var(--text-overline);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--link);
+}
+
+.media__title {
+  margin-top: 0.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-subheading);
+  font-weight: 700;
+  color: var(--ink-primary);
+}
+
+/* Dos líneas y luego elipsis: una tarjeta en una cuadrícula no puede crecer
+   para caber su prosa sin romper la fila en la que se sienta. */
+.media__description {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-top: 0.25rem;
+  font-size: var(--text-body);
+  color: var(--ink-secondary);
+}
+
+.media__figures {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.media__figure {
+  font-family: var(--font-mono);
+  font-size: var(--text-heading);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-primary);
+}
+
+.media__secondary {
+  font-family: var(--font-mono);
+  font-size: var(--text-body);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-muted);
+}
+
+.media__track {
+  height: var(--meter-height);
+  margin-top: 0.75rem;
+  overflow: hidden;
+  border-radius: var(--radius-full);
+  background-color: var(--meter-track);
+}
+
+.media__fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-full);
+  background-color: var(--tone-ink);
+  transition: width var(--duration-normal) var(--ease-out-quart);
+}
+
+.media__actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+/* Sin nada proyectado, el slot no debe dejar su margen superior atrás. */
+.media__actions:empty {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .media,
+  .media__fill {
+    transition: none;
+  }
+
+  .media:hover {
+    transform: none;
+  }
+}

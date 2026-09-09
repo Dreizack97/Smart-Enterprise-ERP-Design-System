@@ -1,0 +1,191 @@
+:host {
+  display: block;
+}
+
+.stat {
+  /* Un grid estira al host: sin esto, una tarjeta con una barra de progreso
+     queda más corta que las que llevan un mini gráfico. */
+  height: 100%;
+  border-radius: var(--card-radius);
+  background-color: var(--card-surface);
+  transition:
+    transform var(--duration-fast) var(--ease-out-quart),
+    box-shadow var(--duration-fast) var(--ease-out-quart);
+}
+
+.stat--metric {
+  padding: var(--stat-padding);
+  border: 1px solid var(--card-border);
+}
+
+.stat--tile {
+  padding: var(--stat-padding-compact);
+  box-shadow: var(--card-shadow);
+}
+
+.stat--report {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem;
+  box-shadow: var(--card-shadow);
+}
+
+/* El bloque de texto toma el espacio que sobra. Sin `flex: 1` se encogía a
+   su contenido más angosto y la etiqueta se truncaba con 850 px de tarjeta
+   sin usar — `justify-content: space-between` repartía la fila mientras
+   nada reclamaba el espacio. */
+.stat--report .stat__main {
+  flex: 1;
+}
+
+/* Y la barra cae a su propia línea en vez de convertirse en una tercera
+   columna de la fila: una barra de progreso se lee como perteneciente a la
+   cifra de arriba. */
+.stat--report .stat__track {
+  flex-basis: 100%;
+  margin-top: 0;
+}
+
+.stat--metric:hover,
+.stat--report:hover {
+  transform: translateY(var(--stat-lift));
+  box-shadow: var(--shadow-xl);
+}
+
+.stat--report:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.stat__main {
+  min-width: 0;
+}
+
+.stat__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.stat__label {
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--ink-secondary);
+}
+
+/* Las variantes compactas usan el overline: una etiqueta en mayúsculas se
+   lee como encabezado de columna, que es exactamente lo que son. */
+.stat--tile .stat__label,
+.stat--report .stat__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-overline);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stat__figure {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.stat__value {
+  font-family: var(--font-mono);
+  font-size: var(--stat-value-size);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-strong);
+}
+
+/* En un tile la cifra es el elemento con color; en el resto, el matiz va en
+   el icono y la cifra se queda neutral. */
+.stat--tile .stat__value {
+  color: var(--tone-ink);
+}
+
+.stat--tile[data-tone='neutral'] .stat__value,
+.stat--report .stat__value {
+  color: var(--ink-primary);
+}
+
+.stat__note {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: var(--text-caption);
+  font-weight: 500;
+  color: var(--tone-ink);
+}
+
+.stat__note[data-tone='neutral'] {
+  color: var(--ink-secondary);
+}
+
+.stat__note--block {
+  display: block;
+  font-weight: 400;
+}
+
+.stat__icon {
+  flex-shrink: 0;
+  color: var(--tone-ink);
+}
+
+.stat[data-tone='neutral'] .stat__icon {
+  color: var(--ink-muted);
+}
+
+.stat__badge {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: var(--stat-badge-size);
+  height: var(--stat-badge-size);
+  border-radius: var(--radius-xl);
+}
+
+.stat__track {
+  height: var(--stat-progress-height);
+  width: 100%;
+  margin-top: 1rem;
+  overflow: hidden;
+  border-radius: var(--radius-full);
+  background-color: var(--stat-progress-track);
+}
+
+.stat__fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-full);
+  background-color: var(--stat-progress-fill);
+  transition: width var(--duration-slow) var(--ease-out-quart);
+}
+
+/* Altura fija: el mini gráfico es la forma de la tendencia, no un gráfico
+   legible. Dejarlo crecer desbalancearía la fila de indicadores. */
+.stat__chart:not(:empty) {
+  height: var(--stat-chart-height);
+  margin-top: 1rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stat,
+  .stat__fill {
+    transition: none;
+  }
+
+  .stat--metric:hover,
+  .stat--report:hover {
+    transform: none;
+  }
+}

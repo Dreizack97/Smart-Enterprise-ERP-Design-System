@@ -1,0 +1,60 @@
+/* El host es la celda: un elemento envoltorio adentro se sentaría a la mitad
+   de los propios bordes de la cuadrícula, y la superficie de hover se
+   quedaría corta antes de llegar a ellos. */
+:host {
+  display: flex;
+  min-height: var(--calendar-cell-min-height);
+  flex-direction: column;
+  gap: var(--calendar-cell-entry-gap);
+  padding: var(--calendar-cell-padding);
+  border-right: 1px solid var(--line-subtle);
+  border-bottom: 1px solid var(--line-subtle);
+  transition: background-color var(--duration-instant) var(--ease-out-quart);
+}
+
+:host(:hover) {
+  background-color: var(--calendar-cell-surface-hover);
+}
+
+:host(.calendar-cell--last-in-row) {
+  border-right: none;
+}
+
+/* Un día de un mes adyacente sigue siendo un destino válido, así que
+   conserva su número y su hover; la superficie hundida es lo que indica que
+   no es de este mes. */
+:host(.calendar-cell--muted) {
+  background-color: var(--calendar-outside-surface);
+  color: var(--ink-muted);
+}
+
+.calendar-cell__day {
+  display: inline-flex;
+  width: var(--calendar-day-size);
+  height: var(--calendar-day-size);
+  /* `flex-shrink: 0` y la autoalineación mantienen el disco perfectamente
+     redondo: una columna flex de otro modo lo estiraría al ancho de la
+     celda y lo aplastaría cuando las entradas de abajo necesiten el
+     espacio. */
+  flex-shrink: 0;
+  align-items: center;
+  align-self: flex-start;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: normal;
+}
+
+.calendar-cell__day--today {
+  background-color: var(--calendar-today-surface);
+  color: var(--calendar-today-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host {
+    transition: none;
+  }
+}

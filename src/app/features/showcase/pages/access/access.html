@@ -1,0 +1,140 @@
+@let current = step();
+
+<app-form-card [brand]="title()" tagline="Sistema de gestión empresarial">
+  @switch (current) {
+    @case ('signin') {
+      <app-input
+        [(value)]="email"
+        label="Correo corporativo"
+        type="email"
+        icon="mail"
+        placeholder="nombre@empresa.mx"
+        name="email"
+        required
+      />
+
+      <app-password-input
+        [(value)]="password"
+        label="Contraseña"
+        autocomplete="current-password"
+        name="password"
+        required
+      />
+
+      <div class="access__row">
+        <app-checkbox [(checked)]="remember" label="Mantener la sesión abierta" />
+        <button type="button" class="access__link focus-ring" (click)="go('verify')">
+          Olvidé mi contraseña
+        </button>
+      </div>
+
+      <app-button
+        variant="primary"
+        size="lg"
+        fullWidth
+        [loading]="busy()"
+        (pressed)="submit('verify', 'Te enviamos un código de verificación.')"
+      >
+        Entrar
+      </app-button>
+
+      <app-divider label="o continúa con" />
+
+      @for (provider of providers; track provider.label) {
+        <app-social-button [label]="provider.label" [iconSrc]="provider.icon" />
+      }
+    }
+
+    @case ('signup') {
+      <app-input
+        [(value)]="fullName"
+        label="Nombre y apellidos"
+        icon="user"
+        placeholder="Lucía Fernández"
+        name="name"
+        required
+      />
+
+      <app-input
+        [(value)]="email"
+        label="Correo corporativo"
+        type="email"
+        icon="mail"
+        placeholder="nombre@empresa.mx"
+        name="email"
+        required
+      />
+
+      <app-password-input
+        [(value)]="password"
+        label="Contraseña"
+        autocomplete="new-password"
+        hint="Doce caracteres o más. Una frase corriente vale más que un símbolo raro."
+        name="new-password"
+        required
+      />
+
+      <app-password-strength-meter [password]="password()" [userInputs]="ownWords()" />
+
+      <app-checkbox [(checked)]="terms" label="Acepto los términos del servicio" />
+
+      <app-button
+        variant="primary"
+        size="lg"
+        fullWidth
+        [disabled]="!terms()"
+        [loading]="busy()"
+        (pressed)="submit('verify', 'Te enviamos un código para confirmar el correo.')"
+      >
+        Crear cuenta
+      </app-button>
+    }
+
+    @case ('verify') {
+      <p class="access__text">
+        Escribimos a <strong>{{ email() || 'tu correo corporativo' }}</strong> con un código de seis
+        dígitos. Caduca en diez minutos.
+      </p>
+
+      <app-otp-input [(value)]="code" label="Código de verificación" />
+
+      <app-resend-timer
+        [cooldownSeconds]="30"
+        [resending]="resending()"
+        [resetSignal]="resendReset()"
+        label="Reenviar código"
+        (resend)="onResend()"
+      />
+
+      <app-button
+        variant="primary"
+        size="lg"
+        fullWidth
+        [disabled]="code().length < 6"
+        [loading]="busy()"
+        (pressed)="finish()"
+      >
+        Verificar y entrar
+      </app-button>
+    }
+  }
+
+  <div footer class="access__footer">
+    @switch (current) {
+      @case ('signin') {
+        <span>¿Todavía no tienes cuenta?</span>
+        <button type="button" class="access__link focus-ring" (click)="go('signup')">
+          Crear una
+        </button>
+      }
+      @case ('signup') {
+        <span>¿Ya tienes cuenta?</span>
+        <button type="button" class="access__link focus-ring" (click)="go('signin')">Entrar</button>
+      }
+      @case ('verify') {
+        <span>¿Te equivocaste de correo?</span>
+        <button type="button" class="access__link focus-ring" (click)="go('signin')">Volver</button>
+      }
+    }
+  </div>
+</app-form-card>

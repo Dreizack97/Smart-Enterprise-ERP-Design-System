@@ -1,0 +1,25 @@
+<figure class="code">
+  @if (language() || copyable()) {
+    <figcaption class="code__bar">
+      <span class="code__language">{{ language() }}</span>
+
+      @if (copyable()) {
+        <app-button
+          variant="ghost"
+          size="sm"
+          icon="copy"
+          ariaLabel="Copiar el código"
+          (pressed)="copy()"
+        >
+          Copiar
+        </app-button>
+      }
+    </figcaption>
+  }
+
+  <pre class="code__body"><code>{{ code() }}</code></pre>
+
+  <!-- Outside the button, so the confirmation never becomes part of the
+       button's accessible name. -->
+  <span class="sr-only" aria-live="polite">{{ feedback() }}</span>
+</figure>

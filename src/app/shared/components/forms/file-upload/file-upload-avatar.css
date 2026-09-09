@@ -1,0 +1,100 @@
+/* =======================================================================
+   Variante avatar
+   ======================================================================= */
+
+.avatar-upload {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.avatar-upload__disc {
+  position: relative;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 6rem;
+  height: 6rem;
+  border: 2px solid var(--field-border);
+  border-radius: var(--radius-full);
+  background-color: var(--surface-2);
+  color: var(--ink-muted);
+  user-select: none;
+  transition:
+    border-color var(--duration-fast) var(--ease-out-quart),
+    box-shadow var(--duration-fast) var(--ease-out-quart);
+}
+
+.avatar-upload__disc--dragging {
+  border-color: var(--field-border-focus);
+  box-shadow: 0 0 0 4px var(--field-focus-halo);
+}
+
+.avatar-upload__disc--invalid {
+  border-color: var(--field-border-invalid);
+}
+
+.avatar-upload__image {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+}
+
+.avatar-upload__initials {
+  font-family: var(--font-mono);
+  font-size: var(--text-heading);
+  font-weight: 700;
+  color: var(--ink-secondary);
+}
+
+.avatar-upload__pick,
+.avatar-upload__remove {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: transform var(--duration-fast) var(--ease-out-quart);
+}
+
+.avatar-upload__pick {
+  inset-block-end: -0.25rem;
+  inset-inline-end: -0.25rem;
+  width: 2rem;
+  height: 2rem;
+  background-color: var(--button-primary-surface);
+  color: var(--button-primary-ink);
+  box-shadow: var(--shadow-md);
+}
+
+.avatar-upload__remove {
+  inset-block-start: -0.25rem;
+  inset-inline-end: -0.25rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 1px solid var(--line-default);
+  background-color: var(--surface-1);
+  color: var(--ink-muted);
+}
+
+.avatar-upload__pick:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.avatar-upload__remove:hover {
+  color: var(--upload-error-ink);
+  border-color: var(--upload-error-border);
+}
+
+.avatar-upload__pick:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.avatar-upload__side {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}

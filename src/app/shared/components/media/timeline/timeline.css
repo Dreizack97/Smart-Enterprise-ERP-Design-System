@@ -1,0 +1,31 @@
+:host {
+  display: block;
+}
+
+.timeline__row {
+  position: relative;
+}
+
+/* El riel cuelga del fondo de una insignia hasta el tope de la siguiente,
+   así que nunca pasa detrás de un icono — ver la nota en el componente sobre
+   por qué eso importa en el tema oscuro.
+
+   Ambos extremos se derivan de los propios tokens de `activity-item` en vez
+   de números escritos aquí. El inicio es el padding sobre la insignia más la
+   insignia misma — el punto donde termina el disco. El final llega UN
+   PADDING POR DEBAJO de esta fila, porque ahí es donde empieza la insignia
+   de la siguiente fila: las filas se sientan pegadas unas a otras, así que
+   lo único entre dos insignias es el padding inferior de un elemento y el
+   padding superior del siguiente. Cambia el tamaño de la insignia o ese
+   padding y el riel sigue a ambos. */
+.timeline__rail {
+  position: absolute;
+  z-index: 0;
+  top: calc(var(--activity-padding) + var(--activity-badge-size));
+  bottom: calc(var(--activity-padding) * -1);
+  left: calc(var(--activity-padding) + var(--activity-badge-size) / 2);
+  width: var(--timeline-rail-width);
+  border-radius: var(--radius-full);
+  background-color: var(--timeline-rail-color);
+  translate: calc(var(--timeline-rail-width) / -2) 0;
+}

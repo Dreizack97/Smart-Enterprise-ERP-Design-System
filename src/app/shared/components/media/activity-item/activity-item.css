@@ -1,0 +1,52 @@
+:host {
+  display: block;
+}
+
+.activity {
+  display: flex;
+  gap: 1rem;
+  padding: var(--activity-padding);
+  border-radius: var(--radius-xl);
+  transition: background-color var(--duration-fast) var(--ease-out-quart);
+}
+
+/* El tinte de hover viene de un token con su propio valor de modo oscuro, en
+   vez de una regla `:host-context(html.dark)`. Una rama de tema dentro de la
+   hoja de estilos de un componente es un segundo lugar donde se define el
+   tema, y se desalinea. */
+.activity:hover {
+  background-color: var(--activity-surface-hover);
+}
+
+.activity__badge {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: var(--activity-badge-size);
+  height: var(--activity-badge-size);
+  border-radius: var(--radius-full);
+}
+
+.activity__body {
+  min-width: 0;
+  flex: 1;
+}
+
+.activity__title {
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--ink-primary);
+}
+
+.activity__description {
+  font-size: var(--text-caption);
+  color: var(--ink-secondary);
+}
+
+.activity__time {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+}

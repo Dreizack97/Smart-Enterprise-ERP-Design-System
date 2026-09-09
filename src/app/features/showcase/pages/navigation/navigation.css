@@ -1,0 +1,16 @@
+/* Las piezas de navegación abarcan su contenedor: un breadcrumb, una barra
+   de pestañas y una fila de paginación son la medida completa del
+   contenido sobre el que se sientan. */
+app-breadcrumb,
+app-tabs,
+app-accordion,
+app-stepper,
+app-pagination {
+  display: block;
+  width: 100%;
+}
+
+.navigation__panel {
+  font-size: var(--text-body);
+  color: var(--ink-secondary);
+}

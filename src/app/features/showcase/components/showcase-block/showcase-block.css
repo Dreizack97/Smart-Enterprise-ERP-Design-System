@@ -1,0 +1,75 @@
+:host {
+  display: block;
+}
+
+.block {
+  border-radius: var(--card-radius);
+  background-color: var(--card-surface);
+  box-shadow: var(--card-shadow);
+}
+
+.block__head {
+  padding: var(--card-padding) var(--card-padding) 1rem;
+}
+
+.block__title {
+  font-size: var(--text-subheading);
+  font-weight: 700;
+  color: var(--ink-primary);
+}
+
+.block__description {
+  margin-top: 0.25rem;
+  font-size: var(--text-body);
+  color: var(--ink-secondary);
+}
+
+/* El área de demostración pinta su propio fondo, para que un componente que
+   no trae superficie propia se siga leyendo como si estuviera asentado
+   sobre algo. */
+.block__demo {
+  display: flex;
+  gap: var(--showcase-demo-gap);
+  padding: var(--showcase-demo-padding);
+  border-top: 1px solid var(--line-subtle);
+  border-bottom-right-radius: var(--card-radius);
+  border-bottom-left-radius: var(--card-radius);
+}
+
+.block__demo--on-canvas {
+  background-color: var(--showcase-demo-surface);
+}
+
+/* El fondo de la tarjeta es igual a la propia superficie del bloque, así que
+   el borde es lo que los separa. Eso es deliberado: un campo tiene que verse
+   sobre la superficie en la que realmente se sienta, no sobre una elegida
+   para hacer visible la franja. */
+.block__demo--on-card {
+  background-color: var(--showcase-demo-surface-card);
+}
+
+.block__demo--row {
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.block__demo--stack {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.block__demo--grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(18rem, 100%), 1fr));
+}
+
+.block__note:empty {
+  display: none;
+}
+
+.block__note {
+  padding: 1rem var(--card-padding);
+  border-top: 1px solid var(--line-subtle);
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+}

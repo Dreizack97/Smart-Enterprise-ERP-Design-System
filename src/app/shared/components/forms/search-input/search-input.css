@@ -1,0 +1,88 @@
+:host {
+  display: block;
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: var(--field-radius);
+  padding-inline: var(--field-padding-x);
+  color: var(--field-ink);
+  transition:
+    border-color var(--duration-fast) var(--ease-out-quart),
+    box-shadow var(--duration-fast) var(--ease-out-quart);
+}
+
+/* Píldora compacta para la barra superior: un relleno sólido y sin borde,
+   para que se lea como parte del chrome y no como un formulario que hay que
+   llenar. */
+.search--chip {
+  height: var(--field-height-sm);
+  background-color: var(--surface-2);
+  border: var(--field-border-width) solid transparent;
+}
+
+.search--field {
+  height: var(--field-height-md);
+  background-color: var(--field-surface);
+  border: var(--field-border-width) solid var(--field-border);
+}
+
+.search:focus-within {
+  border-color: var(--field-border-focus);
+  box-shadow: 0 0 0 3px var(--field-focus-halo);
+}
+
+.search__icon {
+  display: inline-flex;
+  color: var(--field-ink-placeholder);
+}
+
+.search__input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-size: var(--field-font-size);
+  outline: none;
+}
+
+/* El affordance nativo de limpiar de `type="search"` difiere en cada
+   navegador e ignora el tema, así que se reemplaza por un botón propio. */
+.search__input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.search__clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: var(--radius-full);
+  color: var(--field-ink-placeholder);
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-out-quart);
+}
+
+.search__clear:hover {
+  color: var(--field-ink);
+}
+
+.search__spinner {
+  width: 0.875rem;
+  height: 0.875rem;
+  border: 2px solid currentcolor;
+  border-top-color: transparent;
+  border-radius: var(--radius-full);
+  color: var(--field-ink-placeholder);
+  animation: search-spin 0.6s linear infinite;
+}
+
+@keyframes search-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

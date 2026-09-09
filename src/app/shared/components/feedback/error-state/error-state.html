@@ -1,0 +1,21 @@
+<div class="state" role="alert" data-tone="red">
+  <span class="state__badge tone-subtle"><app-icon [name]="icon()" [size]="22" /></span>
+  <p class="state__title">{{ title() }}</p>
+  @if (description(); as text) {
+    <p class="state__description">{{ text }}</p>
+  }
+  <div class="state__actions">
+    @if (retryable()) {
+      <app-button
+        variant="secondary"
+        size="sm"
+        icon="rotate-ccw"
+        [loading]="retrying()"
+        (pressed)="onRetry()"
+      >
+        {{ retryLabel() }}
+      </app-button>
+    }
+    <ng-content select="[actions]" />
+  </div>
+</div>

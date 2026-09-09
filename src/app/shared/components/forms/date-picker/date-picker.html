@@ -1,0 +1,53 @@
+<app-field
+  [label]="label()"
+  [controlId]="pickerId()"
+  [required]="required()"
+  [hint]="hint()"
+  [error]="combinedMessage()"
+  [errorId]="errorId()"
+>
+  <div #anchor class="picker">
+    <input
+      type="text"
+      class="field-control field-control--md picker__input"
+      inputmode="numeric"
+      autocomplete="off"
+      maxlength="10"
+      [id]="pickerId()"
+      [value]="text()"
+      [placeholder]="placeholder()"
+      [disabled]="disabled()"
+      [required]="required()"
+      [attr.aria-label]="!label() && ariaLabel() ? ariaLabel() : null"
+      [attr.aria-invalid]="combinedMessage() ? 'true' : null"
+      [attr.aria-describedby]="combinedMessage() ? errorId() : null"
+      (keydown)="onKeydown($event)"
+      (input)="onType($event)"
+      (blur)="onLeave()"
+    />
+
+    <button
+      type="button"
+      class="picker__toggle focus-ring"
+      [disabled]="disabled()"
+      [attr.aria-expanded]="open()"
+      aria-haspopup="dialog"
+      aria-label="Abrir el calendario"
+      (click)="toggle()"
+    >
+      <app-icon name="calendar" [size]="16" />
+    </button>
+  </div>
+
+  @if (open()) {
+    <div #popup class="picker__popup" role="dialog" aria-label="Elegir fecha">
+      <app-date-grid
+        [month]="month()"
+        [selected]="value() || null"
+        label="Calendario"
+        (daySelected)="choose($event)"
+        (monthChanged)="month.set($event)"
+      />
+    </div>
+  }
+</app-field>

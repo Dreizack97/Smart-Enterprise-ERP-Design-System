@@ -1,0 +1,81 @@
+/* El host ES el panel. En el original era `display: contents` alrededor de
+   un `<aside>`, lo que significaba que cada regla de geometría se tenía que
+   escribir globalmente contra `.sidebar`; poseer la caja las mantiene
+   aquí. */
+:host {
+  position: fixed;
+  z-index: 40;
+  top: var(--navbar-height);
+  bottom: 0;
+  left: 0;
+  display: flex;
+  width: var(--sidebar-width);
+  flex-direction: column;
+  border-right: 1px solid var(--sidebar-border);
+  background-color: var(--sidebar-surface);
+  transition:
+    transform var(--shell-transition-duration) var(--ease-out-quart),
+    width var(--shell-transition-duration) var(--ease-out-quart);
+}
+
+.sidebar__nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--sidebar-padding);
+}
+
+.sidebar__section {
+  margin-bottom: var(--sidebar-section-gap);
+}
+
+.sidebar__section-title {
+  margin-bottom: 0.5rem;
+  padding: 0 1rem;
+  font-size: var(--text-overline);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-muted);
+}
+
+.sidebar__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+/* Móvil y tablet: un drawer que se desliza sobre el contenido. */
+@media (max-width: 1023.98px) {
+  :host {
+    z-index: 50;
+    transform: translateX(-100%);
+  }
+
+  :host(.sidebar--open) {
+    transform: translateX(0);
+  }
+}
+
+/* Escritorio: el panel puede encogerse a un rail de iconos. */
+@media (min-width: 1024px) {
+  :host(.sidebar--rail) {
+    width: var(--sidebar-width-collapsed);
+  }
+
+  /* Los flyouts del rail escapan del panel hacia el costado, y un `<nav>`
+     con scroll los recortaría. A este ancho solo quedan iconos, así que no
+     hay nada que hacer scroll. */
+  :host(.sidebar--rail) .sidebar__nav {
+    overflow: visible;
+  }
+
+  :host(.sidebar--rail) .sidebar__section-title {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host {
+    transition: none;
+  }
+}

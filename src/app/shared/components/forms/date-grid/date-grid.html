@@ -1,0 +1,82 @@
+<div class="cal" role="group" [attr.aria-label]="label() || null">
+  <div class="cal__head">
+    <button type="button" class="cal__step focus-ring" aria-label="Mes anterior" (click)="step(-1)">
+      <app-icon name="chevron-left" [size]="16" />
+    </button>
+
+    <div class="cal__jump">
+      <select
+        class="cal__select focus-ring"
+        aria-label="Mes"
+        [value]="shownMonth()"
+        (change)="pickMonth($any($event.target).value)"
+      >
+        @for (name of months; track name; let index = $index) {
+          <option [value]="index" [selected]="index === shownMonth()">{{ name }}</option>
+        }
+      </select>
+
+      <select
+        class="cal__select focus-ring"
+        aria-label="Año"
+        [value]="shownYear()"
+        (change)="pickYear($any($event.target).value)"
+      >
+        @for (year of years(); track year) {
+          <option [value]="year" [selected]="year === shownYear()">{{ year }}</option>
+        }
+      </select>
+    </div>
+
+    <button type="button" class="cal__step focus-ring" aria-label="Mes siguiente" (click)="step(1)">
+      <app-icon name="chevron-right" [size]="16" />
+    </button>
+  </div>
+
+  <!-- The month on show, announced without interrupting: changing month is
+       something the reader just did. -->
+  <p class="sr-only" aria-live="polite">{{ title() }}</p>
+
+  <div class="cal__weekdays" aria-hidden="true">
+    @for (name of weekdays; track name) {
+      <span class="cal__weekday">{{ name }}</span>
+    }
+  </div>
+
+  <!--
+    `role="grid"` / `row` / `gridcell` is the structure the ARIA practices
+    describe for a calendar, and it is what `@angular/aria`'s grid builds too —
+    that part was worth taking from the library even though its navigation was
+    not. One keydown listener for the whole grid rather than one per day: the
+    keys move BETWEEN days, so the handler belongs to the thing they move
+    within. The container is not focusable and must not be — the focus is
+    always on one of the cells, which is what the roving `tabindex` is for.
+  -->
+  <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
+  <div class="cal__weeks" role="grid" [attr.aria-label]="title()" (keydown)="onKeydown($event)">
+    @for (week of weeks(); track $index) {
+      <div class="cal__week" role="row">
+        @for (slot of week; track slot.iso) {
+          <div
+            class="cal__day focus-ring"
+            role="gridcell"
+            [class.cal__day--muted]="slot.muted"
+            [class.cal__day--today]="slot.today"
+            [class.cal__day--selected]="isSelected(slot)"
+            [class.cal__day--in-range]="inRange(slot)"
+            [attr.tabindex]="slot.iso === tabbableIso() ? 0 : -1"
+            [attr.aria-selected]="isSelected(slot)"
+            [attr.aria-current]="slot.today ? 'date' : null"
+            [attr.aria-label]="slot.iso"
+            [attr.data-iso]="slot.iso"
+            (focus)="onCellFocus(slot.iso)"
+            (click)="daySelected.emit(slot.iso)"
+            (keydown)="onCellKeydown($event, slot.iso)"
+          >
+            {{ slot.day }}
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

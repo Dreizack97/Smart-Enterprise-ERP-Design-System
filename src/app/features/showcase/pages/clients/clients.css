@@ -1,0 +1,82 @@
+.list {
+  padding: var(--showcase-block-gap) var(--showcase-gutter) 2.5rem;
+}
+
+@media (min-width: 1024px) {
+  .list {
+    padding-right: var(--showcase-gutter-wide);
+    padding-left: var(--showcase-gutter-wide);
+  }
+}
+
+/* `flush` en la tarjeta quita su padding, así que la barra de herramientas y
+   el pie traen su propio margen y la tabla se mantiene de borde a borde
+   entre ellos. La barra de herramientas es dueña de su propio ritmo
+   vertical; el margen horizontal y la línea debajo de él son composición de
+   esta pantalla, no del componente. */
+app-table-toolbar {
+  display: block;
+  padding-inline: 1.5rem;
+  border-bottom: 1px solid var(--line-subtle);
+}
+
+.list__footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--line-subtle);
+}
+
+/* Toda la celda abre el detalle, así que el objetivo es el contenido de la
+   fila y no un enlace de cinco píxeles adentro de ella. */
+.list__client {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: var(--radius-md);
+  text-align: start;
+}
+
+.list__client-text {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.list__client-name {
+  font-weight: 500;
+  color: var(--ink-primary);
+}
+
+.list__client-mail {
+  font-size: var(--text-overline);
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--ink-muted);
+}
+
+.detail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.detail__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.detail__row dt {
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+}
+
+.detail__row dd {
+  font-size: var(--text-body);
+  color: var(--ink-primary);
+}
+
+.detail__amount {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}

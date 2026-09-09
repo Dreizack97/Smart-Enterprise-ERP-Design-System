@@ -1,0 +1,22 @@
+@let text = value();
+
+<div class="search" [class]="'search--' + variant()">
+  <span class="search__icon"><app-icon name="search" /></span>
+  <label class="sr-only" [for]="inputId()">{{ label() }}</label>
+  <input
+    class="search__input"
+    [id]="inputId()"
+    type="search"
+    [value]="text"
+    [placeholder]="placeholder()"
+    [disabled]="disabled()"
+    (input)="onInput($event)"
+  />
+  @if (loading()) {
+    <span class="search__spinner" aria-hidden="true"></span>
+  } @else if (text) {
+    <button type="button" class="search__clear focus-ring" aria-label="Limpiar" (click)="clear()">
+      <app-icon name="x" [size]="14" />
+    </button>
+  }
+</div>

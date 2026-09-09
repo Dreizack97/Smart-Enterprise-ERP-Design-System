@@ -1,0 +1,19 @@
+<article class="form-card animate-fade-in">
+  <header class="form-card__head">
+    <span class="form-card__logo">
+      <app-icon [name]="logoIcon()" [size]="26" />
+    </span>
+    @if (headingLevel() === 1) {
+      <h1 class="form-card__brand">{{ brand() }}</h1>
+    } @else {
+      <h2 class="form-card__brand">{{ brand() }}</h2>
+    }
+    @if (tagline(); as text) {
+      <p class="form-card__tagline">{{ text }}</p>
+    }
+  </header>
+
+  <div class="form-card__body"><ng-content /></div>
+
+  <footer class="form-card__footer"><ng-content select="[footer]" /></footer>
+</article>

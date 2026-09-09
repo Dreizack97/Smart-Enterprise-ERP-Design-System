@@ -1,0 +1,23 @@
+<nav [attr.aria-label]="label()">
+  <ol class="crumbs">
+    @for (item of items(); track item.label; let last = $last) {
+      <li class="crumbs__item">
+        @if (item.route && !last) {
+          <a class="crumbs__link focus-ring" [routerLink]="item.route">{{ item.label }}</a>
+        } @else {
+          <span
+            class="crumbs__current"
+            [class.crumbs__current--last]="last"
+            [attr.aria-current]="last ? 'page' : null"
+          >
+            {{ item.label }}
+          </span>
+        }
+
+        @if (!last) {
+          <app-icon name="chevron-right" [size]="12" />
+        }
+      </li>
+    }
+  </ol>
+</nav>

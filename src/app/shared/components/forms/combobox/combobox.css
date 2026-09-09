@@ -1,0 +1,102 @@
+:host {
+  display: block;
+}
+
+.combo {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Espacio para el botón de alternar, para que una etiqueta larga nunca corra debajo de él. */
+.combo__input {
+  width: 100%;
+  padding-inline-end: var(--combobox-toggle-space);
+}
+
+.combo__toggle {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inset-inline-end: 0;
+  width: var(--combobox-toggle-space);
+  height: 100%;
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+
+.combo__toggle:disabled {
+  cursor: not-allowed;
+}
+
+/* `.field-control:disabled` nunca coincide aquí: `ngCombobox` deshabilita
+   suavemente — `aria-disabled` más `readonly`, todavía enfocable — así que el
+   campo se habría visto perfectamente normal mientras se negaba a que se
+   escribiera en él. */
+.combo__input[aria-disabled='true'] {
+  cursor: not-allowed;
+  opacity: var(--field-disabled-opacity);
+}
+
+.combo__input[aria-disabled='true'] ~ .combo__toggle {
+  opacity: var(--field-disabled-opacity);
+}
+
+/* Fijo, y posicionado desde script: un selector de catálogo se sienta dentro
+   de tarjetas, barras de herramientas y celdas de tabla, y cada una de ellas
+   recorta lo que se desborda de ella. */
+.combo__popup {
+  position: fixed;
+  z-index: 60;
+  max-height: var(--combobox-popup-max-height);
+  overflow-y: auto;
+  padding: var(--combobox-popup-padding);
+  border: 1px solid var(--dropdown-border);
+  border-radius: var(--dropdown-radius);
+  background-color: var(--dropdown-surface);
+  box-shadow: var(--shadow-elevated);
+}
+
+.combo__option {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding: var(--combobox-option-padding);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+/* `@angular/aria` mueve `aria-selected` y la opción activa misma; el estilo
+   sigue esos atributos en vez de una clase propia, así que siempre hay una
+   sola fuente de verdad sobre qué opción está dónde. */
+.combo__option[aria-selected='true'] {
+  background-color: var(--combobox-option-selected-surface);
+  color: var(--combobox-option-selected-ink);
+}
+
+.combo__option:hover,
+.combo__option[data-active='true'] {
+  background-color: var(--combobox-option-active-surface);
+}
+
+.combo__option[aria-disabled='true'] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.combo__label {
+  font-size: var(--text-body);
+  color: var(--ink-primary);
+}
+
+.combo__hint {
+  font-size: var(--text-caption);
+  color: var(--ink-secondary);
+}
+
+.combo__empty {
+  padding: var(--combobox-option-padding);
+  color: var(--ink-muted);
+  font-size: var(--text-caption);
+}

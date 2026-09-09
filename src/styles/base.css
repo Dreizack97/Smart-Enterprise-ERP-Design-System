@@ -1,0 +1,132 @@
+/* =======================================================================
+   CAPA BASE — reinicio tipográfico, lienzo y barra de scroll
+   ======================================================================= */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: var(--font-sans);
+
+    /* Reserva el canal de la barra de scroll de forma permanente. Sin esto,
+       bloquear el body mientras un modal está abierto quita la barra de
+       scroll y toda la página brinca hacia el lado por su ancho. */
+    scrollbar-gutter: stable;
+  }
+
+  /* Los controles nativos no heredan la fuente del documento. Nombrarlos
+     explícitamente cuesta una regla; el selector universal que esto
+     reemplaza se evaluaba contra cada elemento del árbol. */
+  button,
+  input,
+  optgroup,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--surface-canvas);
+    color: var(--ink-primary);
+    font-size: var(--text-body);
+    line-height: 1.5;
+  }
+
+  /* Los encabezados heredan su tamaño de la escala tipográfica a través de
+     utilidades, así que los valores por defecto del navegador solo pelearían
+     contra ellos. */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-size: inherit;
+    font-weight: inherit;
+    margin: 0;
+  }
+
+  ::placeholder {
+    color: var(--ink-muted);
+  }
+
+  /* --- Barra de scroll (WebKit) ------------------------------------------ */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--surface-inset);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--line-strong);
+    border-radius: var(--radius-full);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-secondary-500);
+  }
+}
+
+/* =======================================================================
+   Transición de tema
+   -----------------------------------------------------------------------
+   `ThemeStore` agrega `.theme-anim` a `<html>` durante ~350 ms mientras se
+   cambia, para que el cambio de color sea suave sin que cualquier hover
+   ordinario arrastre detrás una transición global.
+   ======================================================================= */
+
+html.theme-anim *,
+html.theme-anim *::before,
+html.theme-anim *::after {
+  transition:
+    background-color var(--duration-normal) ease,
+    border-color var(--duration-normal) ease,
+    color var(--duration-normal) ease,
+    fill var(--duration-normal) ease !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* =======================================================================
+   Transiciones de vista entre rutas
+   -----------------------------------------------------------------------
+   El router entrega la navegación a la View Transition API del navegador; lo
+   que se ve se decide aquí.
+
+   Un cross-fade simple, y deliberadamente así: las páginas del catálogo son
+   el mismo armazón con un cuerpo distinto, así que cualquier cosa que se
+   deslizara reclamaría una relación espacial entre dos listas de componentes
+   que no existe.
+
+   `prefers-reduced-motion` necesita su PROPIA regla. El reinicio general al
+   inicio de este archivo está escrito contra `*`, y los pseudo-elementos de
+   transición de vista no están en el árbol del documento, así que `*` nunca
+   los alcanza: sin esto, la única animación que alguien pidió no ver sería
+   la única que seguiría corriendo.
+   ======================================================================= */
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--view-transition-duration);
+  animation-timing-function: var(--ease-out-quart);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}

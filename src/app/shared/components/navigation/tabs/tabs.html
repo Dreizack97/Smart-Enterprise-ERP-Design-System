@@ -1,0 +1,24 @@
+<ul
+  ngTabList
+  class="tabs"
+  [(selectedTab)]="selected"
+  [disabled]="disabled()"
+  orientation="horizontal"
+  [attr.aria-label]="label() || null"
+>
+  @for (tab of tabs(); track tab.value) {
+    <li ngTab class="tab focus-ring" [value]="tab.value" [disabled]="!!tab.disabled">
+      @if (tab.icon; as name) {
+        <app-icon [name]="name" [size]="15" />
+      }
+      <span>{{ tab.label }}</span>
+      @if (tab.badge; as badge) {
+        <span class="tab__badge">{{ badge }}</span>
+      }
+    </li>
+  }
+</ul>
+
+<!-- The panels must live inside `ngTabs` for the tab/panel pairing, and
+     therefore `aria-controls`, to exist at all. -->
+<ng-content />

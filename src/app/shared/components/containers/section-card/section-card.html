@@ -1,0 +1,12 @@
+<section class="card" [class.card--flush]="flush()">
+  <header class="card__header">
+    <div>
+      <h2 class="card__title" [class]="'card__title--' + titleSize()">{{ title() }}</h2>
+      @if (subtitle(); as text) {
+        <p class="card__subtitle">{{ text }}</p>
+      }
+    </div>
+    <ng-content select="[actions]" />
+  </header>
+  <div class="card__body"><ng-content /></div>
+</section>

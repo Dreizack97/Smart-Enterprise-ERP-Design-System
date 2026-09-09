@@ -1,0 +1,38 @@
+:host {
+  display: block;
+}
+
+:host(.is-disabled) {
+  pointer-events: none;
+  opacity: var(--field-disabled-opacity);
+}
+
+.upload {
+  display: flex;
+  flex-direction: column;
+  gap: var(--field-gap);
+}
+
+.upload__label {
+  font-size: var(--field-label-font-size);
+  font-weight: 500;
+  color: var(--field-label-ink);
+}
+
+.upload__hint {
+  font-size: var(--field-hint-font-size);
+  color: var(--field-hint-ink);
+}
+
+.upload__status {
+  font-size: var(--field-hint-font-size);
+  color: var(--ink-muted);
+}
+
+.upload__error {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: var(--field-hint-font-size);
+  color: var(--field-invalid-ink);
+}

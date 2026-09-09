@@ -1,0 +1,122 @@
+<app-field
+  [label]="label()"
+  [controlId]="comboboxId()"
+  [required]="required()"
+  [hint]="hint()"
+  [error]="message()"
+  [errorId]="errorId()"
+>
+  <div #anchor class="combo">
+    <!--
+      `value` and `disabled` are inputs of `ngCombobox`, so writing them here
+      binds THE DIRECTIVE, not the element: a directive input always wins over
+      a DOM property of the same name. `[value]` therefore has to be the
+      two-way binding the directive expects — it owns the text in the field and
+      keeps `query` in step.
+
+      `role="combobox"`, `aria-controls` and `aria-expanded` are not written
+      here either: `ngCombobox` declares all three as host bindings, and a
+      hand-written copy would be a second statement of the same fact that goes
+      stale the day the directive changes its mind.
+
+      `disabled` is deliberately left to the directive too. It does not set the
+      native attribute: it marks the field `aria-disabled` and `readonly` while
+      keeping it focusable, which is what the ARIA practices ask for — a
+      natively disabled control drops out of the accessibility tree, so someone
+      tabbing through the form never learns it is there. The styling below
+      follows `aria-disabled` for exactly that reason.
+    -->
+    <input
+      ngCombobox
+      #combo="ngCombobox"
+      class="field-control field-control--md combo__input"
+      type="text"
+      autocomplete="off"
+      [id]="comboboxId()"
+      [(expanded)]="expanded"
+      [(value)]="query"
+      [disabled]="disabled()"
+      [placeholder]="placeholder()"
+      [required]="required()"
+      [attr.aria-label]="!label() && ariaLabel() ? ariaLabel() : null"
+      [attr.aria-invalid]="message() ? 'true' : null"
+      [attr.aria-describedby]="message() ? errorId() : null"
+      (input)="onInput()"
+      (keydown.enter)="onEnter($event)"
+      (blur)="onBlur()"
+    />
+
+    <!--
+      A second control, not a decoration: someone who wants to see the whole
+      catalogue without typing needs a way in, and it has to be reachable by
+      pointer. It is out of the tab order because the input beside it already
+      opens the list with the arrow keys.
+    -->
+    <button
+      type="button"
+      class="combo__toggle"
+      tabindex="-1"
+      aria-hidden="true"
+      [disabled]="disabled()"
+      (click)="toggle()"
+    >
+      <app-icon name="chevron-down" [size]="16" />
+    </button>
+  </div>
+
+  <ng-template ngComboboxPopup [combobox]="combo" popupType="listbox">
+    <!--
+      Two of the listbox's defaults are deliberately overridden here. Both are
+      right for the control the default was written for and wrong for this one.
+
+      `selectionMode` defaults to `follow`: the option becomes selected as soon
+      as it becomes active. That is what a tab bar wants — moving through the
+      tabs is meant to show each panel — and it means typing «diaz», which
+      narrows the list to a single entry, CHOOSES that client. Measured: the
+      field committed a value nobody had picked. Here the choice is Enter or a
+      click.
+
+      `focusMode` defaults to `roving`, which moves real DOM focus onto the
+      option. In a combobox the focus has to stay in the field or typing stops
+      working; the active option is announced through `aria-activedescendant`
+      instead. With the default, the arrow keys moved nothing at all: measured
+      `aria-activedescendant` empty after two presses, and Enter chose nothing.
+    -->
+    <div
+      #popup
+      ngComboboxWidget
+      ngListbox
+      #listbox="ngListbox"
+      class="combo__popup"
+      focusMode="activedescendant"
+      selectionMode="explicit"
+      [value]="selectionArray()"
+      [activeDescendant]="listbox.activeDescendant()"
+    >
+      <!--
+        The pointer path. The keyboard one is Enter on the field, handled
+        above — an option here is never focused, because the focus stays in the
+        input and the list only moves `aria-activedescendant`.
+      -->
+      @for (option of filtered(); track option.value) {
+        <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events -->
+        <div
+          ngOption
+          class="combo__option"
+          [id]="optionId(option.value)"
+          [value]="option.value"
+          [label]="option.label"
+          [disabled]="!!option.disabled"
+          (click)="choose(option)"
+        >
+          <span class="combo__label">{{ option.label }}</span>
+          @if (option.hint; as hint) {
+            <span class="combo__hint">{{ hint }}</span>
+          }
+        </div>
+      } @empty {
+        <p class="combo__empty">{{ emptyMessage() }}</p>
+      }
+    </div>
+  </ng-template>
+</app-field>

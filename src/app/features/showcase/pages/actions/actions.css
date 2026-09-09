@@ -1,0 +1,8 @@
+/* Los botones sociales son de ancho completo por diseño, así que la pila
+   tiene que serlo también; un layout `row` los dejaría en su ancho de
+   contenido. */
+app-social-button {
+  display: block;
+  width: 100%;
+  max-width: 24rem;
+}

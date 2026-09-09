@@ -1,0 +1,178 @@
+<app-showcase-page
+  title="Patrones"
+  subtitle="Composiciones generalizadas: no traen vocabulario de negocio dentro"
+>
+  <app-showcase-block
+    title="media-card"
+    anchor="fichas"
+    description="Imagen, antetítulo, título, una cifra principal, una secundaria y un nivel. La misma pieza sirve para un producto y para un presupuesto."
+    layout="grid"
+  >
+    <app-media-card
+      [image]="images.press"
+      overline="Maquinaria"
+      title="Prensa hidráulica H-200"
+      description="Equipo de conformado en frío con control numérico y bancada reforzada."
+      figure="$248.900,00"
+      secondaryFigure="12 disponibles"
+      badgeLabel="En stock"
+      tone="green"
+      [meter]="78"
+      meterLabel="Nivel de existencias de la prensa H-200"
+    >
+      <app-button actions variant="soft" size="sm" icon="shopping-cart">Cotizar</app-button>
+    </app-media-card>
+
+    <app-media-card
+      [image]="images.lathe"
+      overline="Maquinaria"
+      title="Torno CNC serie T"
+      description="Husillo de 15 kW, torreta de doce estaciones y cambio automático."
+      figure="$512.000,00"
+      secondaryFigure="2 disponibles"
+      badgeLabel="Existencias bajas"
+      tone="yellow"
+      [meter]="18"
+      meterLabel="Nivel de existencias del torno CNC"
+    >
+      <app-button actions variant="soft" size="sm" icon="shopping-cart">Cotizar</app-button>
+    </app-media-card>
+
+    <app-media-card
+      [image]="images.crate"
+      overline="Campaña"
+      title="Presupuesto de temporada"
+      description="El mismo patrón sin inventario: un importe, un consumo y su medidor."
+      figure="$1.240.000,00"
+      secondaryFigure="ejercido 92 %"
+      badgeLabel="Al límite"
+      tone="red"
+      [meter]="92"
+      meterLabel="Presupuesto ejercido de la campaña de temporada"
+    />
+
+    <p note>
+      La insignia es <code>badgeLabel</code> + <code>tone</code> y la barra es <code>meter</code> +
+      <code>meterLabel</code>. El original traía dentro un <code>StockStatus</code> con las
+      etiquetas «En Stock», «Stock Bajo» y «Agotado» fijas.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="checklist-item"
+    description="Casilla, título, insignia y las piezas de contexto que haga falta. La casilla es de doble enlace: el contenedor se entera."
+    layout="stack"
+  >
+    <app-checklist-item
+      title="Auditoría de almacén central"
+      description="Conteo cíclico de las líneas A a F antes del cierre."
+      badgeLabel="Alta"
+      badgeTone="red"
+      [meta]="auditMeta"
+      [(done)]="done"
+    />
+    <app-checklist-item
+      title="Confirmar embarques del día"
+      description="Validar guías y notificar al transportista."
+      badgeLabel="Media"
+      badgeTone="yellow"
+      [meta]="shipmentMeta"
+      [(done)]="reviewed"
+    />
+    <app-checklist-item title="Archivar pólizas de agosto" badgeLabel="Baja" badgeTone="blue" />
+
+    <p note>
+      La tercera fila no lleva <code>meta</code>: son las piezas que tenga, no dos ranuras fijas. El
+      original obligaba a dar fecha y responsable, o ninguna de las dos.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="schedule-card"
+    anchor="agenda"
+    description="Un taco de dos cadenas libres y una entrada fechada. Sirve para mes/día, semana/día o sala/turno."
+    layout="stack"
+  >
+    <app-schedule-card
+      stampTop="Sep"
+      stampBottom="12"
+      title="Cierre contable"
+      time="09:00 – 11:30"
+      description="Sala de juntas 2, con el equipo de finanzas."
+      tone="blue"
+    />
+    <app-schedule-card
+      stampTop="Sep"
+      stampBottom="14"
+      title="Inventario físico"
+      time="Todo el día"
+      description="Almacén central; se detiene la recepción de mercancía."
+      tone="green"
+    />
+    <app-schedule-card
+      stampTop="Sem"
+      stampBottom="38"
+      title="Comité de precios"
+      time="16:00 – 17:00"
+      tone="purple"
+    >
+      <app-button actions variant="ghost" size="sm" icon="calendar">Reagendar</app-button>
+    </app-schedule-card>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="calendar-cell · schedule-chip"
+    description="El mes de ejecución, en semanas enteras. La celda es el host: bordes, relleno y matiz llegan hasta la rejilla."
+    layout="stack"
+  >
+    <div class="calendar">
+      <div class="calendar__grid" role="table" [attr.aria-label]="'Calendario de ' + monthTitle">
+        <div class="calendar__head" role="row">
+          @for (name of weekdays; track name) {
+            <div class="calendar__head-cell" role="columnheader">{{ name }}</div>
+          }
+        </div>
+        @for (week of weeks; track $index) {
+          <div class="calendar__week" role="row">
+            @for (slot of week; track $index; let last = $last) {
+              <app-calendar-cell
+                role="cell"
+                [day]="slot.day"
+                [muted]="slot.muted"
+                [today]="slot.today"
+                [lastInRow]="last"
+              >
+                @for (entry of slot.entries; track entry.label) {
+                  <app-schedule-chip [tone]="entry.tone">{{ entry.label }}</app-schedule-chip>
+                }
+              </app-calendar-cell>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <p note>
+      La semana abre en domingo. Los rótulos de columna se obtienen rotando el array canónico, no
+      escribiéndolos por segunda vez: cambiar el día de arranque no puede descolocarlos.
+    </p>
+  </app-showcase-block>
+  <app-showcase-block
+    title="schedule-chip · tonos"
+    description="Los siete matices del sistema, con el mismo `data-tone` en ambos temas. Conmuta el bloque para comprobarlos."
+    layout="stack"
+  >
+    <app-variant-grid>
+      @for (tone of tones; track tone) {
+        <app-variant-row [label]="tone">
+          <app-schedule-chip [tone]="tone">Cierre contable</app-schedule-chip>
+        </app-variant-row>
+      }
+    </app-variant-grid>
+
+    <p note>
+      El componente no nombra ningún matiz en su hoja: pone <code>data-tone</code> y una clase
+      <code>.tone-*</code>, y el valor de cada tema sale del token.
+    </p>
+  </app-showcase-block>
+</app-showcase-page>

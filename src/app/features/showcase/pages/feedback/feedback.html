@@ -1,0 +1,168 @@
+<app-showcase-page
+  title="Retroalimentación"
+  subtitle="Decir qué pasó, en el sitio donde pasó, y con el mismo color que significa lo mismo en todo el sistema"
+>
+  <app-showcase-block
+    title="status-badge"
+    anchor="distintivos"
+    description="Cinco estados. El nombre es el significado, no el matiz: quien lee la API no elige un color."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      @for (status of statuses; track status) {
+        <app-variant-row [label]="status">
+          <app-status-badge [tone]="status" [label]="labels[status]" />
+        </app-variant-row>
+      }
+    </app-variant-grid>
+
+    <p note>
+      <code>StatusTone</code> se apoya en los matices del sistema a través de
+      <code>STATUS_HUE</code>, así que un <code>success</code> y un
+      <code>&lt;app-badge tone="green"&gt;</code> no pueden acabar siendo dos verdes distintos.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="badge"
+    description="La pastilla neutra: cuenta, etiqueta o categoría. Sin significado de estado."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      @for (tone of tones; track tone) {
+        <app-variant-row [label]="tone">
+          <app-badge [tone]="tone">Almacén central</app-badge>
+          <app-badge [tone]="tone">12</app-badge>
+        </app-variant-row>
+      }
+    </app-variant-grid>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="alert"
+    anchor="mensajes"
+    description="Un mensaje anclado al contenido que lo provoca. Para lo efímero está el aviso flotante."
+    layout="stack"
+    surface="card"
+  >
+    @for (status of statuses; track status) {
+      <app-alert [tone]="status" [title]="labels[status]">
+        El pedido PED-2481 cambió de estado el 12 de septiembre a las 09:14.
+      </app-alert>
+    }
+
+    @if (!dismissed()) {
+      <app-alert tone="warning" title="Inventario bajo" dismissible (dismissed)="onDismiss()">
+        Quedan 4 unidades de «Teclado mecánico RX». Este aviso se puede cerrar.
+      </app-alert>
+    } @else {
+      <app-button variant="soft" size="sm" icon="rotate-ccw" (pressed)="restore()">
+        Restaurar el aviso cerrable
+      </app-button>
+    }
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="progress"
+    anchor="progreso"
+    description="Barra para el avance dentro de una página; anillo para una cifra en una tarjeta."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="bar" [note]="progress() + ' %'">
+        <app-progress [value]="progress()" label="Carga del inventario" />
+      </app-variant-row>
+      <app-variant-row label="ring">
+        <app-progress [value]="progress()" variant="ring" label="Presupuesto ejercido" />
+      </app-variant-row>
+      @for (status of statuses; track status) {
+        <app-variant-row [label]="status">
+          <app-progress [value]="progress()" [tone]="status" [label]="labels[status]" />
+        </app-variant-row>
+      }
+    </app-variant-grid>
+
+    <app-button variant="soft" size="sm" icon="plus" (pressed)="nudgeProgress()">
+      Avanzar
+    </app-button>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="skeleton"
+    description="El hueco que ocupará el contenido, con su forma. No un cuadro gris genérico."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="text" note="3 líneas">
+        <app-skeleton [lines]="3" />
+      </app-variant-row>
+      <app-variant-row label="block">
+        <app-skeleton shape="block" [height]="120" />
+      </app-variant-row>
+      <app-variant-row label="circle">
+        <app-skeleton shape="circle" [height]="48" />
+      </app-variant-row>
+    </app-variant-grid>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="empty-state · error-state"
+    description="Vacío no es lo mismo que roto. El primero explica; el segundo ofrece reintentar."
+    layout="stack"
+  >
+    <app-empty-state
+      icon="search"
+      title="Sin clientes"
+      description="Ningún cliente coincide con el filtro actual. Prueba a quitar el estado o a ampliar el rango de fechas."
+    />
+
+    <app-error-state
+      description="No se pudo consultar el listado. Comprueba la conexión y vuelve a intentarlo."
+      [retrying]="retrying()"
+      (retry)="onRetry()"
+    />
+
+    <p note>
+      Un estado vacío con un botón «Reintentar» sugiere que algo falló cuando no falló nada, y un
+      estado de error sin él deja a la persona sin salida.
+    </p>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="resend-timer"
+    description="Cuenta atrás que evita el reenvío en ráfaga y dice cuánto falta, en vez de solo deshabilitar."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="cuenta atrás" note="15 s, reiniciable">
+        <app-resend-timer
+          [cooldownSeconds]="15"
+          [resending]="resending()"
+          [resetSignal]="resendReset()"
+          label="Reenviar código"
+          (resend)="onResend()"
+        />
+      </app-variant-row>
+      <app-variant-row label="disponible" note="cooldown 0: pulsable desde el primer momento">
+        <app-resend-timer [cooldownSeconds]="0" label="Reenviar código" />
+      </app-variant-row>
+      <app-variant-row label="resending" note="mientras se envía">
+        <app-resend-timer [cooldownSeconds]="0" [resending]="true" label="Reenviar código" />
+      </app-variant-row>
+    </app-variant-grid>
+
+    <app-button variant="ghost" size="sm" icon="rotate-ccw" (pressed)="resetTimer()">
+      Reiniciar la cuenta
+    </app-button>
+
+    <p note>
+      La cuenta se reinicia con <code>resetSignal</code>, un contador que el contenedor incrementa.
+      Sin él habría que desmontar el componente para volver a empezar.
+    </p>
+  </app-showcase-block>
+</app-showcase-page>
