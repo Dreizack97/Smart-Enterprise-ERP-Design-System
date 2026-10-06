@@ -1,0 +1,8 @@
+<button
+  type="button"
+  class="theme-toggle focus-ring"
+  [attr.aria-label]="theme.toggleLabel()"
+  (click)="theme.toggle()"
+>
+  <app-icon [name]="icon()" [size]="18" />
+</button>

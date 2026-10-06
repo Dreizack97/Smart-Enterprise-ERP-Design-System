@@ -43,7 +43,7 @@ Catálogo de componentes Angular para el ERP de Smart Enterprise: la librería d
 
 ## 1. Descripción general
 
-El proyecto es un **catálogo standalone de Angular 22**: 63 componentes compartidos, organizados en 10 familias, expuestos a través de páginas de *showcase* que los documentan en vivo (variantes, estados, accesibilidad, ambos temas). Cuatro plantillas completas (`/acceso`, `/panel`, `/clientes`, `/perfil`) demuestran cómo esos componentes se combinan en pantallas reales de un ERP, sin que exista ninguna de negocio detrás — son fachadas.
+El proyecto es un **catálogo standalone de Angular 22**: 64 componentes compartidos, organizados en 10 familias, expuestos a través de páginas de *showcase* que los documentan en vivo (variantes, estados, accesibilidad, ambos temas). Cuatro plantillas completas (`/acceso`, `/panel`, `/clientes`, `/perfil`) demuestran cómo esos componentes se combinan en pantallas reales de un ERP, sin que exista ninguna de negocio detrás — son fachadas.
 
 No hay servidor, ni `HttpClient`, ni guards de ruta, ni interceptores: no hay nada de eso porque no hay nada que proteger ni ninguna API que consumir. Lo que el proyecto sí tiene, con el mismo nivel de cuidado que tendría una aplicación de producción, es:
 
@@ -126,7 +126,7 @@ src/
     │   └── theme/              # ThemeStore, theme.model
     │
     ├── shared/                 # librería reutilizable — ver §4
-    │   ├── components/         # 63 componentes, en 10 familias — ver tabla en §4
+    │   ├── components/         # 64 componentes, en 10 familias — ver tabla en §4
     │   ├── directives/         # Tooltip
     │   ├── models/             # Tone, StatusTone, ControlSize, ControlError
     │   └── utils/              # anchored-position, calendar, date-mask, dialog-behavior…
@@ -147,11 +147,11 @@ scripts/                        # auditorías estáticas — ver §11
 
 ## 4. Componentes principales
 
-Los 63 componentes compartidos viven en `shared/components/`, agrupados en 10 familias. Todos son standalone, `ChangeDetectionStrategy.OnPush` (por defecto en Angular 22) y usan `input()` / `output()` / `model()` en vez de decoradores `@Input()` / `@Output()`.
+Los 64 componentes compartidos viven en `shared/components/`, agrupados en 10 familias. Todos son standalone, `ChangeDetectionStrategy.OnPush` (por defecto en Angular 22) y usan `input()` / `output()` / `model()` en vez de decoradores `@Input()` / `@Output()`.
 
 | Familia | Componentes | Responsabilidad |
 |---|---|---|
-| `actions` | `button`, `segmented-control`, `social-button` | Controles de acción. `variant` y `size` son ejes ortogonales — ninguna variante trae su propio padding. |
+| `actions` | `button`, `segmented-control`, `social-button`, `theme-toggle` | Controles de acción. `variant` y `size` son ejes ortogonales — ninguna variante trae su propio padding. |
 | `forms` | 20 componentes: `field`, `input`, `textarea`, `select`, `checkbox`, `toggle-switch`, `radio-group`, `number-input`, `search-input`, `password-input`, `password-strength-meter`, `password-requirements`, `otp-input`, `file-upload`, `slider`, `rating`, `combobox`, `date-picker`, `date-range-picker`, `date-grid` | Controles de formulario. Todos comparten el contrato de `useFormControl` (`shared/utils/form-control.ts`) para `errorId`, `message` y `onBlur`. |
 | `feedback` | `status-badge`, `badge`, `alert`, `progress`, `skeleton`, `empty-state`, `error-state`, `resend-timer` | Comunican estado y resultado. |
 | `overlays` | `modal`, `confirm-dialog`, `drawer`, `dropdown-menu`, `notification-list` | Superficies flotantes. Comparten el comportamiento de `useDialog` (`shared/utils/dialog-behavior.ts`) — trampa de foco, bloqueo de scroll, Escape, devolución de foco. |
@@ -222,7 +222,7 @@ La rama que contiene la ruta activa se abre sola al navegar (`LayoutStore.openBr
 
 ### Navegación por sección, no por ruta
 
-El sidebar (`layout/layouts/main-layout/main-navigation.config.ts`) no asigna una ruta a cada uno de los 63 componentes — asignaría una ruta a cada uno solo para satisfacer al menú, cuando cada página de familia es una sola historia contada de corrido. En su lugar, las hojas del menú apuntan a una ruta más un **`fragment`** (ancla), y la tarjeta que abre ese grupo dentro de la página lleva el `id` correspondiente. `MainLayout` fija el offset de scroll del router (`ViewportScroller.setOffset`) a la altura medida de la barra superior, para que el ancla no quede tapada.
+El sidebar (`layout/layouts/main-layout/main-navigation.config.ts`) no asigna una ruta a cada uno de los 64 componentes — asignaría una ruta a cada uno solo para satisfacer al menú, cuando cada página de familia es una sola historia contada de corrido. En su lugar, las hojas del menú apuntan a una ruta más un **`fragment`** (ancla), y la tarjeta que abre ese grupo dentro de la página lleva el `id` correspondiente. `MainLayout` fija el offset de scroll del router (`ViewportScroller.setOffset`) a la altura medida de la barra superior, para que el ancla no quede tapada.
 
 `scripts/audit-navigation.mjs` comprueba en cada build que toda entrada del menú apunta a una ruta y a un ancla que existen, y que ninguna ancla de una página queda sin una entrada que la referencie.
 

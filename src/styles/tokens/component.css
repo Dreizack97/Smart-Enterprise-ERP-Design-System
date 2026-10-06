@@ -250,6 +250,15 @@
   --code-list-item-padding: 0.5rem;
   --code-list-item-ink: var(--ink-primary);
 
+  /* --- Interruptor de tema -------------------------------------------------------
+     Flotante en las pantallas sin barra superior, donde no hay otro lugar para él. */
+  --theme-toggle-size: 2.75rem;
+  --theme-toggle-surface: var(--surface-1);
+  --theme-toggle-surface-hover: var(--surface-2);
+  --theme-toggle-border: var(--line-default);
+  --theme-toggle-ink: var(--ink-secondary);
+  --theme-toggle-shadow: var(--shadow-md);
+
   /* --- Control deslizante -------------------------------------------------------- */
   --slider-track: var(--surface-3);
   --slider-track-height: 0.375rem;

@@ -1,0 +1,27 @@
+:host {
+  display: inline-flex;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  width: var(--theme-toggle-size);
+  height: var(--theme-toggle-size);
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--theme-toggle-border);
+  border-radius: var(--radius-full);
+  background-color: var(--theme-toggle-surface);
+  box-shadow: var(--theme-toggle-shadow);
+  color: var(--theme-toggle-ink);
+  transition: background-color var(--duration-instant) var(--ease-out-quart);
+}
+
+.theme-toggle:hover {
+  background-color: var(--theme-toggle-surface-hover);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle {
+    transition: none;
+  }
+}

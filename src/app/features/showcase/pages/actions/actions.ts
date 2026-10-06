@@ -5,6 +5,7 @@ import {
   SegmentedControl,
 } from '@shared/components/actions/segmented-control/segmented-control';
 import { SocialButton } from '@shared/components/actions/social-button/social-button';
+import { ThemeToggle } from '@shared/components/actions/theme-toggle/theme-toggle';
 import { CONTROL_SIZES } from '@shared/models/size.model';
 import { Notifications } from '@core/services/notification';
 import { ShowcaseBlock } from '@features/showcase/components/showcase-block/showcase-block';
@@ -38,6 +39,7 @@ function providerMark(hue: string, glyph: string): string {
     ShowcaseBlock,
     ShowcasePage,
     SocialButton,
+    ThemeToggle,
     VariantGrid,
     VariantRow,
   ],

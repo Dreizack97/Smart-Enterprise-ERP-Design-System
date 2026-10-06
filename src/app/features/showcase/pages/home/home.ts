@@ -44,9 +44,10 @@ const FAMILIES: readonly Family[] = [
     folder: 'actions',
     label: 'Acciones',
     icon: 'zap',
-    count: 3,
+    count: 4,
     route: '/acciones',
-    summary: 'Botones y control segmentado. Variante y tamaño son ejes separados.',
+    summary:
+      'Botones, control segmentado e interruptor de tema. Variante y tamaño son ejes separados.',
   },
   {
     folder: 'forms',
