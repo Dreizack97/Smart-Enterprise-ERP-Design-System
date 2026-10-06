@@ -35,6 +35,8 @@ const OWN_FILL = new Map([
   ['--sidebar-sublink-active-ink', '--sidebar-sublink-active-surface'],
   ['--navbar-mark-ink', '--navbar-mark-surface'],
   ['--form-card-logo-ink', '--form-card-logo-surface'],
+  ['--centered-footer-ink', '--centered-footer-surface'],
+  ['--centered-footer-ink-hover', '--centered-footer-surface'],
   ['--calendar-today-ink', '--calendar-today-surface'],
   ['--button-primary-ink', '--button-primary-surface'],
   ['--button-danger-ink', '--button-danger-surface'],

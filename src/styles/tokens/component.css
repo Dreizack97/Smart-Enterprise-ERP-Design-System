@@ -512,6 +512,12 @@
   --centered-shape-surface: rgba(255, 255, 255, 0.05);
   --centered-shape-display: block;
   --centered-panel-width: 28rem;
+  /* El pie bajo el panel (el aviso legal de las pantallas de acceso). Lleva su
+     propia cápsula: ningún blanco llega a 4.5:1 sobre el tramo claro del
+     degradado, así que el texto no puede apoyarse directamente en él. */
+  --centered-footer-surface: var(--color-primary-800);
+  --centered-footer-ink: rgba(255, 255, 255, 0.85);
+  --centered-footer-ink-hover: #ffffff;
 
   /* --- Gráfico -------------------------------------------------------------
      Un `<canvas>` no hereda CSS, así que `ChartTheme` los lee de vuelta con
@@ -584,6 +590,9 @@ html.dark {
 
   --centered-backdrop: var(--surface-canvas);
   --centered-shape-display: none;
+  --centered-footer-surface: var(--surface-2);
+  --centered-footer-ink: var(--ink-secondary);
+  --centered-footer-ink-hover: var(--ink-primary);
 
   /* El panel esmerilado es blanco-sobre-foto en modo claro; sobre un lienzo
      oscuro tiene que convertirse en una superficie elevada opaca o el texto
