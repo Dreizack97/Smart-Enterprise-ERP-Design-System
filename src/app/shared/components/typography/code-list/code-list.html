@@ -1,0 +1,5 @@
+<ul class="code-list" [attr.aria-label]="label()">
+  @for (code of codes(); track code) {
+    <li class="code-list__item">{{ code }}</li>
+  }
+</ul>

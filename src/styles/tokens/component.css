@@ -237,6 +237,19 @@
   --code-padding: 0.875rem;
   --code-bar-height: 2.5rem;
 
+  /* --- Lista de códigos ----------------------------------------------------------
+     Códigos cortos de un solo uso, uno por casilla, para copiarlos o tacharlos. */
+  --code-list-surface: var(--surface-2);
+  --code-list-border: var(--line-subtle);
+  --code-list-radius: var(--radius-lg);
+  --code-list-padding: 1rem;
+  --code-list-gap: 0.75rem;
+  --code-list-item-surface: var(--surface-1);
+  --code-list-item-border: var(--line-subtle);
+  --code-list-item-radius: var(--radius-md);
+  --code-list-item-padding: 0.5rem;
+  --code-list-item-ink: var(--ink-primary);
+
   /* --- Control deslizante -------------------------------------------------------- */
   --slider-track: var(--surface-3);
   --slider-track-height: 0.375rem;

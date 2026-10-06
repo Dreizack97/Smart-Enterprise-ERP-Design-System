@@ -9,6 +9,7 @@ import { Avatar } from '@shared/components/media/avatar/avatar';
 import { AvatarGroup } from '@shared/components/media/avatar-group/avatar-group';
 import { Timeline, TimelineEntry } from '@shared/components/media/timeline/timeline';
 import { CodeBlock } from '@shared/components/typography/code-block/code-block';
+import { CodeList } from '@shared/components/typography/code-list/code-list';
 import { Kbd } from '@shared/components/typography/kbd/kbd';
 import { Icon } from '@shared/components/media/icon/icon';
 import { Input } from '@shared/components/forms/input/input';
@@ -38,6 +39,7 @@ interface Activity {
     AvatarGroup,
     Button,
     CodeBlock,
+    CodeList,
     Divider,
     Kbd,
     Timeline,
@@ -112,6 +114,16 @@ export class Containers {
   ];
 
   /** Mostrado por `code-block`. Un fragmento real de este catálogo. */
+  /** Códigos de recuperación de ejemplo para `app-code-list`. */
+  protected readonly recoveryCodes = [
+    'QVNCM-TQKW7',
+    'S86FN-HPZ55',
+    '5KNX6-PTC6Y',
+    '8GYBA-226J2',
+    'NTCWT-P847X',
+    'DD85X-T3G39',
+  ];
+
   protected readonly snippet = [
     '<app-avatar-group',
     '  [names]="asignados"',

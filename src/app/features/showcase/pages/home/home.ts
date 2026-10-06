@@ -118,10 +118,10 @@ const FAMILIES: readonly Family[] = [
     folder: 'typography',
     label: 'Texto técnico',
     icon: 'code',
-    count: 2,
+    count: 3,
     route: '/contenedores',
     fragment: 'tecnico',
-    summary: 'Bloques de código y teclas. Se documenta con Contenedores.',
+    summary: 'Bloques y listas de código, y teclas. Se documenta con Contenedores.',
   },
 ];
 

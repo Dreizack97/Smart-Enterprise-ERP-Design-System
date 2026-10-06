@@ -1,0 +1,30 @@
+:host {
+  display: block;
+}
+
+/* Dos columnas en todos los anchos: un código de once caracteres cabe dos
+   veces incluso en un teléfono, y una sola columna duplicaría la altura. */
+.code-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--code-list-gap);
+  padding: var(--code-list-padding);
+  border: 1px solid var(--code-list-border);
+  border-radius: var(--code-list-radius);
+  background-color: var(--code-list-surface);
+}
+
+.code-list__item {
+  padding: var(--code-list-item-padding);
+  border: 1px solid var(--code-list-item-border);
+  border-radius: var(--code-list-item-radius);
+  background-color: var(--code-list-item-surface);
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-body);
+  letter-spacing: 0.08em;
+  text-align: center;
+  color: var(--code-list-item-ink);
+  /* Un clic selecciona el código completo, sin arrastrar. */
+  user-select: all;
+}

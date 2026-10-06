@@ -299,7 +299,7 @@
   </app-showcase-block>
 
   <app-showcase-block
-    title="kbd · code-block"
+    title="kbd · code-block · code-list"
     anchor="tecnico"
     description="Las dos piezas tipográficas que la propia documentación necesita."
     layout="stack"
@@ -320,6 +320,8 @@
     <app-code-block [code]="snippet" language="html" />
 
     <app-code-block code="npm run audit" language="bash" [copyable]="false" />
+
+    <app-code-list [codes]="recoveryCodes" label="Códigos de recuperación de ejemplo" />
 
     <p note>
       Sin coloreado de sintaxis, a propósito: colorear exige un analizador por lenguaje y una
