@@ -10,6 +10,10 @@ import { Input } from '@shared/components/forms/input/input';
 import { NumberInput } from '@shared/components/forms/number-input/number-input';
 import { OtpInput } from '@shared/components/forms/otp-input/otp-input';
 import { PasswordInput } from '@shared/components/forms/password-input/password-input';
+import {
+  PasswordRequirement,
+  PasswordRequirements,
+} from '@shared/components/forms/password-requirements/password-requirements';
 import { PasswordStrengthMeter } from '@shared/components/forms/password-strength-meter/password-strength-meter';
 import { RadioGroup, RadioOption } from '@shared/components/forms/radio-group/radio-group';
 import { Rating } from '@shared/components/forms/rating/rating';
@@ -39,6 +43,7 @@ import { VariantRow } from '@features/showcase/components/variant-row/variant-ro
     NumberInput,
     OtpInput,
     PasswordInput,
+    PasswordRequirements,
     PasswordStrengthMeter,
     RadioGroup,
     Rating,
@@ -116,6 +121,20 @@ export class Forms {
     return picked ? picked.label : 'sin elegir';
   });
   protected readonly password = signal('');
+
+  /** Una política de ejemplo evaluada en vivo; en una aplicación las reglas vienen de su servidor. */
+  protected readonly passwordRules = computed<readonly PasswordRequirement[]>(() => {
+    const value = this.password();
+    return [
+      { label: 'Al menos 8 caracteres', met: value.length >= 8 },
+      {
+        label: 'Una letra mayúscula y una minúscula',
+        met: /[a-z]/.test(value) && /[A-Z]/.test(value),
+      },
+      { label: 'Un número', met: /\d/.test(value) },
+      { label: 'Un carácter especial', met: /[^a-zA-Z\d]/.test(value) },
+    ];
+  });
   protected readonly code = signal('');
   protected readonly shortCode = signal('');
   protected readonly avatar = signal('');

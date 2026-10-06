@@ -43,7 +43,7 @@ Catálogo de componentes Angular para el ERP de Smart Enterprise: la librería d
 
 ## 1. Descripción general
 
-El proyecto es un **catálogo standalone de Angular 22**: 61 componentes compartidos, organizados en 10 familias, expuestos a través de páginas de *showcase* que los documentan en vivo (variantes, estados, accesibilidad, ambos temas). Cuatro plantillas completas (`/acceso`, `/panel`, `/clientes`, `/perfil`) demuestran cómo esos componentes se combinan en pantallas reales de un ERP, sin que exista ninguna de negocio detrás — son fachadas.
+El proyecto es un **catálogo standalone de Angular 22**: 62 componentes compartidos, organizados en 10 familias, expuestos a través de páginas de *showcase* que los documentan en vivo (variantes, estados, accesibilidad, ambos temas). Cuatro plantillas completas (`/acceso`, `/panel`, `/clientes`, `/perfil`) demuestran cómo esos componentes se combinan en pantallas reales de un ERP, sin que exista ninguna de negocio detrás — son fachadas.
 
 No hay servidor, ni `HttpClient`, ni guards de ruta, ni interceptores: no hay nada de eso porque no hay nada que proteger ni ninguna API que consumir. Lo que el proyecto sí tiene, con el mismo nivel de cuidado que tendría una aplicación de producción, es:
 
@@ -126,7 +126,7 @@ src/
     │   └── theme/              # ThemeStore, theme.model
     │
     ├── shared/                 # librería reutilizable — ver §4
-    │   ├── components/         # 61 componentes, en 10 familias — ver tabla en §4
+    │   ├── components/         # 62 componentes, en 10 familias — ver tabla en §4
     │   ├── directives/         # Tooltip
     │   ├── models/             # Tone, StatusTone, ControlSize, ControlError
     │   └── utils/              # anchored-position, calendar, date-mask, dialog-behavior…
@@ -147,12 +147,12 @@ scripts/                        # auditorías estáticas — ver §11
 
 ## 4. Componentes principales
 
-Los 61 componentes compartidos viven en `shared/components/`, agrupados en 10 familias. Todos son standalone, `ChangeDetectionStrategy.OnPush` (por defecto en Angular 22) y usan `input()` / `output()` / `model()` en vez de decoradores `@Input()` / `@Output()`.
+Los 62 componentes compartidos viven en `shared/components/`, agrupados en 10 familias. Todos son standalone, `ChangeDetectionStrategy.OnPush` (por defecto en Angular 22) y usan `input()` / `output()` / `model()` en vez de decoradores `@Input()` / `@Output()`.
 
 | Familia | Componentes | Responsabilidad |
 |---|---|---|
 | `actions` | `button`, `segmented-control`, `social-button` | Controles de acción. `variant` y `size` son ejes ortogonales — ninguna variante trae su propio padding. |
-| `forms` | 19 componentes: `field`, `input`, `textarea`, `select`, `checkbox`, `toggle-switch`, `radio-group`, `number-input`, `search-input`, `password-input`, `password-strength-meter`, `otp-input`, `file-upload`, `slider`, `rating`, `combobox`, `date-picker`, `date-range-picker`, `date-grid` | Controles de formulario. Todos comparten el contrato de `useFormControl` (`shared/utils/form-control.ts`) para `errorId`, `message` y `onBlur`. |
+| `forms` | 20 componentes: `field`, `input`, `textarea`, `select`, `checkbox`, `toggle-switch`, `radio-group`, `number-input`, `search-input`, `password-input`, `password-strength-meter`, `password-requirements`, `otp-input`, `file-upload`, `slider`, `rating`, `combobox`, `date-picker`, `date-range-picker`, `date-grid` | Controles de formulario. Todos comparten el contrato de `useFormControl` (`shared/utils/form-control.ts`) para `errorId`, `message` y `onBlur`. |
 | `feedback` | `status-badge`, `badge`, `alert`, `progress`, `skeleton`, `empty-state`, `error-state`, `resend-timer` | Comunican estado y resultado. |
 | `overlays` | `modal`, `confirm-dialog`, `drawer`, `dropdown-menu`, `notification-list` | Superficies flotantes. Comparten el comportamiento de `useDialog` (`shared/utils/dialog-behavior.ts`) — trampa de foco, bloqueo de scroll, Escape, devolución de foco. |
 | `navigation` | `breadcrumb`, `tabs`, `tab-panel`, `accordion`, `accordion-item`, `stepper`, `pagination` | Moverse por la aplicación o por el contenido de una pantalla. |
@@ -168,7 +168,7 @@ Cuatro utilidades en `shared/utils/` existen porque más de un componente necesi
 
 - **`anchored-position.ts`** — posiciona un panel flotante contra un ancla, con volteo y ajuste a los bordes del viewport. Base de `dropdown-menu`, `tooltip`, `combobox`, `date-picker` y `date-range-picker`.
 - **`dialog-behavior.ts`** (`useDialog`) — trampa de foco, bloqueo de scroll, Escape y devolución de foco. Base de `modal`, `confirm-dialog` y `drawer`.
-- **`form-control.ts`** (`useFormControl`) — `errorId`, mensaje de error derivado y marcado de "touched" hacia Signal Forms. Compartido por los 19 componentes de `forms/`.
+- **`form-control.ts`** (`useFormControl`) — `errorId`, mensaje de error derivado y marcado de "touched" hacia Signal Forms. Compartido por los controles de `forms/`.
 - **`calendar.ts`** / **`date-mask.ts`** — layout de mes en semanas completas y máscara de escritura `dd/mm/aaaa`. Compartidos por `date-picker`, `date-range-picker` y `date-grid`.
 
 ### `@angular/aria`: dónde se usa y dónde no
@@ -222,7 +222,7 @@ La rama que contiene la ruta activa se abre sola al navegar (`LayoutStore.openBr
 
 ### Navegación por sección, no por ruta
 
-El sidebar (`layout/layouts/main-layout/main-navigation.config.ts`) no asigna una ruta a cada uno de los 61 componentes — asignaría una ruta a cada uno solo para satisfacer al menú, cuando cada página de familia es una sola historia contada de corrido. En su lugar, las hojas del menú apuntan a una ruta más un **`fragment`** (ancla), y la tarjeta que abre ese grupo dentro de la página lleva el `id` correspondiente. `MainLayout` fija el offset de scroll del router (`ViewportScroller.setOffset`) a la altura medida de la barra superior, para que el ancla no quede tapada.
+El sidebar (`layout/layouts/main-layout/main-navigation.config.ts`) no asigna una ruta a cada uno de los 62 componentes — asignaría una ruta a cada uno solo para satisfacer al menú, cuando cada página de familia es una sola historia contada de corrido. En su lugar, las hojas del menú apuntan a una ruta más un **`fragment`** (ancla), y la tarjeta que abre ese grupo dentro de la página lleva el `id` correspondiente. `MainLayout` fija el offset de scroll del router (`ViewportScroller.setOffset`) a la altura medida de la barra superior, para que el ancla no quede tapada.
 
 `scripts/audit-navigation.mjs` comprueba en cada build que toda entrada del menú apunta a una ruta y a un ancla que existen, y que ninguna ancla de una página queda sin una entrada que la referencie.
 
@@ -237,7 +237,7 @@ Todo lo demás — stores, estado local de componente, estado derivado — es `s
 
 ### Signal Forms: soporte, no uso end-to-end
 
-Los 19 componentes de `forms/` **cumplen el contrato `FormValueControl`** de Signal Forms (Angular 22): exponen `value` como `model()` y aceptan `errors`, `touched`, `disabled` y `name`, que la directiva `formField` mantiene sincronizados. `shared/utils/field-touch.ts` resuelve el token `FORM_FIELD` para marcar el campo como tocado cuando el `blur` — que no burbujea — ocurre en un `<input>` nativo anidado dentro del elemento del componente.
+Los controles de `forms/` **cumplen el contrato `FormValueControl`** de Signal Forms (Angular 22): exponen `value` como `model()` y aceptan `errors`, `touched`, `disabled` y `name`, que la directiva `formField` mantiene sincronizados. `shared/utils/field-touch.ts` resuelve el token `FORM_FIELD` para marcar el campo como tocado cuando el `blur` — que no burbujea — ocurre en un `<input>` nativo anidado dentro del elemento del componente.
 
 Dicho lo anterior, **ninguna página del showcase construye un `form()` real**: cada componente se demuestra de forma standalone, con `[(value)]` y un `error` escrito a mano. Es coherente con lo que el proyecto es — un catálogo de componentes, no un formulario de negocio — y es también la razón por la que integrar estos controles en un `form()` de Signal Forms en la aplicación anfitriona no debería requerir cambios en el componente: los seams ya existen.
 

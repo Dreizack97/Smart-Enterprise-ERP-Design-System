@@ -381,9 +381,9 @@
   </app-showcase-block>
 
   <app-showcase-block
-    title="password-input · password-strength-meter"
+    title="password-input · password-strength-meter · password-requirements"
     anchor="seguridad"
-    description="Escribe para ver el medidor. La evaluación es zxcvbn, no una cuenta de caracteres."
+    description="Escribe para ver el medidor y los requisitos. El medidor evalúa con zxcvbn; los requisitos son las reglas del servidor."
     layout="stack"
     surface="card"
   >
@@ -397,6 +397,7 @@
             hint="Doce caracteres o más. Una frase corriente vale más que un símbolo raro."
           />
           <app-password-strength-meter [password]="password()" [userInputs]="['Industrias Vega']" />
+          <app-password-requirements [requirements]="passwordRules()" />
         </div>
       </app-variant-row>
       <app-variant-row label="current-password" note="al iniciar sesión">

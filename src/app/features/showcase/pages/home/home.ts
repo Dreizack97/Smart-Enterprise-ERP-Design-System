@@ -52,7 +52,7 @@ const FAMILIES: readonly Family[] = [
     folder: 'forms',
     label: 'Formularios',
     icon: 'pencil',
-    count: 19,
+    count: 20,
     route: '/formularios',
     summary: 'La familia más grande: un solo campo, una sola forma de fallar.',
   },

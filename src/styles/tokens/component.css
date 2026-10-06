@@ -165,6 +165,16 @@
   --meter-height: 0.5rem;
   --meter-track: var(--surface-2);
 
+  /* Lista de requisitos de una contraseña: cada regla se marca al cumplirse. */
+  --requirements-surface: var(--surface-2);
+  --requirements-border: var(--line-subtle);
+  --requirements-radius: var(--radius-lg);
+  --requirements-padding: 1rem;
+  --requirements-gap: 0.375rem;
+  --requirements-title-ink: var(--ink-body);
+  --requirements-pending-ink: var(--ink-muted);
+  --requirements-met-ink: var(--tone-green-ink);
+
   --checklist-padding: 1.25rem;
   --checklist-lift: -2px;
 
