@@ -1,0 +1,74 @@
+<app-field
+  [label]="label()"
+  [controlId]="inputId()"
+  [required]="required()"
+  [hint]="hint()"
+  [error]="message()"
+  [errorId]="errorId()"
+  [labelAsText]="true"
+>
+  <div class="rte" [class.rte--disabled]="disabled()" [class.rte--invalid]="!!message()">
+    <div class="rte__toolbar" role="toolbar" aria-label="Herramientas de formato">
+      <button
+        type="button"
+        class="rte__tool focus-ring"
+        aria-label="Negrita"
+        [disabled]="disabled()"
+        (click)="applyFormat('bold')"
+      >
+        <strong>B</strong>
+      </button>
+      <button
+        type="button"
+        class="rte__tool focus-ring"
+        aria-label="Cursiva"
+        [disabled]="disabled()"
+        (click)="applyFormat('italic')"
+      >
+        <em>I</em>
+      </button>
+      <button
+        type="button"
+        class="rte__tool focus-ring"
+        aria-label="Subrayado"
+        [disabled]="disabled()"
+        (click)="applyFormat('underline')"
+      >
+        <u>U</u>
+      </button>
+      <button
+        type="button"
+        class="rte__tool focus-ring"
+        aria-label="Lista con viñetas"
+        [disabled]="disabled()"
+        (click)="applyFormat('insertUnorderedList')"
+      >
+        <app-icon name="list" [size]="15" />
+      </button>
+
+      <div class="rte__toolbar-end">
+        <ng-content select="[toolbarEnd]" />
+      </div>
+    </div>
+
+    <div
+      #surface
+      [id]="inputId()"
+      class="rte__surface"
+      role="textbox"
+      aria-multiline="true"
+      [attr.contenteditable]="disabled() ? null : 'true'"
+      [attr.data-placeholder]="placeholder()"
+      [attr.aria-label]="!label() && ariaLabel() ? ariaLabel() : label() || placeholder()"
+      [attr.aria-disabled]="disabled() ? 'true' : null"
+      [attr.aria-invalid]="message() ? 'true' : null"
+      [attr.aria-describedby]="message() ? errorId() : null"
+      (input)="onSurfaceInput()"
+      (blur)="onSurfaceBlur()"
+    ></div>
+
+    <div class="rte__footer">
+      <ng-content select="[footer]" />
+    </div>
+  </div>
+</app-field>
