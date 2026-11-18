@@ -1,0 +1,37 @@
+<div class="time-grid" [style.--grid-cols]="columns().length">
+  <div class="time-grid__head" role="row">
+    <div class="time-grid__head-cell time-grid__head-cell--hour" role="columnheader">Hora</div>
+    @for (column of columns(); track column.id) {
+      <div
+        class="time-grid__head-cell"
+        [class.time-grid__head-cell--today]="column.today"
+        role="columnheader"
+      >
+        {{ column.label }}
+      </div>
+    }
+  </div>
+
+  <div class="time-grid__body">
+    @for (hour of hours(); track hour) {
+      <div class="time-grid__hour">{{ formatHour(hour) }}</div>
+      @for (column of columns(); track column.id) {
+        <div class="time-grid__slot">
+          @for (entry of entriesAt(column.id, hour); track entry.id) {
+            <button
+              type="button"
+              class="time-grid__entry tone-soft tone-border focus-ring"
+              [attr.data-tone]="entry.tone"
+              (click)="entrySelected.emit(entry)"
+            >
+              <span class="time-grid__entry-title">{{ entry.title }}</span>
+              @if (entry.subtitle; as sub) {
+                <span class="time-grid__entry-sub">{{ sub }}</span>
+              }
+            </button>
+          }
+        </div>
+      }
+    }
+  </div>
+</div>
