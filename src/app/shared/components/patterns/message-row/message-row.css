@@ -1,0 +1,165 @@
+:host {
+  display: block;
+}
+
+.msg-row {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: var(--message-row-padding-y) var(--message-row-padding-x);
+  background-color: var(--message-row-surface);
+  border-bottom: 1px solid var(--message-row-border);
+  transition: background-color var(--duration-instant) var(--ease-out-quart);
+}
+
+.msg-row::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 3px;
+  background-color: transparent;
+}
+
+.msg-row--unread::before {
+  background-color: var(--message-row-unread-indicator);
+}
+
+.msg-row:hover {
+  background-color: var(--message-row-surface-hover);
+}
+
+.msg-row--selected {
+  background-color: var(--message-row-surface-selected);
+}
+
+.msg-row__left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.375rem;
+  padding-top: 0.125rem;
+  flex-shrink: 0;
+}
+
+.msg-row__trigger {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  text-align: left;
+  border-radius: var(--radius-sm);
+}
+
+.msg-row__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.msg-row__sender {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--ink-primary);
+}
+
+.msg-row--unread .msg-row__sender,
+.msg-row--unread .msg-row__subject {
+  font-weight: 700;
+  color: var(--ink-strong);
+}
+
+.msg-row__time {
+  flex-shrink: 0;
+  font-size: var(--text-overline);
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+
+.msg-row--unread .msg-row__time {
+  color: var(--control-accent-ink);
+  font-weight: 600;
+}
+
+.msg-row__subject-row {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-width: 0;
+  width: 100%;
+}
+
+.msg-row__subject {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-caption);
+  color: var(--ink-body);
+}
+
+.msg-row__snippet {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+  width: 100%;
+}
+
+.msg-row__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin-top: 0.125rem;
+}
+
+.msg-row__quick {
+  position: absolute;
+  top: 0.5rem;
+  inset-inline-end: 0.625rem;
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  padding: 0.125rem;
+  border: 1px solid var(--line-default);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-1);
+  box-shadow: var(--shadow-sm);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-instant) var(--ease-out-quart);
+}
+
+.msg-row:hover .msg-row__quick,
+.msg-row:focus-within .msg-row__quick {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.msg-row__quick-btn {
+  width: 1.625rem;
+  height: 1.625rem;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-secondary);
+}
+
+.msg-row__quick-btn:hover {
+  background-color: var(--surface-3);
+  color: var(--ink-strong);
+}
+
+.msg-row__quick-btn--flagged {
+  color: var(--message-row-flag-ink);
+}

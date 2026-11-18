@@ -1,0 +1,82 @@
+<div
+  class="msg-row"
+  [class.msg-row--unread]="unread()"
+  [class.msg-row--selected]="selected()"
+>
+  <div class="msg-row__left">
+    <app-avatar [name]="sender()" size="md" />
+    @if (selectable()) {
+      <app-checkbox
+        [(checked)]="checked"
+        [label]="'Seleccionar mensaje de ' + sender()"
+        [labelHidden]="true"
+        size="sm"
+      />
+    }
+  </div>
+
+  <button
+    type="button"
+    class="msg-row__trigger focus-ring"
+    [attr.aria-current]="selected() ? 'true' : null"
+    (click)="activated.emit()"
+  >
+    <span class="msg-row__header">
+      <span class="msg-row__sender">{{ sender() }}</span>
+      @if (timestamp(); as time) {
+        <span class="msg-row__time">{{ time }}</span>
+      }
+    </span>
+
+    <span class="msg-row__subject-row">
+      @if (priorityLabel(); as priority) {
+        <app-badge [tone]="priorityTone()">{{ priority }}</app-badge>
+      }
+      <span class="msg-row__subject">{{ subject() }}</span>
+    </span>
+
+    @if (snippet(); as excerpt) {
+      <span class="msg-row__snippet">{{ excerpt }}</span>
+    }
+
+    @if (flagged() || tags().length > 0) {
+      <span class="msg-row__tags">
+        @if (flagged()) {
+          <app-badge tone="orange">Seguimiento</app-badge>
+        }
+        @for (tag of tags(); track tag.label) {
+          <app-badge [tone]="tag.tone">{{ tag.label }}</app-badge>
+        }
+      </span>
+    }
+  </button>
+
+  <div class="msg-row__quick" role="group" aria-label="Acciones rápidas del mensaje">
+    <button
+      type="button"
+      class="msg-row__quick-btn focus-ring"
+      [attr.aria-label]="unread() ? 'Marcar como leído' : 'Marcar como no leído'"
+      (click)="toggleRead.emit()"
+    >
+      <app-icon [name]="unread() ? 'mail-open' : 'mail'" [size]="14" />
+    </button>
+    <button
+      type="button"
+      class="msg-row__quick-btn focus-ring"
+      [class.msg-row__quick-btn--flagged]="flagged()"
+      [attr.aria-pressed]="flagged()"
+      aria-label="Marcar seguimiento"
+      (click)="toggleFlag()"
+    >
+      <app-icon name="star" [size]="14" />
+    </button>
+    <button
+      type="button"
+      class="msg-row__quick-btn focus-ring"
+      aria-label="Eliminar mensaje"
+      (click)="deleted.emit()"
+    >
+      <app-icon name="trash-2" [size]="14" />
+    </button>
+  </div>
+</div>
