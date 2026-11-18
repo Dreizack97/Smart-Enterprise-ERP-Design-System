@@ -17,8 +17,11 @@ app-textarea {
 
 app-textarea,
 app-radio-group,
-app-password-strength-meter {
+app-password-strength-meter,
+app-chip-input,
+app-rich-text-editor {
   max-width: 32rem;
+  width: 100%;
 }
 
 .forms__note {

@@ -1,0 +1,125 @@
+:host {
+  display: block;
+}
+
+.chip-input {
+  position: relative;
+}
+
+.chip-input__box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: var(--field-height-md);
+  padding: 0.3125rem var(--field-padding-x);
+  border: var(--field-border-width) solid var(--field-border);
+  border-radius: var(--field-radius);
+  background-color: var(--field-surface);
+  transition:
+    border-color var(--duration-fast) var(--ease-out-quart),
+    box-shadow var(--duration-fast) var(--ease-out-quart);
+}
+
+.chip-input:hover:not(.chip-input--disabled) .chip-input__box {
+  border-color: var(--field-border-hover);
+}
+
+.chip-input__box:focus-within {
+  border-color: var(--field-border-focus);
+  box-shadow: 0 0 0 3px var(--field-focus-halo);
+}
+
+.chip-input--invalid .chip-input__box {
+  border-color: var(--field-border-invalid);
+}
+
+.chip-input--disabled .chip-input__box {
+  opacity: var(--field-disabled-opacity);
+  cursor: not-allowed;
+}
+
+.chip-input__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  height: var(--chip-input-chip-height);
+  padding-inline: 0.5rem;
+  border: 1px solid var(--chip-input-chip-border);
+  border-radius: var(--chip-input-chip-radius);
+  background-color: var(--chip-input-chip-surface);
+  color: var(--chip-input-chip-ink);
+  font-size: var(--text-caption);
+  max-width: 100%;
+}
+
+.chip-input__chip-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chip-input__remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  color: var(--ink-muted);
+}
+
+.chip-input__remove:hover {
+  color: var(--field-invalid-ink);
+}
+
+.chip-input__field {
+  flex: 1;
+  min-width: 7rem;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--field-ink);
+  font-size: var(--field-font-size);
+}
+
+.chip-input__popup {
+  position: absolute;
+  top: calc(100% + 0.25rem);
+  left: 0;
+  right: 0;
+  z-index: 45;
+  max-height: var(--combobox-popup-max-height);
+  overflow-y: auto;
+  padding: var(--combobox-popup-padding);
+  border: 1px solid var(--dropdown-border);
+  border-radius: var(--dropdown-radius);
+  background-color: var(--dropdown-surface);
+  box-shadow: var(--shadow-elevated);
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.chip-input__option {
+  width: 100%;
+  padding: var(--combobox-option-padding);
+  border-radius: var(--dropdown-item-radius);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  text-align: left;
+  font-size: var(--text-caption);
+  color: var(--ink-primary);
+}
+
+.chip-input__option:hover {
+  background-color: var(--combobox-option-active-surface);
+}
+
+.chip-input__option-label {
+  font-weight: 600;
+}
+
+.chip-input__option-sub {
+  color: var(--ink-muted);
+}

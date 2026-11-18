@@ -1,0 +1,65 @@
+<app-field
+  [label]="label()"
+  [controlId]="inputId()"
+  [required]="required()"
+  [hint]="hint()"
+  [error]="message()"
+  [errorId]="errorId()"
+>
+  <div class="chip-input" [class.chip-input--disabled]="disabled()" [class.chip-input--invalid]="!!message()">
+    <div class="chip-input__box">
+      @for (chip of value(); track chip) {
+        <span class="chip-input__chip">
+          <span class="chip-input__chip-text">{{ chip }}</span>
+          @if (!disabled()) {
+            <button
+              type="button"
+              class="chip-input__remove focus-ring"
+              [attr.aria-label]="'Quitar ' + chip"
+              (click)="removeAt($index)"
+            >
+              <app-icon name="x" [size]="12" />
+            </button>
+          }
+        </span>
+      }
+
+      <input
+        type="text"
+        class="chip-input__field"
+        autocomplete="off"
+        [id]="inputId()"
+        [value]="draft()"
+        [disabled]="disabled()"
+        [placeholder]="value().length === 0 ? placeholder() : ''"
+        [attr.aria-label]="!label() && ariaLabel() ? ariaLabel() : null"
+        [attr.aria-invalid]="message() ? 'true' : null"
+        [attr.aria-describedby]="message() ? errorId() : null"
+        (focus)="onFocus()"
+        (input)="onDraftInput($event)"
+        (keydown)="onKeydown($event)"
+        (blur)="onHostBlur()"
+      />
+    </div>
+
+    @if (popupOpen() && filteredSuggestions().length > 0) {
+      <div class="chip-input__popup" role="listbox" [attr.aria-label]="'Sugerencias de ' + (label() || ariaLabel() || 'etiquetas')">
+        @for (item of filteredSuggestions(); track item.value) {
+          <button
+            type="button"
+            role="option"
+            aria-selected="false"
+            class="chip-input__option focus-ring"
+            (mousedown)="$event.preventDefault()"
+            (click)="pickSuggestion(item)"
+          >
+            <span class="chip-input__option-label">{{ item.label }}</span>
+            @if (item.sublabel; as sub) {
+              <span class="chip-input__option-sub">{{ sub }}</span>
+            }
+          </button>
+        }
+      </div>
+    }
+  </div>
+</app-field>

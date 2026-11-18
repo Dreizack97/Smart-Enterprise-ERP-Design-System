@@ -1,5 +1,6 @@
 import { Component, computed, signal } from '@angular/core';
 import { Checkbox } from '@shared/components/forms/checkbox/checkbox';
+import { ChipInput, ChipSuggestion } from '@shared/components/forms/chip-input/chip-input';
 import { Combobox, ComboboxOption } from '@shared/components/forms/combobox/combobox';
 import { DateGrid } from '@shared/components/forms/date-grid/date-grid';
 import { DatePicker } from '@shared/components/forms/date-picker/date-picker';
@@ -17,6 +18,7 @@ import {
 import { PasswordStrengthMeter } from '@shared/components/forms/password-strength-meter/password-strength-meter';
 import { RadioGroup, RadioOption } from '@shared/components/forms/radio-group/radio-group';
 import { Rating } from '@shared/components/forms/rating/rating';
+import { RichTextEditor } from '@shared/components/forms/rich-text-editor/rich-text-editor';
 import { SearchInput } from '@shared/components/forms/search-input/search-input';
 import { Slider } from '@shared/components/forms/slider/slider';
 import { Select, SelectOption } from '@shared/components/forms/select/select';
@@ -33,6 +35,7 @@ import { VariantRow } from '@features/showcase/components/variant-row/variant-ro
   selector: 'app-forms',
   imports: [
     Checkbox,
+    ChipInput,
     Combobox,
     DateGrid,
     DatePicker,
@@ -47,6 +50,7 @@ import { VariantRow } from '@features/showcase/components/variant-row/variant-ro
     PasswordStrengthMeter,
     RadioGroup,
     Rating,
+    RichTextEditor,
     SearchInput,
     Slider,
     Select,
@@ -203,4 +207,13 @@ export class Forms {
   protected onCodeComplete(code: string): void {
     this.lastCode.set(code);
   }
+
+  protected readonly recipientTags = signal<readonly string[]>(['isabel.barboza@nukabe.mx']);
+  protected readonly richHtml = signal('<p>Hola Isabel, comparto el avance del diseño.</p>');
+
+  protected readonly galSuggestions: readonly ChipSuggestion[] = [
+    { value: 'isabel.barboza@nukabe.mx', label: 'Isabel Barboza', sublabel: 'Gerencia General' },
+    { value: 'abiud.gonzalez@nukabe.mx', label: 'Abiud Gonzalez', sublabel: 'Dirección TI' },
+    { value: 'aketzali.sanchez@nukabe.mx', label: 'Aketzali Sanchez', sublabel: 'Comunicación' },
+  ];
 }

@@ -745,4 +745,30 @@
       elementos.
     </p>
   </app-showcase-block>
+
+  <app-showcase-block
+    title="chip-input · rich-text-editor"
+    description="Entrada de múltiples destinatarios con autocompletado y editor HTML estructurado."
+    layout="stack"
+    surface="card"
+  >
+    <app-variant-grid>
+      <app-variant-row label="chip-input" note="Enter, coma o lista">
+        <app-chip-input
+          [(value)]="recipientTags"
+          [suggestions]="galSuggestions"
+          label="Para"
+          placeholder="Escribe un nombre o correo..."
+          hint="Autocompleta contra el directorio corporativo."
+        />
+      </app-variant-row>
+      <app-variant-row label="rich-text-editor">
+        <app-rich-text-editor
+          [(value)]="richHtml"
+          label="Cuerpo del mensaje"
+          placeholder="Redacta tu mensaje..."
+        />
+      </app-variant-row>
+    </app-variant-grid>
+  </app-showcase-block>
 </app-showcase-page>
