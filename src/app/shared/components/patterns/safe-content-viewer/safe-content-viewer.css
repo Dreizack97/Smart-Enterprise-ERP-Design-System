@@ -1,0 +1,132 @@
+:host {
+  display: block;
+}
+
+.viewer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.viewer__banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 0.625rem 1rem;
+  border: 1px solid var(--content-viewer-banner-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--content-viewer-banner-surface);
+  color: var(--content-viewer-banner-ink);
+  font-size: var(--text-caption);
+}
+
+.viewer__thread {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.viewer__thread:empty {
+  display: none;
+}
+
+.viewer__card {
+  background-color: var(--content-viewer-surface);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+}
+
+.viewer__head {
+  padding: var(--content-viewer-header-padding);
+  border-bottom: 1px solid var(--line-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.viewer__subject-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.viewer__subject {
+  font-size: var(--text-heading);
+  font-weight: 700;
+  color: var(--ink-strong);
+  line-height: 1.3;
+}
+
+.viewer__sender-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.viewer__sender-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.viewer__sender-text {
+  min-width: 0;
+}
+
+.viewer__sender-name {
+  font-weight: 600;
+  color: var(--ink-strong);
+}
+
+.viewer__sender-addr {
+  font-size: var(--text-caption);
+  color: var(--ink-secondary);
+  word-break: break-all;
+}
+
+.viewer__time,
+.viewer__recipients {
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+}
+
+.viewer__attachments {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--surface-canvas);
+  border-bottom: 1px solid var(--line-subtle);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.viewer__attachments:empty {
+  display: none;
+}
+
+.viewer__body {
+  padding: var(--content-viewer-body-padding);
+  color: var(--ink-primary);
+  font-size: var(--text-body);
+  line-height: 1.65;
+  overflow-x: auto;
+}
+
+.viewer__footer {
+  padding: 0.875rem 1.5rem;
+  border-top: 1px dashed var(--line-default);
+  font-size: var(--text-caption);
+  color: var(--ink-secondary);
+}
+
+.viewer__footer:empty {
+  display: none;
+}

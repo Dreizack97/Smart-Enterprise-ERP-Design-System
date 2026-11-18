@@ -1,0 +1,56 @@
+<div class="viewer">
+  @if (externalBlocked()) {
+    <div class="viewer__banner" role="region" aria-label="Aviso de privacidad">
+      <span>{{ externalBannerText() }}</span>
+      <app-button variant="secondary" size="sm" (pressed)="unblockExternal.emit()">
+        Mostrar imágenes externas
+      </app-button>
+    </div>
+  }
+
+  <div class="viewer__thread">
+    <ng-content select="[thread]" />
+  </div>
+
+  <article class="viewer__card">
+    <header class="viewer__head">
+      <div class="viewer__subject-row">
+        <h2 class="viewer__subject">{{ subject() }}</h2>
+        @if (badgeLabel(); as badge) {
+          <app-badge [tone]="badgeTone()">{{ badge }}</app-badge>
+        }
+      </div>
+
+      <div class="viewer__sender-row">
+        <div class="viewer__sender-info">
+          <app-avatar [name]="senderName()" size="lg" />
+          <div class="viewer__sender-text">
+            <div class="viewer__sender-name">{{ senderName() }}</div>
+            @if (senderAddress(); as addr) {
+              <div class="viewer__sender-addr">{{ addr }}</div>
+            }
+          </div>
+        </div>
+        @if (timestamp(); as dateText) {
+          <span class="viewer__time">{{ dateText }}</span>
+        }
+      </div>
+
+      @if (recipientSummary(); as recipients) {
+        <div class="viewer__recipients">{{ recipients }}</div>
+      }
+    </header>
+
+    <div class="viewer__attachments">
+      <ng-content select="[attachments]" />
+    </div>
+
+    <div class="viewer__body">
+      <ng-content />
+    </div>
+
+    <div class="viewer__footer">
+      <ng-content select="[footer]" />
+    </div>
+  </article>
+</div>
