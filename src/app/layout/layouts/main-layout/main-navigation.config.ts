@@ -260,6 +260,7 @@ export const NAV_SECTIONS: readonly NavSection[] = [
       { id: 'template-panel', label: 'Panel', icon: 'chart-pie', route: '/panel' },
       { id: 'template-list', label: 'Listado', icon: 'users', route: '/clientes' },
       { id: 'template-profile', label: 'Perfil', icon: 'user', route: '/perfil' },
+      { id: 'template-mail', label: 'Correo', icon: 'mail', route: '/correo' },
     ],
   },
 ];

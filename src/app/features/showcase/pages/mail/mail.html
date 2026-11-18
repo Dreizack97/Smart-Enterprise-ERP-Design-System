@@ -1,0 +1,447 @@
+<app-page-header
+  title="Correo corporativo"
+  subtitle="Plantilla interactiva · Paridad Microsoft Outlook + MailEnable v10.62"
+>
+  <app-breadcrumb breadcrumb [items]="trail" />
+  <app-segmented-control
+    actions
+    [(value)]="activeModule"
+    [options]="moduleSegments"
+    label="Módulos del cliente web"
+    size="sm"
+  />
+  <app-button actions variant="secondary" size="sm" icon="calendar" (pressed)="myDayOpen.set(true)">
+    Mi Día
+  </app-button>
+  <app-button actions size="sm" icon="pencil" (pressed)="openComposer()">
+    Nuevo correo
+  </app-button>
+</app-page-header>
+
+@switch (activeModule()) {
+  @case ('mail') {
+    <div class="mail-shell">
+      <div class="mail-shell__bar">
+        <div class="mail-shell__filters">
+          <app-segmented-control
+            [(value)]="mailFilter"
+            [options]="mailFilterOptions"
+            label="Filtrar bandeja"
+            size="sm"
+          />
+          <app-checkbox [(checked)]="hideBulk" label="Ocultar masivos" />
+          @if (checkedIds().size > 0) {
+            <app-button variant="soft" size="sm" icon="check-check" (pressed)="batchMarkRead()">
+              Marcar {{ checkedIds().size }} como leídos
+            </app-button>
+          }
+        </div>
+
+        <div class="mail-shell__tools">
+          <app-search-input
+            class="mail-shell__search"
+            [(value)]="mailQuery"
+            variant="field"
+            placeholder="Filtrar en carpeta..."
+            label="Filtrar en carpeta"
+          />
+          <app-select
+            [(value)]="readingPaneMode"
+            [options]="readingPaneOptions"
+            ariaLabel="Posición del panel de lectura"
+            size="sm"
+          />
+        </div>
+      </div>
+
+      <div class="mail-shell__workspace">
+        <app-split-pane [firstWidth]="230" [showFirst]="true" [showThird]="false">
+          <aside first class="mail-pane mail-pane--folders" aria-label="Carpetas">
+            <div class="mail-pane__scroll">
+              <app-tree-nav
+                [groups]="folderGroups()"
+                [(selected)]="selectedFolder"
+                ariaLabel="Carpetas del buzón"
+              />
+            </div>
+
+            <div class="mail-quota">
+              <div class="mail-quota__meta">
+                <span>Almacenamiento</span>
+                <strong>2.3 / 50 GB</strong>
+              </div>
+              <app-progress [value]="4.6" label="Cuota de almacenamiento del buzón" [showValue]="false" />
+            </div>
+          </aside>
+
+          <div second class="mail-content">
+            <app-split-pane
+              [direction]="readingPaneMode() === 'bottom' ? 'vertical' : 'horizontal'"
+              [firstWidth]="360"
+              [minFirst]="280"
+              [maxFirst]="540"
+              [showFirst]="true"
+              [showThird]="false"
+            >
+              <section first class="mail-pane mail-pane--list" aria-label="Listado de mensajes">
+                <div class="mail-pane__scroll">
+                  @for (msg of visibleMessages(); track msg.id) {
+                    <app-message-row
+                      [sender]="msg.sender"
+                      [subject]="msg.subject"
+                      [snippet]="msg.snippet"
+                      [timestamp]="msg.timestamp"
+                      [unread]="msg.unread"
+                      [selected]="selectedMessage()?.id === msg.id"
+                      [flagged]="msg.flagged"
+                      [checked]="isChecked(msg.id)"
+                      [priorityLabel]="msg.priority === 'high' ? '! Alta' : ''"
+                      [tags]="msg.tags"
+                      (flaggedChange)="setMessageFlag(msg.id, $event)"
+                      (checkedChange)="setChecked(msg.id, $event)"
+                      (activated)="selectMessage(msg)"
+                      (toggleRead)="toggleMessageRead(msg)"
+                      (deleted)="deleteMessage(msg.id)"
+                    />
+                  } @empty {
+                    <div class="mail-empty">
+                      <app-empty-state
+                        icon="mail"
+                        title="No hay mensajes aquí"
+                        description="Cambia el filtro rápido o selecciona otra carpeta."
+                      />
+                    </div>
+                  }
+                </div>
+              </section>
+
+              @if (readingPaneMode() !== 'off') {
+                <section second class="mail-pane mail-pane--viewer" aria-label="Visor de mensaje">
+                  @if (selectedMessage(); as current) {
+                    <div class="mail-viewer__actions">
+                      <app-button size="sm" icon="send" (pressed)="replyActive()">Responder</app-button>
+                      <app-button variant="secondary" size="sm" (pressed)="toggleMessageRead(current)">
+                        {{ current.unread ? 'Marcar leído' : 'Marcar no leído' }}
+                      </app-button>
+                      <app-button variant="secondary" size="sm" icon="code" (pressed)="headersModalOpen.set(true)">
+                        Encabezados RFC 5322
+                      </app-button>
+                      <app-button variant="soft-danger" size="sm" icon="trash-2" (pressed)="deleteMessage(current.id)">
+                        Eliminar
+                      </app-button>
+                    </div>
+
+                    <div class="mail-viewer__scroll">
+                      <app-safe-content-viewer
+                        [subject]="current.subject"
+                        [senderName]="current.sender"
+                        [senderAddress]="current.email"
+                        [recipientSummary]="current.recipients"
+                        [timestamp]="current.timestamp"
+                        [badgeLabel]="current.priority === 'high' ? 'Prioridad Alta' : ''"
+                        [externalBlocked]="!!current.hasExternalImages && !current.externalUnblocked"
+                        (unblockExternal)="unblockExternal(current.id)"
+                      >
+                        <ng-container attachments>
+                          @for (att of current.attachments; track att.name) {
+                            <app-attachment-chip
+                              [name]="att.name"
+                              [size]="att.size"
+                              [kind]="att.kind"
+                              [tone]="att.tone"
+                              (pressed)="notifySaved('Descargando adjunto: ' + att.name)"
+                            />
+                          }
+                        </ng-container>
+
+                        <p>{{ current.body }}</p>
+
+                        @if (current.isCalendarInvite) {
+                          <div class="mail-invite">
+                            <div class="mail-invite__title">Invitación iCal · Mié 18/11/2026 11:00 – 12:00</div>
+                            <div class="mail-invite__actions">
+                              <app-button size="sm" (pressed)="answerInvite(current.id, 'Aceptada')">Aceptar</app-button>
+                              <app-button variant="secondary" size="sm" (pressed)="answerInvite(current.id, 'Tentativa')">Quizás</app-button>
+                              <app-button variant="soft-danger" size="sm" (pressed)="answerInvite(current.id, 'Rechazada')">Rechazar</app-button>
+                              @if (current.rsvpStatus; as rsvp) {
+                                <app-badge tone="green">Respuesta: {{ rsvp }}</app-badge>
+                              }
+                            </div>
+                          </div>
+                        }
+
+                        <div footer>
+                          <strong>Nukabe S.A. de C.V.</strong> · Contenido sanitizado con protección anti-XSS
+                        </div>
+                      </app-safe-content-viewer>
+                    </div>
+                  }
+                </section>
+              } @else {
+                <section second class="mail-pane mail-pane--viewer">
+                  <div class="mail-empty">
+                    <app-empty-state
+                      icon="eye-off"
+                      title="Panel de lectura oculto"
+                      description="Elige Derecha o Inferior para leer sin abrir ventanas adicionales."
+                    />
+                  </div>
+                </section>
+              }
+            </app-split-pane>
+          </div>
+        </app-split-pane>
+      </div>
+    </div>
+  }
+
+  @case ('calendar') {
+    <div class="mail-module">
+      <div class="mail-module__head">
+        <app-segmented-control [(value)]="calView" [options]="calViewOptions" label="Vista del calendario" size="sm" />
+        <app-button size="sm" icon="plus" (pressed)="notifySaved('Nueva cita lista para programar')">Nueva cita</app-button>
+      </div>
+
+      <div class="mail-calendar-layout">
+        <div class="mail-calendar-side">
+          <app-date-grid
+            [month]="calMonth()"
+            [selected]="calSelectedDate()"
+            label="Mini calendario"
+            (daySelected)="calSelectedDate.set($event)"
+            (monthChanged)="calMonth.set($event)"
+          />
+        </div>
+
+        <div class="mail-calendar-main">
+          @if (calView() === 'week') {
+            <app-time-grid
+              [columns]="timeColumns"
+              [entries]="timeEntries"
+              [startHour]="8"
+              [endHour]="16"
+              (entrySelected)="notifySaved($event.title)"
+            />
+          } @else {
+            <div class="mail-stack">
+              @for (ev of timeEntries; track ev.id) {
+                <app-schedule-card
+                  stampTop="Nov"
+                  [stampBottom]="ev.hour + ':00'"
+                  [title]="ev.title"
+                  [time]="ev.subtitle ?? ''"
+                  [tone]="ev.tone"
+                />
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+  @case ('contacts') {
+    <div class="mail-module">
+      <div class="mail-module__head">
+        <app-segmented-control [(value)]="contactScope" [options]="contactScopeOptions" label="Alcance de directorio" size="sm" />
+        <app-search-input
+          class="mail-shell__search"
+          [(value)]="contactQuery"
+          variant="field"
+          placeholder="Buscar en Contactos o GAL..."
+          label="Buscar contactos"
+        />
+      </div>
+
+      <div class="mail-contacts-layout">
+        <app-section-card title="Directorio corporativo" subtitle="Contactos personales (.VCF) y Lista Global (GAL)" [flush]="true">
+          <app-data-table
+            [columns]="contactColumns"
+            [rows]="filteredContacts()"
+            [trackBy]="trackContact"
+            caption="Contactos personales y Lista Global de Direcciones"
+          >
+            <ng-template appTableCell="name" [appTableCellOf]="filteredContacts()" let-person>
+              <button type="button" class="mail-contact-btn focus-ring" (click)="selectedContact.set(person)">
+                <app-avatar [name]="person.name" size="sm" />
+                <span>{{ person.name }}</span>
+              </button>
+            </ng-template>
+          </app-data-table>
+        </app-section-card>
+
+        <app-section-card [title]="selectedContact().name" [subtitle]="selectedContact().role" titleSize="lg">
+          <p class="mail-detail-line">{{ selectedContact().email }}</p>
+          <p class="mail-detail-line">{{ selectedContact().phone }}</p>
+          <app-button
+            actions
+            size="sm"
+            icon="send"
+            (pressed)="openComposer([selectedContact().email])"
+          >
+            Enviar correo
+          </app-button>
+        </app-section-card>
+      </div>
+    </div>
+  }
+
+  @case ('tasks') {
+    <div class="mail-module">
+      <div class="mail-module__head">
+        <app-segmented-control [(value)]="pimMode" [options]="pimOptions" label="Tareas o notas" size="sm" />
+      </div>
+
+      @if (pimMode() === 'tasks') {
+        <div class="mail-stack">
+          @for (task of tasks(); track task.id) {
+            <app-checklist-item
+              [title]="task.title"
+              [description]="task.description"
+              [badgeLabel]="task.badgeLabel"
+              [badgeTone]="task.badgeTone"
+              [meta]="[{ icon: 'clock', text: task.due }]"
+              [done]="task.done"
+              (doneChange)="toggleTask(task.id, $event)"
+            />
+          }
+        </div>
+      } @else {
+        <div class="mail-notes-grid">
+          @for (note of notes; track note.id) {
+            <article class="mail-note tone-subtle tone-border" [attr.data-tone]="note.tone">
+              <div class="mail-note__head">
+                <strong>{{ note.title }}</strong>
+                <span class="mail-note__date">{{ note.updated }}</span>
+              </div>
+              <p class="mail-note__body">{{ note.body }}</p>
+            </article>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  @case ('options') {
+    <div class="mail-options-layout">
+      <aside class="mail-options-nav" aria-label="Secciones de configuración">
+        <app-tree-nav
+          [groups]="optionGroups"
+          [(selected)]="selectedOptionTab"
+          ariaLabel="Categorías de opciones"
+        />
+      </aside>
+
+      <div class="mail-options-body">
+        @switch (selectedOptionTab()) {
+          @case ('gen-regional') {
+            <app-section-card title="Configuración regional" subtitle="Zona horaria e idioma del buzón">
+              <app-combobox [(value)]="timezone" [options]="timezoneOptions" label="Zona horaria" />
+              <app-button size="sm" (pressed)="notifySaved('Zona horaria guardada')">Guardar</app-button>
+            </app-section-card>
+          }
+          @case ('gen-account') {
+            <app-section-card title="Seguridad del buzón" subtitle="Cambio de contraseña y actividad reciente">
+              <app-input type="text" label="Buzón corporativo" value="jorge.silva@nukabe.mx" disabled />
+              <app-button size="sm" (pressed)="notifySaved('Verificación completada')">Validar cuenta</app-button>
+            </app-section-card>
+          }
+          @case ('mail-signature') {
+            <app-section-card title="Firma automática HTML" subtitle="Se inyecta al redactar, responder o reenviar">
+              <app-rich-text-editor [(value)]="signatureDraft" label="Firma corporativa" />
+              <app-button size="sm" (pressed)="notifySaved('Firma actualizada')">Guardar firma</app-button>
+            </app-section-card>
+          }
+          @case ('mail-ooo') {
+            <app-section-card title="Respuesta automática (Fuera de oficina)">
+              <app-toggle-switch [(checked)]="oooEnabled" label="Activar respuesta automática por ausencia" />
+              <app-date-range-picker [(start)]="oooStart" [(end)]="oooEnd" label="Periodo activo" />
+              <app-button size="sm" (pressed)="notifySaved('Respuesta automática guardada')">Aplicar</app-button>
+            </app-section-card>
+          }
+          @case ('mail-rules') {
+            <app-section-card title="Reglas de filtrado del buzón" subtitle="Motor compatible con las 11 condiciones de MailEnable">
+              <div class="mail-stack">
+                @for (rule of rules(); track rule.id) {
+                  <div class="mail-rule">
+                    <div>
+                      <div class="mail-rule__name">{{ rule.name }}</div>
+                      <div class="mail-rule__desc">Si {{ rule.condition }} → {{ rule.action }}</div>
+                    </div>
+                    <app-toggle-switch [checked]="rule.enabled" [label]="rule.name" labelHidden (checkedChange)="toggleRule(rule.id)" />
+                  </div>
+                }
+              </div>
+            </app-section-card>
+          }
+        }
+      </div>
+    </div>
+  }
+}
+
+<!-- Drawer Mi Día -->
+<app-drawer [(open)]="myDayOpen" title="Mi Día · Resumen del buzón" size="md">
+  <div class="mail-stack">
+    <app-section-card title="Uso del buzón" subtitle="2.3 GB de 50 GB (4.6%)" titleSize="lg">
+      <app-progress [value]="4.6" label="Cuota del buzón" />
+    </app-section-card>
+
+    @for (ev of timeEntries.slice(0, 2); track ev.id) {
+      <app-schedule-card
+        stampTop="Hoy"
+        [stampBottom]="ev.hour + ':00'"
+        [title]="ev.title"
+        [time]="ev.subtitle ?? ''"
+        [tone]="ev.tone"
+      />
+    }
+
+    @for (task of tasks(); track task.id) {
+      <app-checklist-item
+        [title]="task.title"
+        [badgeLabel]="task.badgeLabel"
+        [badgeTone]="task.badgeTone"
+        [done]="task.done"
+        (doneChange)="toggleTask(task.id, $event)"
+      />
+    }
+  </div>
+</app-drawer>
+
+<!-- Modal Encabezados MIME -->
+<app-modal [(open)]="headersModalOpen" title="Encabezados originales RFC 5322" size="lg">
+  <app-code-block [code]="activeHeaders()" language="rfc5322" />
+</app-modal>
+
+<!-- Modal Redactor Moderno -->
+<app-modal [(open)]="composerOpen" title="Redactor de correo" size="lg">
+  <div class="mail-stack">
+    <app-chip-input
+      [(value)]="composerTo"
+      [suggestions]="galSuggestions"
+      label="Para"
+      placeholder="Escribe un nombre o correo..."
+    />
+    <app-chip-input
+      [(value)]="composerCc"
+      [suggestions]="galSuggestions"
+      label="CC"
+      placeholder="Con copia a..."
+    />
+    <app-input [(value)]="composerSubject" label="Asunto" placeholder="Agrega un asunto claro..." />
+    <app-rich-text-editor [(value)]="composerBody" label="Mensaje">
+      <div toolbarEnd class="mail-composer-opts">
+        <app-select [(value)]="composerPriority" [options]="priorityOptions" ariaLabel="Prioridad de envío" size="sm" />
+      </div>
+      <div footer class="mail-composer-sig">
+        <strong>Jorge Silva</strong> · Arquitectura de Software · Nukabe Corporativo
+      </div>
+    </app-rich-text-editor>
+    <app-checkbox [(checked)]="composerReadReceipt" label="Solicitar confirmación de lectura" />
+    <div class="mail-composer-foot">
+      <app-button variant="secondary" (pressed)="composerOpen.set(false)">Guardar borrador</app-button>
+      <app-button icon="send" (pressed)="sendDraft()">Enviar correo</app-button>
+    </div>
+  </div>
+</app-modal>

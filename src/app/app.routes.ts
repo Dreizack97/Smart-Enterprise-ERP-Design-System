@@ -104,6 +104,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('@features/showcase/pages/patterns/patterns').then((m) => m.Patterns),
       },
+      {
+        path: 'correo',
+        title: 'Correo · Sistema de Diseño',
+        loadComponent: () => import('@features/showcase/pages/mail/mail').then((m) => m.Mail),
+      },
     ],
   },
   {
