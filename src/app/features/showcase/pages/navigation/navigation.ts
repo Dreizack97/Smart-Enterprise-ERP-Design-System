@@ -6,6 +6,7 @@ import { Pagination } from '@shared/components/navigation/pagination/pagination'
 import { StepItem, Stepper } from '@shared/components/navigation/stepper/stepper';
 import { AppTabPanel } from '@shared/components/navigation/tab-panel/tab-panel';
 import { TabItem, Tabs } from '@shared/components/navigation/tabs/tabs';
+import { TreeNav, TreeNavGroup } from '@shared/components/navigation/tree-nav/tree-nav';
 import { Button } from '@shared/components/actions/button/button';
 import { ShowcaseBlock } from '@features/showcase/components/showcase-block/showcase-block';
 import { ShowcasePage } from '@features/showcase/components/showcase-page/showcase-page';
@@ -26,6 +27,7 @@ import { VariantRow } from '@features/showcase/components/variant-row/variant-ro
     ShowcasePage,
     Stepper,
     Tabs,
+    TreeNav,
     VariantGrid,
     VariantRow,
   ],
@@ -80,4 +82,21 @@ export class Navigation {
   protected advance(): void {
     this.step.update((current) => (current >= this.steps.length - 1 ? 0 : current + 1));
   }
+
+  protected readonly treeSelected = signal('inbox');
+
+  protected readonly treeGroups: readonly TreeNavGroup[] = [
+    {
+      label: 'Buzón',
+      items: [
+        { id: 'inbox', label: 'Bandeja de entrada', icon: 'mail', badge: 1, badgeTone: 'blue' },
+        { id: 'sent', label: 'Elementos enviados', icon: 'send', badge: '1,644' },
+        { id: 'drafts', label: 'Borradores', icon: 'pencil', badge: 2 },
+      ],
+    },
+    {
+      label: 'Compartidas',
+      items: [{ id: 'share-it', label: 'Soporte TI', icon: 'users', badge: 12 }],
+    },
+  ];
 }

@@ -14,3 +14,8 @@ app-pagination {
   font-size: var(--text-body);
   color: var(--ink-secondary);
 }
+
+.navigation__tree-demo {
+  max-width: 18rem;
+  width: 100%;
+}

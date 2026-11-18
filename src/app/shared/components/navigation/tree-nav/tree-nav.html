@@ -1,0 +1,38 @@
+<nav class="tree-nav" [attr.aria-label]="ariaLabel()">
+  @for (group of groups(); track $index) {
+    <div class="tree-nav__group">
+      @if (group.label; as groupLabel) {
+        <div class="tree-nav__heading">{{ groupLabel }}</div>
+      }
+
+      <ul class="tree-nav__list">
+        @for (item of group.items; track item.id) {
+          <li>
+            <button
+              type="button"
+              class="tree-nav__item focus-ring"
+              [class.tree-nav__item--active]="item.id === selected()"
+              [attr.aria-current]="item.id === selected() ? 'page' : null"
+              (click)="choose(item.id)"
+            >
+              <span class="tree-nav__main">
+                @if (item.icon; as iconName) {
+                  <app-icon [name]="iconName" [size]="16" />
+                }
+                <span class="tree-nav__label">{{ item.label }}</span>
+              </span>
+
+              @if (item.badge !== undefined && item.badge !== null && item.badge !== '') {
+                @if (item.badgeTone; as tone) {
+                  <app-badge [tone]="tone">{{ item.badge }}</app-badge>
+                } @else {
+                  <span class="tree-nav__count">{{ item.badge }}</span>
+                }
+              }
+            </button>
+          </li>
+        }
+      </ul>
+    </div>
+  }
+</nav>

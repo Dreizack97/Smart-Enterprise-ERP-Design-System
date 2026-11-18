@@ -188,4 +188,15 @@
       hacía; se vio al montar esta matriz.
     </p>
   </app-showcase-block>
+
+  <app-showcase-block
+    title="tree-nav"
+    description="Árbol lateral por secciones con icono, insignia o contador y estado activo."
+    layout="stack"
+    surface="card"
+  >
+    <div class="navigation__tree-demo">
+      <app-tree-nav [groups]="treeGroups" [(selected)]="treeSelected" ariaLabel="Carpetas de ejemplo" />
+    </div>
+  </app-showcase-block>
 </app-showcase-page>
