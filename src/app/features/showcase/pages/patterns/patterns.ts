@@ -4,12 +4,15 @@ import { ShowcaseBlock } from '@features/showcase/components/showcase-block/show
 import { VariantGrid } from '@features/showcase/components/variant-grid/variant-grid';
 import { VariantRow } from '@features/showcase/components/variant-row/variant-row';
 import { ShowcasePage } from '@features/showcase/components/showcase-page/showcase-page';
+import { AttachmentChip } from '@shared/components/patterns/attachment-chip/attachment-chip';
 import { CalendarCell } from '@shared/components/patterns/calendar-cell/calendar-cell';
-import { ChecklistItem } from '@shared/components/patterns/checklist-item/checklist-item';
+import { ChecklistItem, ChecklistMeta } from '@shared/components/patterns/checklist-item/checklist-item';
 import { MediaCard } from '@shared/components/patterns/media-card/media-card';
+import { MessageRow } from '@shared/components/patterns/message-row/message-row';
+import { SafeContentViewer } from '@shared/components/patterns/safe-content-viewer/safe-content-viewer';
 import { ScheduleCard } from '@shared/components/patterns/schedule-card/schedule-card';
 import { ScheduleChip } from '@shared/components/patterns/schedule-chip/schedule-chip';
-import { ChecklistMeta } from '@shared/components/patterns/checklist-item/checklist-item';
+import { TimeGrid, TimeGridColumn, TimeGridEntry } from '@shared/components/patterns/time-grid/time-grid';
 import { TONES, Tone } from '@shared/models/tone.model';
 import { DaySlot, WEEKDAY_HEADINGS, monthGrid, monthTitle } from '@shared/utils/calendar';
 
@@ -105,14 +108,18 @@ function placeholder(hue: string): string {
 @Component({
   selector: 'app-patterns',
   imports: [
+    AttachmentChip,
     Button,
     CalendarCell,
     ChecklistItem,
     MediaCard,
+    MessageRow,
+    SafeContentViewer,
     ScheduleCard,
     ScheduleChip,
     ShowcaseBlock,
     ShowcasePage,
+    TimeGrid,
     VariantGrid,
     VariantRow,
   ],
@@ -158,4 +165,22 @@ export class Patterns {
    * primera letra se sube a mayúscula.
    */
   protected readonly monthTitle = monthTitle(new Date());
+
+  protected readonly demoMsgUnread = signal(true);
+  protected readonly demoMsgFlagged = signal(true);
+  protected readonly demoExternalBlocked = signal(true);
+
+  protected readonly timeGridColumns: readonly TimeGridColumn[] = [
+    { id: 'mon', label: 'Lun 16' },
+    { id: 'tue', label: 'Mar 17' },
+    { id: 'wed', label: 'Mié 18 (Hoy)', today: true },
+    { id: 'thu', label: 'Jue 19' },
+    { id: 'fri', label: 'Vie 20' },
+  ];
+
+  protected readonly timeGridEntries: readonly TimeGridEntry[] = [
+    { id: 'e1', columnId: 'wed', hour: 9, title: 'Daily Sistemas', subtitle: 'Sala 2', tone: 'blue' },
+    { id: 'e2', columnId: 'wed', hour: 11, title: 'Revisión UI/UX', subtitle: 'Sala B', tone: 'orange' },
+    { id: 'e3', columnId: 'thu', hour: 10, title: 'Seguridad OWASP', subtitle: 'Remoto', tone: 'purple' },
+  ];
 }

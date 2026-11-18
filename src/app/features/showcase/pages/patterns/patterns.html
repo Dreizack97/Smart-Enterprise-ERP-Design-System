@@ -175,4 +175,54 @@
       <code>.tone-*</code>, y el valor de cada tema sale del token.
     </p>
   </app-showcase-block>
+
+  <app-showcase-block
+    title="message-row · attachment-chip · safe-content-viewer"
+    description="Piezas base de mensajería empresarial: fila de bandeja con acciones rápidas, adjuntos y visor seguro con bloqueo anti-tracking."
+    layout="stack"
+  >
+    <div class="patterns__mail-stack">
+      <div class="patterns__msg-frame">
+        <app-message-row
+          sender="Isabel Barboza"
+          subject="Revisión de avances ERP y portal corporativo"
+          snippet="Compartimos la propuesta arquitectónica y cronograma del trimestre..."
+          timestamp="09:42"
+          [unread]="demoMsgUnread()"
+          [selected]="true"
+          [(flagged)]="demoMsgFlagged"
+          priorityLabel="Alta"
+          [tags]="[{ label: '2 adjuntos', tone: 'neutral' }]"
+          (toggleRead)="demoMsgUnread.set(!demoMsgUnread())"
+        />
+      </div>
+
+      <app-safe-content-viewer
+        subject="Revisión de avances ERP y portal corporativo"
+        senderName="Isabel Barboza"
+        senderAddress="isabel.barboza@nukabe.mx"
+        recipientSummary="Para: Jorge Silva <jorge.silva@nukabe.mx>"
+        timestamp="Mié 18/11/2026 09:42"
+        badgeLabel="Prioridad Alta"
+        [externalBlocked]="demoExternalBlocked()"
+        (unblockExternal)="demoExternalBlocked.set(false)"
+      >
+        <ng-container attachments>
+          <app-attachment-chip name="Propuesta-Arquitectura.pdf" size="1.4 MB" kind="PDF" tone="blue" />
+          <app-attachment-chip name="Cronograma-Q4.xlsx" size="420 KB" kind="Excel" tone="green" [removable]="true" />
+        </ng-container>
+        <p>Contenido del mensaje renderizado con protección contra rastreadores externos.</p>
+      </app-safe-content-viewer>
+    </div>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="time-grid"
+    description="Cuadrícula horaria por columnas para agenda diaria o semanal."
+    layout="stack"
+  >
+    <div class="patterns__grid-frame">
+      <app-time-grid [columns]="timeGridColumns" [entries]="timeGridEntries" [startHour]="8" [endHour]="13" />
+    </div>
+  </app-showcase-block>
 </app-showcase-page>
