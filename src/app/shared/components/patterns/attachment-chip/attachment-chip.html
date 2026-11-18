@@ -1,0 +1,20 @@
+<div class="att-chip">
+  <button type="button" class="att-chip__main focus-ring" (click)="pressed.emit()">
+    <app-badge [tone]="tone()">{{ kind() }}</app-badge>
+    <span class="att-chip__name">{{ name() }}</span>
+    @if (size(); as fileSize) {
+      <span class="att-chip__size">{{ fileSize }}</span>
+    }
+  </button>
+
+  @if (removable()) {
+    <button
+      type="button"
+      class="att-chip__remove focus-ring"
+      [attr.aria-label]="'Quitar ' + name()"
+      (click)="removed.emit()"
+    >
+      <app-icon name="x" [size]="14" />
+    </button>
+  }
+</div>
