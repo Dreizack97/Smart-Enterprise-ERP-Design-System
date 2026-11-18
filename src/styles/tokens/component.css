@@ -590,6 +590,63 @@
   --focus-ring-width: 2px;
   --focus-ring-offset: 2px;
   --focus-ring-color: var(--color-primary-500);
+
+  /* --- Panel dividido (split-pane) ---------------------------------------------- */
+  --split-pane-handle-size: 0.25rem;
+  --split-pane-handle-surface: var(--line-subtle);
+  --split-pane-handle-surface-hover: var(--color-primary-500);
+
+  /* --- Árbol de navegación (tree-nav) -------------------------------------------- */
+  --tree-nav-item-height: var(--control-height-sm);
+  --tree-nav-item-radius: var(--radius-md);
+  --tree-nav-item-padding-x: 0.625rem;
+  --tree-nav-item-ink: var(--ink-body);
+  --tree-nav-item-surface-hover: var(--surface-2);
+  --tree-nav-item-surface-active: var(--tone-blue-surface-soft);
+  --tree-nav-item-ink-active: var(--tone-blue-ink-strong);
+
+  /* --- Fila de mensaje (message-row) --------------------------------------------- */
+  --message-row-padding-x: 0.875rem;
+  --message-row-padding-y: 0.75rem;
+  --message-row-surface: var(--surface-1);
+  --message-row-surface-hover: var(--surface-2);
+  --message-row-surface-selected: var(--tone-blue-surface-subtle);
+  --message-row-border: var(--line-subtle);
+  --message-row-unread-indicator: var(--color-primary-600);
+  --message-row-flag-ink: var(--tone-orange-ink);
+
+  /* --- Entrada de chips (chip-input) --------------------------------------------- */
+  --chip-input-chip-height: 1.75rem;
+  --chip-input-chip-radius: var(--radius-full);
+  --chip-input-chip-surface: var(--surface-2);
+  --chip-input-chip-border: var(--line-default);
+  --chip-input-chip-ink: var(--ink-primary);
+
+  /* --- Editor de texto enriquecido (rich-text-editor) ---------------------------- */
+  --rte-toolbar-surface: var(--surface-canvas);
+  --rte-border: var(--field-border);
+  --rte-radius: var(--field-radius);
+  --rte-surface: var(--field-surface);
+  --rte-min-height: 9rem;
+
+  /* --- Chip de adjunto (attachment-chip) ----------------------------------------- */
+  --attachment-chip-radius: var(--radius-lg);
+  --attachment-chip-surface: var(--surface-2);
+  --attachment-chip-surface-hover: var(--surface-3);
+  --attachment-chip-border: var(--line-default);
+
+  /* --- Visor seguro de contenido (safe-content-viewer) --------------------------- */
+  --content-viewer-surface: var(--surface-1);
+  --content-viewer-header-padding: 1.25rem 1.5rem;
+  --content-viewer-body-padding: 1.5rem;
+  --content-viewer-banner-surface: var(--tone-yellow-surface-subtle);
+  --content-viewer-banner-border: var(--tone-yellow-border);
+  --content-viewer-banner-ink: var(--tone-yellow-ink-strong);
+
+  /* --- Cuadrícula horaria (time-grid) -------------------------------------------- */
+  --time-grid-hour-height: 3.25rem;
+  --time-grid-line: var(--line-subtle);
+  --time-grid-header-surface: var(--surface-canvas);
 }
 
 /* Los tokens de gráfico son el único grupo de nivel 3 que hay que reescribir
@@ -654,4 +711,7 @@ html.dark {
   --chart-series-4: #8b5cf6;
   --chart-series-5: #65a30d;
   --chart-series-6: #db2777;
+
+  --message-row-unread-indicator: var(--link);
+  --message-row-surface-selected: rgba(96, 165, 250, 0.14);
 }
