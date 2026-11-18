@@ -3,6 +3,7 @@ import { Button } from '@shared/components/actions/button/button';
 import { Divider } from '@shared/components/containers/divider/divider';
 import { FormCard } from '@shared/components/containers/form-card/form-card';
 import { SectionCard } from '@shared/components/containers/section-card/section-card';
+import { SplitPane } from '@shared/components/containers/split-pane/split-pane';
 import { StatCard, StatVariant } from '@shared/components/containers/stat-card/stat-card';
 import { ActivityItem } from '@shared/components/media/activity-item/activity-item';
 import { Avatar } from '@shared/components/media/avatar/avatar';
@@ -49,6 +50,7 @@ interface Activity {
     SectionCard,
     ShowcaseBlock,
     ShowcasePage,
+    SplitPane,
     StatCard,
     VariantGrid,
     VariantRow,

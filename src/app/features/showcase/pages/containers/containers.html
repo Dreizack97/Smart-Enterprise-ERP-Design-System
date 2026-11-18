@@ -30,6 +30,20 @@
   </app-showcase-block>
 
   <app-showcase-block
+    title="split-pane"
+    description="Dos o tres paneles separados por divisores arrastrables con puntero o teclado."
+    layout="stack"
+  >
+    <div class="containers__split-demo">
+      <app-split-pane [firstWidth]="200" [secondWidth]="260">
+        <div first class="containers__split-pane">Carpetas o índice</div>
+        <div second class="containers__split-pane">Listado principal</div>
+        <div third class="containers__split-pane">Panel de lectura</div>
+      </app-split-pane>
+    </div>
+  </app-showcase-block>
+
+  <app-showcase-block
     title="stat-card"
     description="Una cifra y su contexto. Tres disposiciones de la misma anatomía: etiqueta, cifra y nota."
     layout="stack"

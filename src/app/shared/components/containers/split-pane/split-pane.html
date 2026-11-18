@@ -1,0 +1,54 @@
+<div class="split-pane" [class.split-pane--vertical]="direction() === 'vertical'">
+  @if (showFirst()) {
+    <div
+      class="split-pane__first"
+      [style.width.px]="direction() === 'horizontal' ? firstWidth() : null"
+      [style.height.px]="direction() === 'vertical' ? firstWidth() : null"
+    >
+      <ng-content select="[first]" />
+    </div>
+
+    <div
+      class="split-pane__handle focus-ring"
+      [class.split-pane__handle--active]="draggingHandle() === 'first'"
+      role="separator"
+      tabindex="0"
+      aria-label="Redimensionar primer panel"
+      [attr.aria-orientation]="direction() === 'horizontal' ? 'vertical' : 'horizontal'"
+      [attr.aria-valuenow]="firstWidth()"
+      [attr.aria-valuemin]="minFirst()"
+      [attr.aria-valuemax]="maxFirst()"
+      (pointerdown)="startDrag('first', $event)"
+      (keydown)="onHandleKeydown('first', $event)"
+    ></div>
+  }
+
+  <div
+    class="split-pane__second"
+    [class.split-pane__second--fill]="!showThird()"
+    [style.width.px]="showThird() && direction() === 'horizontal' ? secondWidth() : null"
+    [style.height.px]="showThird() && direction() === 'vertical' ? secondWidth() : null"
+  >
+    <ng-content select="[second]" />
+  </div>
+
+  @if (showThird()) {
+    <div
+      class="split-pane__handle focus-ring"
+      [class.split-pane__handle--active]="draggingHandle() === 'second'"
+      role="separator"
+      tabindex="0"
+      aria-label="Redimensionar panel secundario"
+      [attr.aria-orientation]="direction() === 'horizontal' ? 'vertical' : 'horizontal'"
+      [attr.aria-valuenow]="secondWidth()"
+      [attr.aria-valuemin]="minSecond()"
+      [attr.aria-valuemax]="maxSecond()"
+      (pointerdown)="startDrag('second', $event)"
+      (keydown)="onHandleKeydown('second', $event)"
+    ></div>
+
+    <div class="split-pane__third">
+      <ng-content select="[third]" />
+    </div>
+  }
+</div>

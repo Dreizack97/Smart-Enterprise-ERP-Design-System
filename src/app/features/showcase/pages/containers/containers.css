@@ -40,3 +40,18 @@ app-stat-card {
   align-items: stretch;
   gap: 0.5rem;
 }
+
+.containers__split-demo {
+  height: 12rem;
+  width: 100%;
+  border: 1px solid var(--line-default);
+  border-radius: var(--card-radius);
+  background-color: var(--surface-1);
+  overflow: hidden;
+}
+
+.containers__split-pane {
+  padding: 1rem;
+  font-size: var(--text-caption);
+  color: var(--ink-secondary);
+}
