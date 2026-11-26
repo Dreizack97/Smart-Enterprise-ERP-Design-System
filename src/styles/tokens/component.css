@@ -114,7 +114,7 @@
      activa era ilegible de noche. En oscuro se convierte en el mismo azul
      aclarado que ya usa todo enlace. */
   --field-accent: var(--color-primary-600);
-  --control-accent-ink: var(--color-primary-600);
+  --control-accent-ink: var(--link);
   --field-selected-surface: color-mix(in srgb, var(--field-accent) 10%, var(--field-surface));
   --field-toggle-ink-hover: var(--control-accent-ink);
   --field-icon-surface: var(--tone-blue-surface-soft);
@@ -133,9 +133,13 @@
   /* --- Tabla de datos ------------------------------------------------------- */
   --table-cell-padding-x: 1.5rem;
   --table-cell-padding-y: 1rem;
+  --table-cell-padding-x-compact: 0.875rem;
+  --table-cell-padding-y-compact: 0.5rem;
   --table-cell-font-size: var(--text-body);
+  --table-cell-font-size-compact: var(--text-body);
   --table-cell-ink: var(--ink-primary);
   --table-header-font-size: var(--text-overline);
+  --table-header-font-size-compact: var(--text-overline);
   --table-header-ink: var(--ink-secondary);
   --table-header-surface: var(--surface-canvas);
   --table-row-surface-hover: rgba(37, 99, 235, 0.02);
@@ -173,7 +177,7 @@
   --requirements-gap: 0.375rem;
   --requirements-title-ink: var(--ink-body);
   --requirements-pending-ink: var(--ink-muted);
-  --requirements-met-ink: var(--tone-green-ink);
+  --requirements-met-ink: var(--tone-green-ink-strong);
 
   --checklist-padding: 1.25rem;
   --checklist-lift: -2px;
@@ -259,6 +263,11 @@
   --theme-toggle-ink: var(--ink-secondary);
   --theme-toggle-shadow: var(--shadow-md);
 
+  /* --- Texto resaltado -----------------------------------------------------------
+     Coincidencias de una búsqueda dentro de una etiqueta, como en el sidebar. */
+  --highlight-surface: var(--tone-blue-surface-soft);
+  --highlight-ink: var(--tone-blue-ink-strong);
+
   /* --- Control deslizante -------------------------------------------------------- */
   --slider-track: var(--surface-3);
   --slider-track-height: 0.375rem;
@@ -298,7 +307,17 @@
   /* --- Modal --------------------------------------------------------------- */
   --modal-surface: var(--surface-1);
   --modal-radius: var(--radius-xl);
-  --modal-padding: 1.5rem;
+  --modal-padding: 1.25rem 1.5rem;
+  --modal-header-padding: 1rem 1.5rem;
+  --modal-body-padding: 1.25rem 1.5rem;
+  --modal-footer-padding: 1rem 1.5rem;
+  --modal-padding-compact: 0.875rem 1.25rem;
+  --modal-header-padding-compact: 0.75rem 1.25rem;
+  --modal-footer-padding-compact: 0.75rem 1.25rem;
+  --modal-title-size: 1.25rem;
+  --modal-title-size-compact: 1.1rem;
+  --modal-close-size: 2rem;
+  --modal-close-size-compact: 1.75rem;
   --modal-max-width-sm: 24rem;
   --modal-max-width-md: 32rem;
   --modal-max-width-lg: 48rem;
@@ -470,6 +489,8 @@
   --navbar-mark-ink: #ffffff;
   --navbar-dot-surface: #ef4444;
   --navbar-identity-width: 8rem;
+  --navbar-search-width: 16rem;
+  --navbar-search-max-width: 21rem;
 
   --sidebar-surface: var(--surface-1);
   --sidebar-border: var(--line-default);
@@ -479,7 +500,7 @@
   --sidebar-link-radius: var(--radius-lg);
   --sidebar-link-padding: 0.75rem 1rem;
   --sidebar-link-ink: var(--ink-secondary);
-  --sidebar-link-ink-hover: var(--color-primary-600);
+  --sidebar-link-ink-hover: var(--link);
   --sidebar-link-surface-hover: rgba(37, 99, 235, 0.08);
   --sidebar-link-active-surface: linear-gradient(
     135deg,
@@ -542,7 +563,12 @@
     var(--color-primary-500) 100%
   );
   --centered-shape-surface: rgba(255, 255, 255, 0.05);
+  --centered-shape-border: none;
+  --centered-shape-shadow: none;
   --centered-shape-display: block;
+  /* Retícula de puntos detrás del panel. Solo se ve en oscuro, donde el
+     fondo deja de ser un degradado de marca. */
+  --centered-grid-color: transparent;
   --centered-panel-width: 28rem;
   /* El pie bajo el panel (el aviso legal de las pantallas de acceso). Lleva su
      propia cápsula: ningún blanco llega a 4.5:1 sobre el tramo claro del
@@ -613,7 +639,7 @@
   --message-row-surface-selected: var(--tone-blue-surface-subtle);
   --message-row-border: var(--line-subtle);
   --message-row-unread-indicator: var(--color-primary-600);
-  --message-row-flag-ink: var(--tone-orange-ink);
+  --message-row-flag-ink: var(--tone-orange-ink-strong);
 
   /* --- Entrada de chips (chip-input) --------------------------------------------- */
   --chip-input-chip-height: 1.75rem;
@@ -677,8 +703,23 @@ html.dark {
   --sidebar-link-ink-hover: var(--link);
   --sidebar-group-ink: var(--color-secondary-200);
 
-  --centered-backdrop: var(--surface-canvas);
-  --centered-shape-display: none;
+  /* En oscuro el degradado de marca deslumbra; lo sustituyen halos tenues
+     sobre el lienzo, que siguen a la paleta elegida. */
+  --centered-backdrop:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(59, 130, 246, 0.18) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 100% 100%, rgba(37, 99, 235, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 0% 100%, rgba(14, 165, 233, 0.08) 0%, transparent 60%),
+    linear-gradient(180deg, var(--surface-inset) 0%, var(--surface-canvas) 100%);
+  --centered-shape-surface: radial-gradient(
+    circle at 35% 35%,
+    rgba(59, 130, 246, 0.12) 0%,
+    rgba(37, 99, 235, 0.03) 65%,
+    transparent 100%
+  );
+  --centered-shape-border: 1px solid rgba(255, 255, 255, 0.07);
+  --centered-shape-shadow:
+    0 0 50px rgba(59, 130, 246, 0.08), inset 0 0 20px rgba(255, 255, 255, 0.02);
+  --centered-grid-color: rgba(255, 255, 255, 0.06);
   --centered-footer-surface: var(--surface-2);
   --centered-footer-ink: var(--ink-secondary);
   --centered-footer-ink-hover: var(--ink-primary);
@@ -714,4 +755,191 @@ html.dark {
 
   --message-row-unread-indicator: var(--link);
   --message-row-surface-selected: rgba(96, 165, 250, 0.14);
+}
+
+/* Fondo de las pantallas de acceso para las paletas oscuras alternativas. */
+html.dark.theme-graphite {
+  --centered-backdrop:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(56, 189, 248, 0.14) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 100% 100%, rgba(71, 85, 105, 0.14) 0%, transparent 60%),
+    linear-gradient(180deg, #05070a 0%, #0d1117 100%);
+  --centered-shape-surface: radial-gradient(
+    circle at 35% 35%,
+    rgba(56, 189, 248, 0.09) 0%,
+    rgba(30, 41, 59, 0.03) 65%,
+    transparent 100%
+  );
+  --centered-shape-shadow:
+    0 0 50px rgba(56, 189, 248, 0.06), inset 0 0 20px rgba(255, 255, 255, 0.02);
+}
+
+html.dark.theme-zinc {
+  --centered-backdrop:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(255, 255, 255, 0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 100% 100%, rgba(96, 165, 250, 0.08) 0%, transparent 60%),
+    linear-gradient(180deg, #000000 0%, #09090b 100%);
+  --centered-shape-surface: radial-gradient(
+    circle at 35% 35%,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(39, 39, 42, 0.02) 65%,
+    transparent 100%
+  );
+  --centered-shape-border: 1px solid rgba(255, 255, 255, 0.05);
+  --centered-shape-shadow: 0 0 40px rgba(255, 255, 255, 0.03);
+  --centered-grid-color: rgba(255, 255, 255, 0.04);
+}
+
+html.dark.theme-cyber {
+  --cyber-on-accent: #02060b;
+  --button-primary-surface: linear-gradient(135deg, #00e5ff 0%, #6366f1 100%);
+  --button-primary-surface-hover: linear-gradient(135deg, #22d3ee 0%, #818cf8 100%);
+  --button-primary-ink: var(--cyber-on-accent);
+  --calendar-today-ink: var(--cyber-on-accent);
+  --form-card-logo-surface: linear-gradient(to bottom right, #00b8d4, #0891b2);
+  --form-card-logo-ink: var(--cyber-on-accent);
+  --date-grid-selected-ink: var(--cyber-on-accent);
+  --stepper-accent-ink: var(--cyber-on-accent);
+  --segmented-item-ink-active: var(--cyber-on-accent);
+  --navbar-mark-surface: linear-gradient(135deg, #00b8d4, #0891b2);
+  --navbar-mark-ink: var(--cyber-on-accent);
+  --sidebar-link-active-ink: var(--cyber-on-accent);
+  --sidebar-sublink-active-ink: var(--cyber-on-accent);
+  --button-primary-shadow: 0 4px 18px rgba(0, 229, 255, 0.35);
+  --sidebar-link-active-surface: linear-gradient(135deg, #0891b2 0%, #6366f1 100%);
+  --centered-backdrop:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(0, 240, 255, 0.22) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 100% 100%, rgba(139, 92, 246, 0.2) 0%, transparent 60%),
+    linear-gradient(180deg, #02060b 0%, #050b14 100%);
+}
+
+/* Paletas claras alternativas: botones, enlaces y fondo de acceso */
+html:not(.dark).theme-ocean {
+  --button-primary-surface: #0e7490;
+  --button-primary-surface-hover: #0891b2;
+  --button-primary-ink: #ffffff;
+  --sidebar-link-active-surface: #0e7490;
+  --sidebar-link-ink-hover: var(--link);
+  --centered-backdrop:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(6, 182, 212, 0.16) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 100% 100%, rgba(14, 116, 144, 0.14) 0%, transparent 60%),
+    linear-gradient(180deg, #f2f6f8 0%, #e8eff3 100%);
+}
+
+html:not(.dark).theme-cyberpunk {
+  --cyber-on-accent: #02060b;
+  --button-primary-surface: linear-gradient(135deg, #00b8d4 0%, #008ba3 100%);
+  --button-primary-surface-hover: linear-gradient(135deg, #00e5ff 0%, #00b8d4 100%);
+  --button-primary-ink: var(--cyber-on-accent);
+  --calendar-today-ink: var(--cyber-on-accent);
+  --form-card-logo-surface: linear-gradient(to bottom right, #00b8d4, #008ba3);
+  --form-card-logo-ink: var(--cyber-on-accent);
+  --date-grid-selected-ink: var(--cyber-on-accent);
+  --stepper-accent-ink: var(--cyber-on-accent);
+  --segmented-item-ink-active: var(--cyber-on-accent);
+  --navbar-mark-surface: linear-gradient(135deg, #00b8d4, #008ba3);
+  --navbar-mark-ink: var(--cyber-on-accent);
+  --sidebar-link-active-ink: var(--cyber-on-accent);
+  --sidebar-sublink-active-ink: var(--cyber-on-accent);
+  --button-primary-shadow: 0 4px 14px rgba(0, 184, 212, 0.3);
+  --sidebar-link-active-surface: linear-gradient(135deg, #00b8d4 0%, #008ba3 100%);
+  --sidebar-link-ink-hover: var(--link);
+  --centered-backdrop:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(0, 229, 255, 0.2) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 100% 100%, rgba(99, 102, 241, 0.15) 0%, transparent 60%),
+    linear-gradient(180deg, #edf2f7 0%, #e2eaf2 100%);
+}
+
+/* Bisel especular, sombras multicapa y opacidades para modo Cristal */
+html:not(.dark)[data-surface='glass'] {
+  --glass-body-color: #f1f4f9;
+  --glass-body-image:
+    radial-gradient(
+      at 5% 0%,
+      color-mix(in srgb, var(--color-primary-400) 42%, transparent) 0px,
+      transparent 48%
+    ),
+    radial-gradient(at 95% 0%, rgba(99, 102, 241, 0.28) 0px, transparent 45%),
+    radial-gradient(
+      at 90% 60%,
+      color-mix(in srgb, var(--color-primary-500) 30%, transparent) 0px,
+      transparent 48%
+    ),
+    radial-gradient(at 8% 85%, rgba(14, 165, 233, 0.26) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(168, 85, 247, 0.18) 0px, transparent 48%);
+  --glass-card-surface: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.78) 0%,
+    rgba(255, 255, 255, 0.52) 100%
+  );
+  --glass-card-border: rgba(255, 255, 255, 0.85);
+  --glass-navbar-surface: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.82) 0%,
+    rgba(255, 255, 255, 0.65) 100%
+  );
+  --glass-navbar-border: rgba(255, 255, 255, 0.85);
+  --glass-navbar-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+  --glass-sidebar-surface: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.84) 0%,
+    rgba(255, 255, 255, 0.68) 50%,
+    rgba(255, 255, 255, 0.78) 100%
+  );
+  --glass-sidebar-border: rgba(255, 255, 255, 0.85);
+  --glass-sidebar-shadow: 4px 0 24px -4px rgba(15, 23, 42, 0.04);
+  --glass-sidebar-open-surface: rgba(255, 255, 255, 0.94);
+  --glass-sidebar-open-shadow: 12px 0 36px rgba(15, 23, 42, 0.18);
+
+  --card-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.8), 0 16px 36px -4px rgba(15, 23, 42, 0.08),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
+  --dropdown-surface: color-mix(in srgb, #ffffff 94%, transparent);
+  --modal-surface: color-mix(in srgb, #ffffff 92%, transparent);
+}
+
+html.dark[data-surface='glass'] {
+  --glass-body-color: var(--surface-canvas);
+  --glass-body-image:
+    radial-gradient(
+      at 5% 0%,
+      color-mix(in srgb, var(--color-primary-500) 32%, transparent) 0px,
+      transparent 48%
+    ),
+    radial-gradient(at 95% 0%, rgba(139, 92, 246, 0.26) 0px, transparent 46%),
+    radial-gradient(
+      at 90% 60%,
+      color-mix(in srgb, var(--link) 28%, transparent) 0px,
+      transparent 48%
+    ),
+    radial-gradient(at 8% 85%, rgba(6, 182, 212, 0.25) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(124, 58, 237, 0.22) 0px, transparent 48%);
+  --glass-card-surface: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--surface-1) 85%, transparent) 0%,
+    color-mix(in srgb, var(--surface-1) 60%, transparent) 100%
+  );
+  --glass-card-border: rgba(255, 255, 255, 0.12);
+  --glass-navbar-surface: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--surface-1) 88%, transparent) 0%,
+    color-mix(in srgb, var(--surface-1) 72%, transparent) 100%
+  );
+  --glass-navbar-border: rgba(255, 255, 255, 0.1);
+  --glass-navbar-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.4);
+  --glass-sidebar-surface: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--surface-1) 88%, transparent) 0%,
+    color-mix(in srgb, var(--surface-1) 75%, transparent) 50%,
+    color-mix(in srgb, var(--surface-1) 85%, transparent) 100%
+  );
+  --glass-sidebar-border: rgba(255, 255, 255, 0.1);
+  --glass-sidebar-shadow: 4px 0 28px -4px rgba(0, 0, 0, 0.35);
+  --glass-sidebar-open-surface: color-mix(in srgb, var(--surface-1) 95%, transparent);
+  --glass-sidebar-open-shadow: 12px 0 40px rgba(0, 0, 0, 0.6);
+
+  --card-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.12), 0 20px 48px -4px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.18);
+  --dropdown-surface: color-mix(in srgb, var(--surface-1) 94%, transparent);
+  --modal-surface: color-mix(in srgb, var(--surface-1) 92%, transparent);
 }

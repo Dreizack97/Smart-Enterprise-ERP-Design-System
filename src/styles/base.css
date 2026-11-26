@@ -74,19 +74,18 @@
 /* =======================================================================
    Transición de tema
    -----------------------------------------------------------------------
-   `ThemeStore` agrega `.theme-anim` a `<html>` durante ~350 ms mientras se
-   cambia, para que el cambio de color sea suave sin que cualquier hover
-   ordinario arrastre detrás una transición global.
+   Mientras `ThemeStore` aplica un cambio de apariencia, `.theme-anim`
+   congela cualquier `transition` individual de botones, filas, inputs o
+   bordes para que ningún elemento cambie antes o después que otro.
+   La transición visual la realiza el compositor en GPU mediante la
+   View Transition API (`::view-transition-old(root)` / `new(root)`).
    ======================================================================= */
 
+html.theme-anim,
 html.theme-anim *,
 html.theme-anim *::before,
 html.theme-anim *::after {
-  transition:
-    background-color var(--duration-normal) ease,
-    border-color var(--duration-normal) ease,
-    color var(--duration-normal) ease,
-    fill var(--duration-normal) ease !important;
+  transition: none !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -100,33 +99,218 @@ html.theme-anim *::after {
   }
 }
 
+/* La misma reducción, pedida desde las preferencias de la aplicación en lugar
+   de las del sistema operativo. */
+html[data-reduced-motion='true'] *,
+html[data-reduced-motion='true'] *::before,
+html[data-reduced-motion='true'] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
 /* =======================================================================
-   Transiciones de vista entre rutas
+   Transiciones de vista entre rutas y cambio de tema
    -----------------------------------------------------------------------
-   El router entrega la navegación a la View Transition API del navegador; lo
-   que se ve se decide aquí.
+   El router y `ThemeStore` entregan la transición a la View Transition API
+   del navegador: captura el estado anterior y el nuevo como dos texturas
+   en GPU y las funde de forma uniforme a 60fps sin recalcular estilos por
+   elemento en cada frame.
 
-   Un cross-fade simple, y deliberadamente así: las páginas del catálogo son
-   el mismo armazón con un cuerpo distinto, así que cualquier cosa que se
-   deslizara reclamaría una relación espacial entre dos listas de componentes
-   que no existe.
-
-   `prefers-reduced-motion` necesita su PROPIA regla. El reinicio general al
-   inicio de este archivo está escrito contra `*`, y los pseudo-elementos de
-   transición de vista no están en el árbol del documento, así que `*` nunca
-   los alcanza: sin esto, la única animación que alguien pidió no ver sería
-   la única que seguiría corriendo.
+   Cuando `html.theme-anim` está activo usamos una duración un poco más
+   suave (`--duration-normal`) y `mix-blend-mode: normal` para que el
+   fundido entre claro y oscuro sea limpio y uniforme.
    ======================================================================= */
+
+@property --theme-wave {
+  syntax: '<length>';
+  initial-value: 0px;
+  inherits: true;
+}
 
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-duration: var(--view-transition-duration);
   animation-timing-function: var(--ease-out-quart);
+  mix-blend-mode: normal;
+}
+
+/* Durante el cambio de tema:
+   - `old(root)` permanece fijo debajo.
+   - `new(root)` se revela desde las coordenadas exactas del botón presionado
+     (`--theme-x`, `--theme-y`) usando una máscara radial con un borde suave
+     difuminado de 120px y un ligero bloom inicial. */
+html.theme-anim::view-transition-old(root) {
+  animation: none;
+  z-index: 1;
+}
+
+html.theme-anim::view-transition-new(root) {
+  z-index: 2;
+  -webkit-mask-image: radial-gradient(
+    circle at var(--theme-x, 92vw) var(--theme-y, 32px),
+    #000 calc(var(--theme-wave) - 120px),
+    rgba(0, 0, 0, 0.55) calc(var(--theme-wave) - 45px),
+    transparent var(--theme-wave)
+  );
+  mask-image: radial-gradient(
+    circle at var(--theme-x, 92vw) var(--theme-y, 32px),
+    #000 calc(var(--theme-wave) - 120px),
+    rgba(0, 0, 0, 0.55) calc(var(--theme-wave) - 45px),
+    transparent var(--theme-wave)
+  );
+  animation: theme-radial-bloom 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes theme-radial-bloom {
+  0% {
+    --theme-wave: 0px;
+    filter: brightness(1.06) blur(2px);
+  }
+  45% {
+    filter: brightness(1) blur(0px);
+  }
+  100% {
+    --theme-wave: calc(var(--theme-r, 150vmax) + 140px);
+    filter: brightness(1) blur(0px);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-old(root),
   ::view-transition-new(root) {
-    animation: none;
+    animation: none !important;
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
   }
+}
+
+html[data-reduced-motion='true']::view-transition-old(root),
+html[data-reduced-motion='true']::view-transition-new(root) {
+  animation: none !important;
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+}
+
+/* =======================================================================
+   Ambiente y refracción para el estilo Cristal (Glassmorphism)
+   -----------------------------------------------------------------------
+   El fondo ambiente fijo proporciona luz y matiz detrás de las tarjetas
+   para que la refracción y el desenfoque sean vívidos al desplazar.
+
+   En `app-navbar` y `app-sidebar` el fondo y el `backdrop-filter` viven en
+   el `::before` para que el desenfoque refracte el contenido que pasa por
+   detrás sin crear un bloque contenedor que atrape hijos con `position: fixed`.
+   ======================================================================= */
+
+html:not(.dark)[data-surface='glass'] body {
+  background-color: var(--glass-body-color);
+  background-image: var(--glass-body-image);
+  background-attachment: fixed;
+}
+
+html.dark[data-surface='glass'] body {
+  background-color: var(--glass-body-color);
+  background-image: var(--glass-body-image);
+  background-attachment: fixed;
+}
+
+/* Desenfoque de cristal esmerilado y bisel especular en las tarjetas */
+html[data-surface='glass'] .card,
+html[data-surface='glass'] .stat,
+html[data-surface='glass'] .identity-card,
+html[data-surface='glass'] .accordion {
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+html:not(.dark)[data-surface='glass'] .card,
+html:not(.dark)[data-surface='glass'] .stat,
+html:not(.dark)[data-surface='glass'] .identity-card {
+  background: var(--glass-card-surface) !important;
+  border: 1px solid var(--glass-card-border) !important;
+}
+
+html.dark[data-surface='glass'] .card,
+html.dark[data-surface='glass'] .stat,
+html.dark[data-surface='glass'] .identity-card {
+  background: var(--glass-card-surface) !important;
+  border: 1px solid var(--glass-card-border) !important;
+}
+
+/* Barra superior translúcida con refracción al desplazar el contenido por debajo */
+html[data-surface='glass'] app-navbar {
+  background-color: transparent !important;
+  border-bottom-color: transparent !important;
+}
+
+html[data-surface='glass'] app-navbar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+html:not(.dark)[data-surface='glass'] app-navbar::before {
+  background: var(--glass-navbar-surface);
+  border-bottom: 1px solid var(--glass-navbar-border);
+  box-shadow: var(--glass-navbar-shadow);
+}
+
+html.dark[data-surface='glass'] app-navbar::before {
+  background: var(--glass-navbar-surface);
+  border-bottom: 1px solid var(--glass-navbar-border);
+  box-shadow: var(--glass-navbar-shadow);
+}
+
+/* Sidebar translúcido satinado con borde especular */
+html[data-surface='glass'] app-sidebar {
+  background-color: transparent !important;
+  border-right-color: transparent !important;
+}
+
+html[data-surface='glass'] app-sidebar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+}
+
+html:not(.dark)[data-surface='glass'] app-sidebar::before {
+  background: var(--glass-sidebar-surface);
+  border-right: 1px solid var(--glass-sidebar-border);
+  box-shadow: var(--glass-sidebar-shadow);
+}
+
+html.dark[data-surface='glass'] app-sidebar::before {
+  background: var(--glass-sidebar-surface);
+  border-right: 1px solid var(--glass-sidebar-border);
+  box-shadow: var(--glass-sidebar-shadow);
+}
+
+/* En móvil, el drawer al desplegarse mantiene opacidad alta para no perder tono con el scrim */
+@media (max-width: 1023.98px) {
+  html:not(.dark)[data-surface='glass'] app-sidebar.sidebar--open::before {
+    background: var(--glass-sidebar-open-surface);
+    box-shadow: var(--glass-sidebar-open-shadow);
+  }
+
+  html.dark[data-surface='glass'] app-sidebar.sidebar--open::before {
+    background: var(--glass-sidebar-open-surface);
+    box-shadow: var(--glass-sidebar-open-shadow);
+  }
+}
+
+/* Desplegables y menús en modo Cristal */
+html[data-surface='glass'] .dropdown,
+html[data-surface='glass'] .crumbs__menu {
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
 }

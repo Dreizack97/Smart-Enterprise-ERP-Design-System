@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56" width="56" height="56" role="img" aria-labelledby="favicon-t">
+  <title id="favicon-t">Smart Enterprise ERP</title>
+  <defs>
+    <style>.a{fill:#2563EB}.b{fill:#1E3A8A}.l{fill:#10B981}@media (prefers-color-scheme:dark){.a{fill:#93C5FD}.b{fill:#3B82F6}.l{fill:#34D399}}</style>
+    <mask id="favicon-base" maskUnits="userSpaceOnUse" x="-1" y="-1" width="58" height="58"><rect x="-1" y="-1" width="58" height="58" fill="#fff"/><path d="M5.75 37A24 24 0 1 1 50.25 37L34 18.5H22Z" fill="#000" stroke="#000" stroke-width="8" stroke-linejoin="round"/><path d="M5.75 37L22 18.5H34L50.25 37V41H5.75Z" fill="#000"/><path d="M13.5 38L21.2 26.5L24.8 29.2L28 26.2L31.2 29.2L34.8 26.5L42.5 38Z" fill="#000" stroke="#000" stroke-width="8" stroke-linejoin="round"/></mask>
+    <mask id="favicon-canal" maskUnits="userSpaceOnUse" x="-1" y="-1" width="58" height="58"><rect x="-1" y="-1" width="58" height="58" fill="#fff"/><path d="M10.4 33.2A18.5 18.5 0 0 1 20.6 11.05M35.4 11.05A18.5 18.5 0 0 1 45.6 33.2" fill="none" stroke="#000" stroke-width="3.2" stroke-linecap="round"/><circle cx="28" cy="11.2" r="3.2" fill="#000"/><path d="M13.5 38L21.2 26.5L24.8 29.2L28 26.2L31.2 29.2L34.8 26.5L42.5 38Z" fill="#000" stroke="#000" stroke-width="8" stroke-linejoin="round"/></mask>
+  </defs>
+  <g mask="url(#favicon-base)">
+    <path class="b" d="M7.83 41A24 24 0 0 0 48.17 41Z"/>
+  </g>
+  <g mask="url(#favicon-canal)">
+    <path class="a" d="M5.75 37A24 24 0 1 1 50.25 37L34 18.5H22Z"/>
+  </g>
+  <path class="l" d="M13.5 38L21.2 26.5L24.8 29.2L28 26.2L31.2 29.2L34.8 26.5L42.5 38Z"/>
+</svg>
