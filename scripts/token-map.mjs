@@ -15,33 +15,78 @@ const FILES = ['primitive.css', 'semantic.css', 'component.css'].map((name) =>
   join(ROOT, 'src/styles/tokens', name),
 );
 
-/** `{ light, dark }`, each a `Map` of custom property to a literal value. */
+/** `{ light, dark }` base-palette maps, excluding alternate palettes and surface modifiers. */
 export function readTokens() {
   const source = FILES.map((file) => readFileSync(file, 'utf8')).join('\n');
   return {
-    light: resolveAll(declarationsFor(source, 'light')),
-    dark: resolveAll(declarationsFor(source, 'dark')),
+    light: resolveAll(declarationsForPalette(source, { dark: false, selector: null })),
+    dark: resolveAll(declarationsForPalette(source, { dark: true, selector: null })),
   };
 }
 
 /**
- * Every custom property declared for one theme, later declarations winning.
- *
- * The light theme is `:root`; the dark one is `:root` plus `html.dark`, which
- * is exactly how the cascade resolves them on the document element.
+ * Resolves one token map for each supported color palette. Theme selectors are
+ * mutually exclusive at runtime; merging every `html.dark.theme-*` block into
+ * one map silently made the last palette look like the default dark theme.
  */
-function declarationsFor(source, theme) {
+export function readThemeTokens() {
+  const source = FILES.map((file) => readFileSync(file, 'utf8')).join('\n');
+  const palettes = [
+    { scheme: 'claro', name: 'base', dark: false, selector: null },
+    { scheme: 'claro', name: 'océano', dark: false, selector: 'ocean' },
+    { scheme: 'claro', name: 'cyberpunk', dark: false, selector: 'cyberpunk' },
+    { scheme: 'claro', name: 'perla', dark: false, selector: 'pearl' },
+    { scheme: 'oscuro', name: 'medianoche', dark: true, selector: null },
+    { scheme: 'oscuro', name: 'grafito', dark: true, selector: 'graphite' },
+    { scheme: 'oscuro', name: 'zinc', dark: true, selector: 'zinc' },
+    { scheme: 'oscuro', name: 'cyber', dark: true, selector: 'cyber' },
+  ];
+
+  return palettes.map((palette) => ({
+    label: `${palette.scheme} / ${palette.name}`,
+    tokens: resolveAll(declarationsForPalette(source, palette)),
+  }));
+}
+
+/** Applies only the base and selected palette blocks for one runtime state. */
+function declarationsForPalette(source, { dark, selector: palette }) {
   const declarations = new Map();
 
   for (const { selector, body } of blocksOf(stripComments(source))) {
     if (/^@keyframes/i.test(selector)) {
       continue;
     }
-    const isDarkBlock = /html\.dark/.test(selector);
-    const isLightBlock = /:root|^@theme/.test(selector);
-    if (isDarkBlock ? theme !== 'dark' : !isLightBlock) {
+
+    const isRoot = selector === ':root' || /^@theme(?:\s|$)/.test(selector);
+    const isDarkBlock = /^html\.dark(?:$|[.\[])/.test(selector);
+    const isLightPaletteBlock = /^html:not\(\.dark\)(?:$|[.\[])/.test(selector);
+    if (isRoot) {
+      // Root tokens are inherited by both color schemes.
+    } else if (isDarkBlock) {
+      if (
+        !dark ||
+        selector.includes('[data-surface=') ||
+        selector.includes('[data-high-contrast=')
+      ) {
+        continue;
+      }
+    } else if (isLightPaletteBlock) {
+      if (
+        dark ||
+        selector.includes('[data-surface=') ||
+        selector.includes('[data-high-contrast=')
+      ) {
+        continue;
+      }
+    } else {
       continue;
     }
+
+    const themeName = /\.theme-([a-z0-9-]+)/i.exec(selector)?.[1] ?? null;
+    if (themeName !== null && themeName !== palette) {
+      continue;
+    }
+
     for (const [, name, value] of body.matchAll(/(--[a-z0-9-]+)\s*:\s*([^;]+);/gi)) {
       declarations.set(name, value.trim().replace(/\s+/g, ' '));
     }
