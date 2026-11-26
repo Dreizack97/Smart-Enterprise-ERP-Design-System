@@ -1,28 +1,34 @@
 import { Component, input } from '@angular/core';
 import { IconName } from '@core/icons/lucide-icons';
 import { Tone } from '@shared/models/tone.model';
+import { Badge } from '@shared/components/feedback/badge/badge';
 import { Icon } from '@shared/components/media/icon/icon';
 
-/** Una entrada en un historial de actividad. */
+/** Píldora de contexto bajo el título (dispositivo, actor o IP). */
+export interface ActivityPill {
+  readonly icon?: IconName;
+  readonly label: string;
+  readonly mono?: boolean;
+}
+
+/** Una entrada en un historial de actividad, lista de sesiones o bloque de acción. */
 @Component({
   selector: 'app-activity-item',
-  imports: [Icon],
+  imports: [Icon, Badge],
   templateUrl: './activity-item.html',
   styleUrl: './activity-item.css',
+  host: {
+    '[attr.title]': 'null',
+  },
 })
 export class ActivityItem {
-  /** Icono que categoriza la actividad. */
   readonly icon = input.required<IconName>();
-
-  /** Resumen de lo que ocurrió. */
   readonly title = input.required<string>();
-
-  /** Detalle bajo el título. Vacío lo omite. */
   readonly description = input('');
-
-  /** Antigüedad, ya formateada, al estilo de "hace 5 min". Vacío la omite. */
   readonly time = input('');
-
-  /** Matiz de la burbuja del icono, de la paleta de tonos compartida. */
+  readonly secondaryTime = input('');
   readonly tone = input<Tone>('blue');
+  readonly badgeLabel = input<string | null>('');
+  readonly badgeTone = input<Tone>('neutral');
+  readonly pills = input<readonly ActivityPill[]>([]);
 }

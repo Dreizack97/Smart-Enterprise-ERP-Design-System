@@ -15,7 +15,7 @@ import { Component, input } from '@angular/core';
 })
 export class PageHeader {
   /** El título de la página. Es el único `h1` del documento. */
-  readonly title = input.required<string>();
+  readonly title = input<string>('');
 
   /** Descriptor bajo el título. Vacío lo omite. */
   readonly subtitle = input('');

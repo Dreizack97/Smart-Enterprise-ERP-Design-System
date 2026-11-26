@@ -34,10 +34,9 @@ const onDisk = new Map(
 /** Lo que la portada declara: `folder` y el `count` que le sigue. */
 const home = readFileSync(HOME, 'utf8');
 const declared = new Map(
-  [...home.matchAll(/folder: '([a-z-]+)',[\s\S]{0,200}?count: (\d+),/g)].map(([, folder, count]) => [
-    folder,
-    Number(count),
-  ]),
+  [...home.matchAll(/folder: '([a-z-]+)',[\s\S]{0,200}?count: (\d+),/g)].map(
+    ([, folder, count]) => [folder, Number(count)],
+  ),
 );
 
 /** Las rutas que la portada enlaza, para que ninguna tarjeta lleve a un 404. */
@@ -54,9 +53,7 @@ for (const [folder, count] of onDisk) {
     continue;
   }
   if (declared.get(folder) !== count) {
-    problems.push(
-      `«${folder}»: la portada dice ${declared.get(folder)} y en disco hay ${count}.`,
-    );
+    problems.push(`«${folder}»: la portada dice ${declared.get(folder)} y en disco hay ${count}.`);
   }
 }
 

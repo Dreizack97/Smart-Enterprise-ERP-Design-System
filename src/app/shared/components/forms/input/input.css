@@ -6,3 +6,32 @@
   position: relative;
   display: flex;
 }
+
+.field-control--with-valid-check {
+  padding-inline-end: calc(var(--field-padding-x) * 2 + 1rem);
+}
+
+.input-valid-check {
+  color: var(--tone-green-ink);
+}
+
+.input-valid-check app-icon {
+  animation: input-valid-pop var(--duration-fast) var(--ease-out-quart);
+}
+
+@keyframes input-valid-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .input-valid-check app-icon {
+    animation: none;
+  }
+}

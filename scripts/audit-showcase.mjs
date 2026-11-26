@@ -24,7 +24,7 @@ function walk(directory) {
 }
 
 const declared = new Map();
-for (const path of walk(COMPONENTS).filter((p) => p.endsWith('.ts'))) {
+for (const path of walk(COMPONENTS).filter((p) => p.endsWith('.ts') && !p.endsWith('.spec.ts'))) {
   const selector = /selector: '(app-[a-z0-9-]+)'/.exec(readFileSync(path, 'utf8'))?.[1];
   if (selector) {
     declared.set(selector, path);

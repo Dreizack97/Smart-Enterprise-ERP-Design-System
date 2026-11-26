@@ -3,7 +3,9 @@
 <div class="resend" role="status" aria-live="polite">
   @if (left > 0) {
     <span>
-      Puedes solicitar un nuevo envío en <span class="resend__count">{{ left }}</span> s
+      Puedes solicitar un nuevo envío en
+      <span class="resend__count">{{ left }}</span>
+      s
     </span>
   } @else {
     <app-button

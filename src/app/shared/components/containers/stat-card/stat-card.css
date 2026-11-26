@@ -98,12 +98,22 @@
 }
 
 .stat__value {
+  display: inline-block;
   font-family: var(--font-mono);
   font-size: var(--stat-value-size);
   font-weight: 700;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
   color: var(--ink-strong);
+  transition: transform var(--duration-normal) var(--ease-out-quart);
+}
+
+.stat__value--counting {
+  transform: translateY(-1px) scale(1.04);
+}
+
+:host-context(html[data-reduced-motion='true']) .stat__value--counting {
+  transform: none;
 }
 
 /* En un tile la cifra es el elemento con color; en el resto, el matiz va en
@@ -180,12 +190,14 @@
 
 @media (prefers-reduced-motion: reduce) {
   .stat,
-  .stat__fill {
+  .stat__fill,
+  .stat__value {
     transition: none;
   }
 
   .stat--metric:hover,
-  .stat--report:hover {
+  .stat--report:hover,
+  .stat__value--counting {
     transform: none;
   }
 }

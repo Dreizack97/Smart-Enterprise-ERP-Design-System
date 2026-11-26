@@ -60,6 +60,9 @@
   --surface-3: var(--color-secondary-100); /* hover y popovers */
   --surface-field: var(--color-secondary-50); /* relleno de control de formulario */
   --surface-inset: var(--color-secondary-100); /* hundido: riel de la barra de scroll */
+  --surface-brand-mark: var(
+    --color-secondary-500
+  ); /* respaldo estable mientras se analiza el logotipo */
 
   --line-subtle: var(--color-secondary-100);
   --line-default: var(--color-secondary-200);
@@ -78,6 +81,128 @@
 
   --link: var(--color-primary-600);
   --scrim: rgba(15, 23, 42, 0.5);
+}
+
+/* =======================================================================
+   Paletas alternativas del modo claro
+   -----------------------------------------------------------------------
+   Estas variantes reescriben las superficies claras, las líneas y la
+   rampa primaria para que toda la interfaz adopte el nuevo matiz.
+   ======================================================================= */
+
+/* Dark cyan (Océano): lienzo neutro frío con acentos petróleo y teal profundo */
+html:not(.dark).theme-ocean {
+  --color-primary-50: #ecfeff;
+  --color-primary-100: #cffafe;
+  --color-primary-200: #a5f3fc;
+  --color-primary-300: #67e8f9;
+  --color-primary-400: #22d3ee;
+  --color-primary-500: #06b6d4;
+  --color-primary-600: #0e7490;
+  --color-primary-700: #155e75;
+  --color-primary-800: #164e63;
+  --color-primary-900: #083344;
+
+  --surface-canvas: #f2f6f8;
+  --surface-1: #ffffff;
+  --surface-2: #e8eff3;
+  --surface-3: #dbe4ea;
+  --surface-field: #f7fafb;
+  --surface-inset: #e2ebf0;
+
+  --line-subtle: #e2ebf0;
+  --line-default: #cbd8e1;
+  --line-strong: #94aab8;
+
+  --ink-strong: #0f1e26;
+  --ink-primary: #1e323d;
+  --ink-body: #334e5c;
+  --ink-secondary: #4a6878;
+  --ink-muted: #526672;
+
+  --link: #0d6c85;
+}
+
+/* Light Cyan Cyberpunk: platino frío de alto contraste con acentos cian y neón */
+html:not(.dark).theme-cyberpunk {
+  --color-primary-50: #ecfeff;
+  --color-primary-100: #cffafe;
+  --color-primary-200: #a5f3fc;
+  --color-primary-300: #67e8f9;
+  --color-primary-400: #00e5ff;
+  --color-primary-500: #00b8d4;
+  --color-primary-600: #008ba3;
+  --color-primary-700: #006978;
+  --color-primary-800: #004d5a;
+  --color-primary-900: #003640;
+
+  --surface-canvas: #edf2f7;
+  --surface-1: #ffffff;
+  --surface-2: #e2eaf2;
+  --surface-3: #d0dde9;
+  --surface-field: #f5f9fc;
+  --surface-inset: #dce5ef;
+
+  --line-subtle: #dce5ef;
+  --line-default: #c3d2e2;
+  --line-strong: #00b8d4;
+
+  --ink-strong: #0a1824;
+  --ink-primary: #15293c;
+  --ink-body: #243d54;
+  --ink-secondary: #43607a;
+  --ink-muted: #4a6176;
+
+  --link: #00687a;
+}
+
+/* Perla: neutro minimalista frío */
+html:not(.dark).theme-pearl {
+  --color-primary-50: #f0f9ff;
+  --color-primary-100: #e0f2fe;
+  --color-primary-200: #bae6fd;
+  --color-primary-300: #7dd3fc;
+  --color-primary-400: #38bdf8;
+  --color-primary-500: #0284c7;
+  --color-primary-600: #0369a1;
+  --color-primary-700: #075985;
+  --color-primary-800: #0c4a6e;
+  --color-primary-900: #082f49;
+
+  --surface-canvas: #f4f4f6;
+  --surface-1: #ffffff;
+  --surface-2: #eaeaeef5;
+  --surface-3: #e2e2e8;
+  --surface-field: #fafafa;
+  --surface-inset: #e4e4e7;
+
+  --line-subtle: #e4e4e7;
+  --line-default: #d4d4d8;
+  --line-strong: #a1a1aa;
+
+  --ink-strong: #09090b;
+  --ink-primary: #18181b;
+  --ink-body: #27272a;
+  --ink-secondary: #52525b;
+  --ink-muted: #62626a;
+
+  --link: #0369a1;
+}
+
+/* =======================================================================
+   Estilo de superficie: Cristal (Glassmorphism)
+   -----------------------------------------------------------------------
+   Convierte las superficies opacas en láminas translúcidas manteniendo
+   los mismos matices de la paleta activa (clara u oscura).
+   ======================================================================= */
+
+html:not(.dark)[data-surface='glass'] {
+  --surface-1: color-mix(in srgb, #ffffff 68%, transparent);
+  --surface-2: color-mix(in srgb, var(--color-primary-100) 45%, rgba(255, 255, 255, 0.55));
+  --surface-3: color-mix(in srgb, var(--color-primary-200) 50%, rgba(255, 255, 255, 0.65));
+  --surface-field: color-mix(in srgb, #ffffff 56%, transparent);
+  --line-subtle: color-mix(in srgb, var(--color-primary-500) 14%, rgba(255, 255, 255, 0.65));
+  --line-default: color-mix(in srgb, var(--color-primary-500) 24%, rgba(255, 255, 255, 0.75));
 }
 
 /* =======================================================================
@@ -112,6 +237,147 @@ html.dark {
   --scrim: rgba(0, 0, 0, 0.6);
 
   color-scheme: dark; /* controles nativos y barras de scroll en oscuro */
+}
+
+/* =======================================================================
+   Paletas alternativas del modo oscuro
+   -----------------------------------------------------------------------
+   `html.dark` de arriba es la paleta «Medianoche», la predeterminada. Las
+   alternativas solo reescriben superficies, líneas y tintas neutras: los
+   tonos y la marca no cambian. `ThemeStore` pone la clase `theme-*` solo en
+   modo oscuro, y el selector compuesto la vuelve inerte en claro aunque
+   quedara puesta.
+   ======================================================================= */
+
+/* Grafito: neutro frío, al estilo GitHub / Linear. */
+html.dark.theme-graphite {
+  --surface-canvas: #0d1117;
+  --surface-1: #161b22;
+  --surface-2: #21262d;
+  --surface-3: #2d333b;
+  --surface-field: #0d1117;
+  --surface-inset: #010409;
+
+  --line-subtle: #21262d;
+  --line-default: #30363d;
+  --line-strong: #484f58;
+
+  --ink-strong: #ffffff;
+  --ink-primary: #f0f6fc;
+  --ink-body: #e6edf3;
+  --ink-secondary: #c9d1d9;
+  --ink-muted: #959ea7;
+
+  --link: #58a6ff;
+  --scrim: rgba(1, 4, 9, 0.7);
+}
+
+/* Zinc: carbón sin tinte azul, al estilo Vercel. */
+html.dark.theme-zinc {
+  --surface-canvas: #09090b;
+  --surface-1: #141417;
+  --surface-2: #1f1f23;
+  --surface-3: #27272a;
+  --surface-field: #09090b;
+  --surface-inset: #000000;
+
+  --line-subtle: #1f1f23;
+  --line-default: #2e2e33;
+  --line-strong: #3f3f46;
+
+  --ink-strong: #ffffff;
+  --ink-primary: #fafafa;
+  --ink-body: #f4f4f5;
+  --ink-secondary: #d4d4d8;
+  --ink-muted: #a1a1aa;
+
+  --link: #60a5fa;
+  --scrim: rgba(0, 0, 0, 0.75);
+}
+
+/* Cyber: abisal oscuro con acentos cían eléctrico / neón. */
+
+html.dark.theme-cyber {
+  --color-primary-50: #ecfeff;
+  --color-primary-100: #cffafe;
+  --color-primary-200: #a5f3fc;
+  --color-primary-300: #67e8f9;
+  --color-primary-400: #22d3ee;
+  --color-primary-500: #00e5ff;
+  --color-primary-600: #00b8d4;
+  --color-primary-700: #0891b2;
+  --color-primary-800: #0e7490;
+  --color-primary-900: #164e63;
+
+  --surface-canvas: #050b14;
+  --surface-1: #0b1624;
+  --surface-2: #112236;
+  --surface-3: #19304a;
+  --surface-field: #050b14;
+  --surface-inset: #02060b;
+
+  --line-subtle: #12263a;
+  --line-default: #1c3b57;
+  --line-strong: #0891b2;
+
+  --ink-strong: #ecfeff;
+  --ink-primary: #e0f2fe;
+  --ink-body: #bae6fd;
+  --ink-secondary: #7dd3fc;
+  --ink-muted: #63a0bd;
+
+  --link: #00f0ff;
+  --scrim: rgba(2, 6, 11, 0.78);
+}
+
+html.dark[data-surface='glass'] {
+  --surface-1: color-mix(in srgb, var(--surface-canvas) 62%, rgba(255, 255, 255, 0.05));
+  --surface-2: color-mix(in srgb, var(--surface-canvas) 48%, rgba(255, 255, 255, 0.09));
+  --surface-3: color-mix(in srgb, var(--surface-canvas) 38%, rgba(255, 255, 255, 0.14));
+  --surface-field: color-mix(in srgb, var(--surface-canvas) 72%, rgba(0, 0, 0, 0.25));
+  --line-subtle: color-mix(in srgb, var(--link) 16%, rgba(255, 255, 255, 0.08));
+  --line-default: color-mix(in srgb, var(--link) 28%, rgba(255, 255, 255, 0.14));
+}
+
+/* =======================================================================
+   Preferencias de accesibilidad y ergonomía
+   -----------------------------------------------------------------------
+   Atributos que `ThemeStore` (y el script de `index.html`) ponen en
+   `<html>`. La escala cambia el tamaño raíz, así que todo lo medido en `rem`
+   la sigue. El alto contraste solo endurece las líneas: las tintas ya
+   cumplen AA o AAA.
+   ======================================================================= */
+
+html[data-ui-scale='compact'] {
+  font-size: 14.5px;
+}
+
+html[data-ui-scale='comfortable'] {
+  font-size: 17.5px;
+}
+
+html[data-high-contrast='true'] {
+  --line-subtle: #cbd5e1;
+  --line-default: #94a3b8;
+  --line-strong: #475569;
+}
+
+html.dark[data-high-contrast='true'] {
+  --line-subtle: #334155;
+  --line-default: #475569;
+  --line-strong: #64748b;
+}
+
+html.dark.theme-graphite[data-high-contrast='true'] {
+  --line-subtle: #30363d;
+  --line-default: #484f58;
+  --line-strong: #8b949e;
+}
+
+html.dark.theme-zinc[data-high-contrast='true'] {
+  --line-subtle: #2e2e33;
+  --line-default: #3f3f46;
+  --line-strong: #71717a;
 }
 
 /* =======================================================================

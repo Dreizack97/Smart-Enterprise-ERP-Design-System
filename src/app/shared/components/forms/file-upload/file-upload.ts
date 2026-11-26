@@ -1,8 +1,10 @@
 import {
   Component,
+  DestroyRef,
   ElementRef,
   booleanAttribute,
   computed,
+  inject,
   input,
   model,
   numberAttribute,
@@ -84,10 +86,13 @@ export class FileUpload {
 
   private readonly fileInput = viewChild.required<ElementRef<HTMLInputElement>>('fileInput');
   private readonly markTouched = fieldTouchMarker();
+  private reader: FileReader | null = null;
 
   protected readonly dragging = signal(false);
   protected readonly localError = signal('');
   protected readonly reading = signal(false);
+  /** Permite impedir el envío del formulario mientras se prepara la selección de imagen. */
+  readonly processing = computed(() => this.reading());
   protected readonly selected = signal<SelectedFile | null>(null);
 
   protected readonly inputId = computed(() => `${this.uploadId()}-input`);
@@ -116,6 +121,10 @@ export class FileUpload {
     const kb = file.size / 1024;
     return kb < 1024 ? `${Math.round(kb)} KB` : `${(kb / 1024).toFixed(1)} MB`;
   });
+
+  constructor() {
+    inject(DestroyRef).onDestroy(() => this.releaseReader());
+  }
 
   protected openPicker(): void {
     if (!this.disabled()) {
@@ -163,6 +172,7 @@ export class FileUpload {
       return;
     }
     event?.stopPropagation();
+    this.releaseReader();
     this.value.set('');
     this.selected.set(null);
     this.localError.set('');
@@ -171,7 +181,15 @@ export class FileUpload {
   }
 
   private processFile(file: File): void {
+    if (this.disabled()) {
+      return;
+    }
     this.markTouched();
+
+    if (this.reader) {
+      this.releaseReader();
+      this.selected.set(null);
+    }
 
     if (!this.isAccepted(file)) {
       this.localError.set('Formato de archivo no admitido.');
@@ -195,19 +213,53 @@ export class FileUpload {
       return;
     }
 
-    this.reading.set(true);
     const reader = new FileReader();
+    this.reader = reader;
+    this.reading.set(true);
     reader.onload = () => {
-      this.reading.set(false);
+      if (this.reader !== reader) {
+        return;
+      }
+      this.releaseReader();
       this.value.set(reader.result as string);
       this.fileSelected.emit(file);
     };
-    reader.onerror = () => {
-      this.reading.set(false);
+    const fail = () => {
+      if (this.reader !== reader) {
+        return;
+      }
+      this.releaseReader();
       this.selected.set(null);
       this.localError.set('No se pudo leer el archivo.');
     };
-    reader.readAsDataURL(file);
+    reader.onerror = fail;
+    reader.onabort = () => {
+      if (this.reader !== reader) {
+        return;
+      }
+      this.releaseReader();
+      this.selected.set(null);
+    };
+    try {
+      reader.readAsDataURL(file);
+    } catch {
+      fail();
+    }
+  }
+
+  /** Desvincula la lectura vigente antes de abortarla para impedir resultados y errores de selecciones anteriores. */
+  private releaseReader(): void {
+    const reader = this.reader;
+    this.reader = null;
+    this.reading.set(false);
+    if (reader) {
+      reader.onload = null;
+      reader.onerror = null;
+      reader.onabort = null;
+      if (reader.readyState === FileReader.LOADING) {
+        reader.abort();
+      }
+    }
   }
 
   /**

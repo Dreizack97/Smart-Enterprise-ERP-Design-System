@@ -1,0 +1,13 @@
+<div class="totp-setup">
+  <img
+    class="totp-setup__qr"
+    [src]="qrCodeDataUri()"
+    alt="Código QR para agregar tu cuenta a la aplicación de autenticación"
+    width="176"
+    height="176"
+  />
+  <div class="totp-setup__secret">
+    <p class="totp-setup__hint">¿No puedes escanearlo? Escribe esta clave en la aplicación:</p>
+    <app-code-block [code]="groupedSecret()" language="Clave" />
+  </div>
+</div>

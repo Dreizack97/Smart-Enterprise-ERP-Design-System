@@ -59,6 +59,6 @@ const ICONS: Record<StatusTone, IconName> = {
   success: 'circle-check',
   warning: 'triangle-alert',
   danger: 'circle-alert',
-  neutral: 'circle',
+  neutral: 'info',
   info: 'info',
 };

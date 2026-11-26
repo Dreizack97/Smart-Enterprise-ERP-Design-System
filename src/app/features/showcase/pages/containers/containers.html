@@ -313,9 +313,9 @@
   </app-showcase-block>
 
   <app-showcase-block
-    title="kbd · code-block · code-list"
+    title="kbd · code-block · code-list · highlight-text · typewriter"
     anchor="tecnico"
-    description="Las dos piezas tipográficas que la propia documentación necesita."
+    description="Las piezas tipográficas y de texto técnico del sistema."
     layout="stack"
     surface="card"
   >
@@ -328,6 +328,12 @@
       </app-variant-row>
       <app-variant-row label="separator" note="una secuencia, no una combinación">
         <app-kbd [keys]="['G', 'I']" separator="luego" />
+      </app-variant-row>
+      <app-variant-row label="highlight-text" note="coincidencia sin acentos">
+        <app-highlight-text text="Administración de nómina y asistencia" query="nomina" />
+      </app-variant-row>
+      <app-variant-row label="typewriter" note="revelado progresivo opcional">
+        <app-typewriter text="Sistema de diseño unificado" [animate]="false" />
       </app-variant-row>
     </app-variant-grid>
 

@@ -44,10 +44,10 @@ const FAMILIES: readonly Family[] = [
     folder: 'actions',
     label: 'Acciones',
     icon: 'zap',
-    count: 4,
+    count: 5,
     route: '/acciones',
     summary:
-      'Botones, control segmentado e interruptor de tema. Variante y tamaño son ejes separados.',
+      'Botones, botón de copiar, control segmentado e interruptor de tema. Variante y tamaño son ejes separados.',
   },
   {
     folder: 'forms',
@@ -61,7 +61,7 @@ const FAMILIES: readonly Family[] = [
     folder: 'feedback',
     label: 'Retroalimentación',
     icon: 'info',
-    count: 8,
+    count: 9,
     route: '/retroalimentacion',
     summary: 'Decir qué pasó, dónde pasó, y con el color que eso significa.',
   },
@@ -85,9 +85,9 @@ const FAMILIES: readonly Family[] = [
     folder: 'data',
     label: 'Datos',
     icon: 'chart-column',
-    count: 3,
+    count: 4,
     route: '/datos',
-    summary: 'Tabla y gráficos. Ordenar en español no es un detalle.',
+    summary: 'Tabla, paginación y gráficos. Ordenar en español no es un detalle.',
   },
   {
     folder: 'containers',
@@ -111,7 +111,7 @@ const FAMILIES: readonly Family[] = [
     folder: 'patterns',
     label: 'Patrones',
     icon: 'calendar',
-    count: 9,
+    count: 11,
     route: '/patrones',
     summary: 'Composiciones generalizadas, sin vocabulario de negocio adentro.',
   },
@@ -119,10 +119,11 @@ const FAMILIES: readonly Family[] = [
     folder: 'typography',
     label: 'Texto técnico',
     icon: 'code',
-    count: 3,
+    count: 5,
     route: '/contenedores',
     fragment: 'tecnico',
-    summary: 'Bloques y listas de código, y teclas. Se documenta con Contenedores.',
+    summary:
+      'Bloques y listas de código, resaltado, texto progresivo y teclas. Se documenta con Contenedores.',
   },
 ];
 

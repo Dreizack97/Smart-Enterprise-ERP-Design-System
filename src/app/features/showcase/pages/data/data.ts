@@ -5,6 +5,8 @@ import { ChartCanvas } from '@shared/components/data/chart-canvas/chart-canvas';
 import { DataTable } from '@shared/components/data/data-table/data-table';
 import { TableColumn } from '@shared/components/data/data-table/data-table.model';
 import { TableCell } from '@shared/components/data/data-table/table-cell';
+import { createTablePagination } from '@shared/components/data/data-table/table-state';
+import { TablePagination } from '@shared/components/data/table-pagination/table-pagination';
 import { TableToolbar } from '@shared/components/data/table-toolbar/table-toolbar';
 import { EmptyState } from '@shared/components/feedback/empty-state/empty-state';
 import { ErrorState } from '@shared/components/feedback/error-state/error-state';
@@ -42,6 +44,7 @@ const CURRENCY = new Intl.NumberFormat('es-MX', { style: 'currency', currency: '
     Select,
     ShowcaseBlock,
     ShowcasePage,
+    TablePagination,
     TableToolbar,
     Skeleton,
     StatusBadge,
@@ -113,6 +116,12 @@ export class Data {
   ];
 
   protected readonly emptyClients: readonly Client[] = [];
+
+  protected readonly pagination = createTablePagination({
+    totalItems: () => this.clients.length,
+    pageSizes: [5, 10, 25],
+    initialPageSize: 5,
+  });
 
   protected readonly toolbarQuery = signal('');
   protected readonly toolbarStatus = signal('');

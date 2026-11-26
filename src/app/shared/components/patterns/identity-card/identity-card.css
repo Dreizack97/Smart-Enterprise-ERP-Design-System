@@ -1,0 +1,118 @@
+:host {
+  display: block;
+}
+
+.identity {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (min-width: 960px) {
+  .identity {
+    display: grid;
+    grid-template-columns: 19rem minmax(0, 1fr);
+    gap: 1.75rem;
+    align-items: start;
+  }
+}
+
+.identity__cap {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.25rem;
+  border-radius: var(--radius-xl);
+  background-color: var(--tone-neutral-surface-subtle);
+  border: 1px solid var(--line-subtle);
+}
+
+.identity__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.35rem;
+}
+
+.identity__avatar {
+  --avatar-size: 5rem;
+}
+
+/* Si el consumidor proyecta un [avatar] (ej. app-file-upload), oculta el fallback */
+.identity__avatar:has(> :not(.identity__avatar-fallback)) .identity__avatar-fallback {
+  display: none;
+}
+
+.identity__name {
+  margin-top: 0.35rem;
+  overflow-wrap: anywhere;
+  font-size: var(--text-subheading);
+  font-weight: 700;
+  color: var(--ink-strong);
+}
+
+.identity__subtitle {
+  font-size: var(--text-caption);
+  color: var(--ink-secondary);
+  word-break: break-all;
+}
+
+.identity__badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem;
+  margin-top: 0.35rem;
+}
+
+.identity__badges:empty {
+  display: none;
+}
+
+.identity__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 0.875rem;
+  border-top: 1px solid var(--line-subtle);
+  margin: 0;
+}
+
+.identity__fact {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.identity__fact-label {
+  flex-shrink: 0;
+  max-width: 60%;
+  overflow-wrap: anywhere;
+  font-size: var(--text-overline);
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.identity__fact-value {
+  min-width: 0;
+  text-align: end;
+  overflow-wrap: anywhere;
+  font-size: var(--text-caption);
+  font-weight: 500;
+  color: var(--ink-primary);
+  margin: 0;
+}
+
+.identity__content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
+  gap: 1rem;
+  min-width: 0;
+}
+
+.identity__content > ::ng-deep [fullWidth] {
+  grid-column: 1 / -1;
+}

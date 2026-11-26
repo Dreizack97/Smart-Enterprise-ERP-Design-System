@@ -1,4 +1,4 @@
-:host {
+﻿:host {
   display: block;
   width: 100%;
   max-width: var(--form-card-max-width);
@@ -31,9 +31,24 @@
   height: var(--form-card-logo-size);
   margin-inline: auto;
   border-radius: var(--radius-2xl);
+  background: var(--surface-1);
+  color: var(--color-primary-600);
+  border: 1px solid var(--line-default);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+.form-card__logo:has(.form-card__logo-icon) {
   background: var(--form-card-logo-surface);
   color: var(--form-card-logo-ink);
-  box-shadow: var(--shadow-lg);
+  border: none;
+}
+
+.form-card__logo-img {
+  width: 2.25rem;
+  height: 2.25rem;
+  object-fit: contain;
+  display: block;
 }
 
 .form-card__brand {

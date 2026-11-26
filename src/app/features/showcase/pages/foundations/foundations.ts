@@ -108,6 +108,10 @@ export class Foundations {
    */
   private readonly tokens = computed(() => {
     this.theme.resolvedTheme();
+    this.theme.lightPalette();
+    this.theme.darkPalette();
+    this.theme.surfaceStyle();
+    this.theme.highContrast();
     this.afterRender();
     const read = (prefix: string) => collectTokens(this.document, prefix);
     return {
@@ -153,6 +157,7 @@ export class Foundations {
 
   protected readonly typeRoles = computed<TypeRole[]>(() => {
     this.theme.resolvedTheme();
+    this.theme.uiScale();
     this.afterRender();
     return TYPE_ROLES.map((role) => ({
       token: `--text-${role.token}`,

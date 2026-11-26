@@ -1,7 +1,14 @@
 @let current = page();
 
-<div class="pagination">
-  <p class="pagination__summary">{{ summary() }}</p>
+<div
+  class="pagination"
+  [class.pagination--flush]="flush()"
+  [class.pagination--compact]="variant() === 'compact'"
+  [class.pagination--sm]="size() === 'sm'"
+>
+  @if (summary()) {
+    <p class="pagination__summary">{{ summary() }}</p>
+  }
 
   @if (navigable()) {
     <nav class="pagination__nav" aria-label="Paginación">
@@ -12,23 +19,29 @@
         aria-label="Página anterior"
         (click)="previous()"
       >
-        <app-icon name="chevron-left" [size]="14" />
+        <app-icon name="chevron-left" [size]="size() === 'sm' ? 12 : 14" />
       </button>
 
-      @for (slot of slots(); track $index) {
-        @if (slot === gap) {
-          <span class="pagination__gap" aria-hidden="true">…</span>
-        } @else {
-          <button
-            type="button"
-            class="pagination__page focus-ring"
-            [class.pagination__page--active]="slot === current"
-            [attr.aria-current]="slot === current ? 'page' : null"
-            [attr.aria-label]="'Página ' + slot"
-            (click)="goTo(+slot)"
-          >
-            {{ slot }}
-          </button>
+      @if (variant() === 'compact') {
+        <span class="pagination__counter" aria-live="polite">
+          {{ current }} / {{ pageCount() }}
+        </span>
+      } @else {
+        @for (slot of slots(); track $index) {
+          @if (slot === gap) {
+            <span class="pagination__gap" aria-hidden="true">…</span>
+          } @else {
+            <button
+              type="button"
+              class="pagination__page focus-ring"
+              [class.pagination__page--active]="slot === current"
+              [attr.aria-current]="slot === current ? 'page' : null"
+              [attr.aria-label]="'Página ' + slot"
+              (click)="goTo(+slot)"
+            >
+              {{ slot }}
+            </button>
+          }
         }
       }
 
@@ -39,7 +52,7 @@
         aria-label="Página siguiente"
         (click)="next()"
       >
-        <app-icon name="chevron-right" [size]="14" />
+        <app-icon name="chevron-right" [size]="size() === 'sm' ? 12 : 14" />
       </button>
     </nav>
   }

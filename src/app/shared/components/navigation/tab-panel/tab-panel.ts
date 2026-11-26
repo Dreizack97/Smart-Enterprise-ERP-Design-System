@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, booleanAttribute, input } from '@angular/core';
 import { TabContent, TabPanel } from '@angular/aria/tabs';
 
 /**
@@ -19,7 +19,7 @@ import { TabContent, TabPanel } from '@angular/aria/tabs';
   selector: 'app-tab-panel',
   imports: [TabPanel, TabContent],
   template: `
-    <div ngTabPanel [value]="value()" class="tab-panel">
+    <div ngTabPanel [value]="value()" [preserveContent]="preserveContent()" class="tab-panel">
       <ng-template ngTabContent>
         <ng-content />
       </ng-template>
@@ -30,4 +30,7 @@ import { TabContent, TabPanel } from '@angular/aria/tabs';
 export class AppTabPanel {
   /** Debe coincidir con el `value` de la pestaña a la que pertenece. */
   readonly value = input.required<string>();
+
+  /** Conserva el DOM del panel ya visitado al cambiar de pestaña. */
+  readonly preserveContent = input(false, { transform: booleanAttribute });
 }

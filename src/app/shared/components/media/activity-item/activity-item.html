@@ -1,14 +1,48 @@
-<div class="activity" [attr.data-tone]="tone()">
-  <span class="activity__badge tone-soft">
-    <app-icon [name]="icon()" />
-  </span>
-  <div class="activity__body">
-    <p class="activity__title">{{ title() }}</p>
-    @if (description(); as text) {
-      <p class="activity__description">{{ text }}</p>
-    }
-    @if (time(); as stamp) {
-      <time class="activity__time">{{ stamp }}</time>
-    }
+<article class="activity" [attr.data-tone]="tone()">
+  <div class="activity__main">
+    <span class="activity__badge tone-soft">
+      <app-icon [name]="icon()" [size]="18" />
+    </span>
+
+    <div class="activity__body">
+      <div class="activity__head">
+        <p class="activity__title">{{ title() }}</p>
+        @if (badgeLabel(); as badge) {
+          <app-badge [tone]="badgeTone()">{{ badge }}</app-badge>
+        }
+        <ng-content select="[badges]" />
+      </div>
+
+      @if (description(); as text) {
+        <p class="activity__description">{{ text }}</p>
+      }
+
+      @if (pills().length > 0) {
+        <div class="activity__pills">
+          @for (pill of pills(); track pill.label) {
+            <span class="activity__pill" [class.activity__pill--mono]="pill.mono">
+              @if (pill.icon; as pillIcon) {
+                <app-icon [name]="pillIcon" [size]="13" />
+              }
+              {{ pill.label }}
+            </span>
+          }
+        </div>
+      }
+    </div>
   </div>
-</div>
+
+  <div class="activity__aside">
+    @if (time() || secondaryTime()) {
+      <div class="activity__times">
+        @if (time(); as primary) {
+          <time class="activity__time">{{ primary }}</time>
+        }
+        @if (secondaryTime(); as exact) {
+          <time class="activity__secondary-time">{{ exact }}</time>
+        }
+      </div>
+    }
+    <ng-content select="[actions]" />
+  </div>
+</article>

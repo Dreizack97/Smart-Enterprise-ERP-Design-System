@@ -1,6 +1,11 @@
 <div class="header__lead">
   <div class="header__breadcrumb"><ng-content select="[breadcrumb]" /></div>
-  <h1 class="header__title">{{ title() }}</h1>
+  <h1 class="header__title">
+    @if (title(); as text) {
+      {{ text }}
+    }
+    <ng-content select="[title]:not([actions])" />
+  </h1>
   @if (subtitle(); as text) {
     <p class="header__subtitle">{{ text }}</p>
   }

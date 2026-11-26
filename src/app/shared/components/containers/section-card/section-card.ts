@@ -1,4 +1,5 @@
 import { Component, booleanAttribute, input } from '@angular/core';
+import { ComponentDensity } from '@shared/models/density.model';
 
 /**
  * Tamaño del título del encabezado.
@@ -18,9 +19,12 @@ export type SectionTitleSize = 'lg' | 'xl';
   selector: 'app-section-card',
   templateUrl: './section-card.html',
   styleUrl: './section-card.css',
+  host: {
+    '[attr.title]': 'null',
+  },
 })
 export class SectionCard {
-  readonly title = input.required<string>();
+  readonly title = input('');
 
   /** Aclaración bajo el título. Vacío la omite. */
   readonly subtitle = input('');
@@ -29,4 +33,5 @@ export class SectionCard {
   readonly flush = input(false, { transform: booleanAttribute });
 
   readonly titleSize = input<SectionTitleSize>('xl');
+  readonly density = input<ComponentDensity>('normal');
 }

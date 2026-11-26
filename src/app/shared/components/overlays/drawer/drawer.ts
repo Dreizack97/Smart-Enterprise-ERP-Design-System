@@ -37,7 +37,6 @@ export type DrawerSize = 'sm' | 'md' | 'lg';
   imports: [Icon],
   templateUrl: './drawer.html',
   styleUrl: './drawer.css',
-  host: { '(keydown.escape)': 'requestClose()' },
 })
 export class Drawer {
   /**

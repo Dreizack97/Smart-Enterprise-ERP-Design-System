@@ -4,8 +4,9 @@ import { IconName } from '@core/icons/lucide-icons';
  * Un nodo de navegación.
  *
  * Un nodo con `children` es un grupo expandible; uno sin ellos es un enlace.
- * El árbol soporta hasta tres niveles — pasado eso, el sidebar deja de ser
- * navegable y se convierte en un mapa del sitio.
+ * El árbol soporta hasta cuatro niveles, los que necesita Recursos Humanos;
+ * pasado eso, el sidebar deja de ser navegable y se convierte en un mapa del
+ * sitio.
  */
 export interface NavItem {
   /**
@@ -40,4 +41,9 @@ export interface NavSection {
   readonly title?: string;
 
   readonly items: readonly NavItem[];
+}
+
+/** Recolecta recursivamente los IDs de una lista de nodos y todos sus descendientes. */
+export function subtreeIdsOf(items: readonly NavItem[]): string[] {
+  return items.flatMap((item) => [item.id, ...subtreeIdsOf(item.children ?? [])]);
 }

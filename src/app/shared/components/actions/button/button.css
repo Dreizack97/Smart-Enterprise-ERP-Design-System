@@ -9,6 +9,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: fit-content;
   gap: var(--button-gap);
   border: 1px solid transparent;
   border-radius: var(--button-radius);
@@ -50,27 +51,46 @@
   width: 100%;
 }
 
+.btn__label:empty {
+  display: none;
+}
+
+.btn:not(.btn--success-text):has(.btn__label:empty) {
+  padding-inline: 0;
+  width: var(--button-height-md);
+}
+
+.btn--sm:not(.btn--success-text):has(.btn__label:empty) {
+  width: var(--button-height-sm);
+  padding-inline: 0;
+}
+
+.btn--lg:not(.btn--success-text):has(.btn__label:empty) {
+  width: var(--button-height-lg);
+  padding-inline: 0;
+}
+
 /* =======================================================================
    Variante
    ======================================================================= */
 
 .btn--primary {
-  background-color: var(--button-primary-surface);
+  background: var(--button-primary-surface);
   color: var(--button-primary-ink);
 }
 
 .btn--primary:hover:not(:disabled) {
-  background-color: var(--button-primary-surface-hover);
+  background: var(--button-primary-surface-hover);
 }
 
 .btn--secondary {
-  background-color: var(--button-secondary-surface);
+  background: var(--button-secondary-surface);
   border-color: var(--button-secondary-border);
   color: var(--button-secondary-ink);
 }
 
 .btn--secondary:hover:not(:disabled) {
-  background-color: var(--button-secondary-surface-hover);
+  background: var(--button-secondary-surface-hover);
 }
 
 .btn--ghost {
@@ -91,12 +111,12 @@
 }
 
 .btn--danger {
-  background-color: var(--button-danger-surface);
+  background: var(--button-danger-surface);
   color: var(--button-danger-ink);
 }
 
 .btn--danger:hover:not(:disabled) {
-  background-color: var(--button-danger-surface-hover);
+  background: var(--button-danger-surface-hover);
 }
 
 .btn--soft-danger {
@@ -148,8 +168,16 @@
    ======================================================================= */
 
 .btn:disabled {
-  opacity: var(--button-disabled-opacity);
+  opacity: 0.6;
   cursor: not-allowed;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.btn--secondary:disabled {
+  background-color: var(--surface-2);
+  border-color: var(--line-default);
+  color: var(--ink-secondary);
 }
 
 /* Mientras carga, la etiqueta se queda en su lugar y solo se desvanece:
@@ -181,5 +209,43 @@
 @media (prefers-reduced-motion: reduce) {
   .btn__spinner {
     animation-duration: 2s;
+  }
+}
+
+/* Confirmación explícita con los tonos de éxito de cada tema. */
+
+.btn--success,
+.btn--success:disabled {
+  opacity: 1;
+  cursor: default;
+  background: var(--tone-green-surface-soft);
+  border-color: var(--tone-green-border);
+  color: var(--tone-green-ink-strong);
+}
+
+.btn__check {
+  display: inline-flex;
+}
+
+.btn__check,
+.btn__success-label {
+  animation: btn-success-enter var(--duration-fast) var(--ease-out-quart);
+}
+
+@keyframes btn-success-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn__check,
+  .btn__success-label {
+    animation: none;
   }
 }

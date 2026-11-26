@@ -1,1 +1,4 @@
-<span class="status-badge tone-soft" [attr.data-tone]="hue()">{{ label() }}</span>
+<span class="status-badge tone-soft" [attr.data-tone]="hue()">
+  <app-status-indicator [tone]="tone()" [pulse]="isPulsing()" />
+  <span>{{ label() }}</span>
+</span>

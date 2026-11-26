@@ -15,12 +15,29 @@
 }
 
 .panel {
+  --modal-panel-header-padding: var(--modal-header-padding, 1rem 1.5rem);
+  --modal-panel-body-padding: var(--modal-body-padding, 1.25rem 1.5rem);
+  --modal-panel-footer-padding: var(--modal-footer-padding, 1rem 1.5rem);
+  --modal-panel-title-size: var(--modal-title-size, 1.25rem);
+  --modal-panel-close-size: var(--modal-close-size, 2rem);
   width: 100%;
+  min-width: 0;
   max-height: 90vh;
-  overflow-y: auto;
+  max-height: min(90dvh, 100%);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   border-radius: var(--modal-radius);
   background-color: var(--modal-surface);
   box-shadow: var(--shadow-2xl);
+}
+
+.panel--compact {
+  --modal-panel-header-padding: var(--modal-header-padding-compact, 0.75rem 1.25rem);
+  --modal-panel-body-padding: var(--modal-padding-compact, 0.875rem 1.25rem);
+  --modal-panel-footer-padding: var(--modal-footer-padding-compact, 0.75rem 1.25rem);
+  --modal-panel-title-size: var(--modal-title-size-compact, 1.1rem);
+  --modal-panel-close-size: var(--modal-close-size-compact, 1.75rem);
 }
 
 .panel--sm {
@@ -40,26 +57,31 @@
 }
 
 .panel__header {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: var(--modal-padding);
+  padding: var(--modal-panel-header-padding);
   border-bottom: 1px solid var(--line-subtle);
 }
 
 .panel__title {
-  font-size: var(--text-heading);
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: var(--modal-panel-title-size);
   font-weight: 700;
+  line-height: 1.25;
   color: var(--ink-primary);
 }
 
 .panel__close {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: var(--modal-panel-close-size);
+  height: var(--modal-panel-close-size);
   border-radius: var(--radius-md);
   color: var(--ink-secondary);
   cursor: pointer;
@@ -71,14 +93,23 @@
 }
 
 .panel__body {
-  padding: var(--modal-padding);
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-gap);
+  padding: var(--modal-panel-body-padding);
 }
 
 .panel__footer {
+  flex-shrink: 0;
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
   gap: 0.75rem;
-  padding: var(--modal-padding);
+  padding: var(--modal-panel-footer-padding);
   border-top: 1px solid var(--line-subtle);
 }
 

@@ -1,0 +1,28 @@
+/* El QR arriba y la clave debajo, en todos los anchos: la tarjeta de acceso y el modal del perfil son
+   angostos incluso en escritorio, y lado a lado la clave quedaba cortada. */
+.totp-setup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* La imagen del backend (QRCoder) trae su propio fondo blanco, que la mantiene legible también en el
+   tema oscuro; aquí solo se enmarca. */
+.totp-setup__qr {
+  border: 1px solid var(--line-default);
+  border-radius: var(--radius-lg);
+}
+
+.totp-setup__secret {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.totp-setup__hint {
+  font-size: var(--text-body);
+  color: var(--ink-secondary);
+}

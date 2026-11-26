@@ -1,5 +1,18 @@
-import { Component, computed, input, model, numberAttribute } from '@angular/core';
+import {
+  Component,
+  booleanAttribute,
+  computed,
+  input,
+  model,
+  numberAttribute,
+} from '@angular/core';
 import { Icon } from '@shared/components/media/icon/icon';
+
+/** Estilo de presentación del paginador. */
+export type PaginationVariant = 'pages' | 'compact';
+
+/** Tamaño de los controles de paso y páginas. */
+export type PaginationSize = 'sm' | 'md';
 
 /** Un hueco de puntos suspensivos entre bloques de páginas no contiguos. */
 const PAGE_GAP = 'gap' as const;
@@ -10,9 +23,8 @@ type PageSlot = number | typeof PAGE_GAP;
  * Paginación.
  *
  * Muestra una ventana de páginas alrededor de la actual, más la primera y la
- * última, con puntos suspensivos entre bloques. El original en React pintaba
- * cada página sin ningún recorte, que desbordaba la tarjeta a partir de
- * cuarenta páginas.
+ * última, con puntos suspensivos entre bloques, o bien un modo compacto
+ * (`< 1 / 4 >`) ideal para modales y tarjetas.
  */
 @Component({
   selector: 'app-pagination',
@@ -29,6 +41,15 @@ export class Pagination {
 
   /** Texto informativo, p. ej. "Mostrando 1-10 de 87 clientes". */
   readonly summary = input('');
+
+  /** Estilo de paginador: 'pages' (numérico con ventanas) o 'compact' (< 1 / 4 >). */
+  readonly variant = input<PaginationVariant>('pages');
+
+  /** Tamaño de los controles: 'md' (estándar de tabla) o 'sm' (compacto para tarjetas/modales). */
+  readonly size = input<PaginationSize>('md');
+
+  /** Quita el borde superior y el relleno (ideal dentro de modales o pies de tarjeta). */
+  readonly flush = input(false, { transform: booleanAttribute });
 
   /**
    * Si hay algo a lo que navegar.

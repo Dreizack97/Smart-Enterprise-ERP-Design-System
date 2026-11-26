@@ -1,39 +1,65 @@
 <!doctype html>
-<html lang="es">
+<html lang="es-MX">
   <head>
     <meta charset="utf-8" />
     <title>Smart Enterprise ERP · Sistema de Diseño</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <!--
-      The theme BEFORE the first paint.
+      Tema antes del primer pintado.
 
-      Angular boots after the first frame, so applying this from a service
-      would flash the light theme first. Synchronous, and deliberately so.
-
-      Only the theme: it paints the page background, which exists from frame
-      one. The sidebar does not exist until the application renders, so
-      pre-painting its rail state bought nothing.
-
-      The value is written by `BrowserStorage`, which stores JSON — hence the
-      `JSON.parse`. The key is duplicated here by force: this script runs
-      before Angular and cannot import anything. It must stay in step with
-      `core/theme/theme.model.ts`.
+      Angular arranca después del primer cuadro: aplicarlo desde un servicio
+      mostraría primero el tema claro. Lo mismo vale para la paleta oscura, la
+      escala y las preferencias de accesibilidad. Las claves, los valores
+      admitidos y el formato JSON deben coincidir con
+      `core/theme/theme.model.ts` y `BrowserStorage`.
     -->
     <script>
       (function () {
         try {
-          var parse = function (raw) {
+          var root = document.documentElement;
+          var read = function (key) {
+            var raw = localStorage.getItem(key);
             return raw === null ? null : JSON.parse(raw);
           };
-          var stored = parse(localStorage.getItem('seerp:theme'));
+          var oneOf = function (value, options, fallback) {
+            return options.indexOf(value) >= 0 ? value : fallback;
+          };
+
+          var stored = read('seerp:theme');
           var dark =
             stored === 'dark' ||
             (stored !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
-          if (dark) document.documentElement.classList.add('dark');
+          if (dark) {
+            var darkPalette = oneOf(
+              read('seerp:dark-palette'),
+              ['midnight', 'graphite', 'zinc', 'cyber'],
+              'midnight',
+            );
+            root.classList.add('dark', 'theme-' + darkPalette);
+          } else {
+            var lightPalette = oneOf(
+              read('seerp:light-palette'),
+              ['classic', 'ocean', 'cyberpunk', 'pearl'],
+              'classic',
+            );
+            root.classList.add('theme-' + lightPalette);
+          }
+
+          root.setAttribute(
+            'data-surface',
+            oneOf(read('seerp:surface-style'), ['flat', 'glass'], 'flat'),
+          );
+          root.setAttribute(
+            'data-ui-scale',
+            oneOf(read('seerp:ui-scale'), ['compact', 'standard', 'comfortable'], 'standard'),
+          );
+          root.setAttribute('data-high-contrast', String(read('seerp:high-contrast') === true));
+          root.setAttribute('data-reduced-motion', String(read('seerp:reduced-motion') === true));
         } catch (e) {
-          /* storage blocked or value unreadable: the light theme is used */
+          /* Almacenamiento bloqueado o valor ilegible: se usa el tema claro. */
         }
       })();
     </script>

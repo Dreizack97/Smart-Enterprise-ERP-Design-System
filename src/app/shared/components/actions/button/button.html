@@ -3,6 +3,8 @@
   [class]="'btn--' + variant() + ' btn--' + size()"
   [class.btn--full]="fullWidth()"
   [class.btn--loading]="loading()"
+  [class.btn--success]="isSuccess()"
+  [class.btn--success-text]="isSuccess() && !!successText()"
   [type]="type()"
   [disabled]="inactive()"
   [attr.aria-label]="ariaLabel() || null"
@@ -11,11 +13,21 @@
 >
   @if (loading()) {
     <span class="btn__spinner" aria-hidden="true"></span>
+  } @else if (isSuccess()) {
+    <span class="btn__check" aria-hidden="true">
+      <app-icon name="check" [size]="iconSize()" />
+    </span>
   } @else if (icon(); as leading) {
     <app-icon [name]="leading" [size]="iconSize()" />
   }
-  <span class="btn__label"><ng-content /></span>
-  @if (iconAfter(); as trailing) {
-    <app-icon [name]="trailing" [size]="iconSize()" />
+  <span class="btn__label" [class.sr-only]="isSuccess() && !!successText()"><ng-content /></span>
+  @if (isSuccess() && successText(); as text) {
+    <span class="btn__success-label" aria-hidden="true">{{ text }}</span>
+  }
+  @if (!isSuccess()) {
+    @if (iconAfter(); as trailing) {
+      <app-icon [name]="trailing" [size]="iconSize()" />
+    }
   }
 </button>
+<span class="sr-only" role="status" aria-live="polite">{{ feedback() }}</span>

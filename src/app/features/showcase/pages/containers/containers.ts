@@ -11,7 +11,9 @@ import { AvatarGroup } from '@shared/components/media/avatar-group/avatar-group'
 import { Timeline, TimelineEntry } from '@shared/components/media/timeline/timeline';
 import { CodeBlock } from '@shared/components/typography/code-block/code-block';
 import { CodeList } from '@shared/components/typography/code-list/code-list';
+import { HighlightText } from '@shared/components/typography/highlight-text/highlight-text';
 import { Kbd } from '@shared/components/typography/kbd/kbd';
+import { Typewriter } from '@shared/components/typography/typewriter/typewriter';
 import { Icon } from '@shared/components/media/icon/icon';
 import { Input } from '@shared/components/forms/input/input';
 import { CONTROL_SIZES } from '@shared/models/size.model';
@@ -42,8 +44,10 @@ interface Activity {
     CodeBlock,
     CodeList,
     Divider,
+    HighlightText,
     Kbd,
     Timeline,
+    Typewriter,
     FormCard,
     Icon,
     Input,

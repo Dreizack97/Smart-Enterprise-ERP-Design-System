@@ -1,34 +1,108 @@
-import { Component, input } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import {
+  Component,
+  DestroyRef,
+  ElementRef,
+  afterRenderEffect,
+  inject,
+  input,
+  signal,
+  viewChild,
+  viewChildren,
+} from '@angular/core';
+import { Params, RouterLink } from '@angular/router';
 import { Icon } from '@shared/components/media/icon/icon';
+import { IconName } from '@core/icons/lucide-icons';
+import { placeAnchored, watchAnchor } from '@shared/utils/anchored-position';
 
-/** Un peldaño del trayecto. Sin `route` se renderiza como texto, no como enlace. */
+/** Opción navegable dentro del menú desplegable de una miga. */
+export interface BreadcrumbOption {
+  readonly label: string;
+  readonly route?: string;
+  readonly queryParams?: Params;
+  readonly icon?: IconName;
+}
+
+/** Nivel dentro de la ruta de navegación, con enlace y submenú opcionales. */
 export interface BreadcrumbItem {
   readonly label: string;
   readonly route?: string;
+  readonly children?: readonly BreadcrumbOption[];
 }
 
-/**
- * El trayecto hasta la pantalla actual.
- *
- * El último peldaño nunca es un enlace y lleva `aria-current="page"`:
- * enlazar a la página en la que ya se está desorienta a quien navega con
- * teclado o lector de pantalla.
- */
+/** Demora breve antes de cerrar al salir con el puntero para permitir cruzar al menú. */
+const CLOSE_DELAY_MS = 400;
+
+/** Migas de navegación cuyos menús se montan solo al abrirse y se ajustan al viewport. */
 @Component({
   selector: 'app-breadcrumb',
   imports: [RouterLink, Icon],
   templateUrl: './breadcrumb.html',
   styleUrl: './breadcrumb.css',
+  host: { '(keydown.escape)': 'closeMenu()' },
 })
 export class Breadcrumb {
-  /** El trayecto completo, desde la raíz hasta la página actual inclusive. */
+  /** Niveles ordenados que conforman la ruta actual de navegación. */
   readonly items = input.required<readonly BreadcrumbItem[]>();
-
-  /**
-   * Nombre accesible del `<nav>`. Solo hace falta cambiarlo cuando una
-   * pantalla pinta dos trayectos: dos landmarks con el mismo nombre se
-   * anulan entre sí.
-   */
+  /** Nombre accesible de la región de navegación. */
   readonly label = input('Ruta de navegación');
+
+  protected readonly activeIndex = signal<number | null>(null);
+  private readonly nodes = viewChildren<ElementRef<HTMLElement>>('node');
+  private readonly menu = viewChild<ElementRef<HTMLElement>>('menu');
+  private closeTimer: ReturnType<typeof setTimeout> | null = null;
+
+  constructor() {
+    afterRenderEffect((onCleanup) => {
+      const panel = this.menu()?.nativeElement;
+      const index = this.activeIndex();
+      const anchor = index === null ? undefined : this.nodes()[index]?.nativeElement;
+      const view = panel?.ownerDocument.defaultView;
+      if (!panel || !anchor || !view) return;
+
+      const reposition = () =>
+        placeAnchored(panel, anchor, view, {
+          placement: 'bottom-start',
+          gap: 4,
+          clampHeight: true,
+        });
+      reposition();
+      onCleanup(watchAnchor(view, reposition));
+    });
+    inject(DestroyRef).onDestroy(() => this.cancelClose());
+  }
+
+  protected onNodeEnter(index: number): void {
+    this.cancelClose();
+    this.activeIndex.set(index);
+  }
+
+  protected onNodeLeave(): void {
+    this.cancelClose();
+    this.closeTimer = setTimeout(() => {
+      this.closeTimer = null;
+      this.activeIndex.set(null);
+    }, CLOSE_DELAY_MS);
+  }
+
+  protected onNodeFocusOut(event: FocusEvent, index: number): void {
+    const next = event.relatedTarget as Node | null;
+    if (next && this.nodes()[index]?.nativeElement.contains(next)) return;
+    if (this.activeIndex() === index) this.closeMenu();
+  }
+
+  protected onMenuEnter(): void {
+    this.cancelClose();
+  }
+
+  protected closeMenu(): void {
+    this.cancelClose();
+    this.activeIndex.set(null);
+  }
+
+  private cancelClose(): void {
+    if (this.closeTimer) {
+      clearTimeout(this.closeTimer);
+      this.closeTimer = null;
+    }
+  }
 }

@@ -1,12 +1,4 @@
-import {
-  Component,
-  DestroyRef,
-  DOCUMENT,
-  inject,
-  input,
-  model,
-  signal,
-} from '@angular/core';
+import { Component, DestroyRef, DOCUMENT, inject, input, model, signal } from '@angular/core';
 
 /** Orientación en que se distribuyen los paneles del contenedor dividido. */
 export type SplitDirection = 'horizontal' | 'vertical';

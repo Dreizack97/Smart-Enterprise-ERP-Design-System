@@ -1,7 +1,5 @@
-import { Component, WritableSignal, computed, inject, signal } from '@angular/core';
+import { Component, WritableSignal, computed, effect, inject, input, signal } from '@angular/core';
 import { Notifications } from '@core/services/notification';
-import { ThemeStore } from '@core/theme/theme-store';
-import { Theme } from '@core/theme/theme.model';
 import { Button } from '@shared/components/actions/button/button';
 import { SectionCard } from '@shared/components/containers/section-card/section-card';
 import { DataTable } from '@shared/components/data/data-table/data-table';
@@ -17,7 +15,6 @@ import { Input } from '@shared/components/forms/input/input';
 import { OtpInput } from '@shared/components/forms/otp-input/otp-input';
 import { PasswordInput } from '@shared/components/forms/password-input/password-input';
 import { PasswordStrengthMeter } from '@shared/components/forms/password-strength-meter/password-strength-meter';
-import { RadioGroup, RadioOption } from '@shared/components/forms/radio-group/radio-group';
 import { Select, SelectOption } from '@shared/components/forms/select/select';
 import { Textarea } from '@shared/components/forms/textarea/textarea';
 import { ToggleSwitch } from '@shared/components/forms/toggle-switch/toggle-switch';
@@ -27,6 +24,7 @@ import { AppTabPanel } from '@shared/components/navigation/tab-panel/tab-panel';
 import { TabItem, Tabs } from '@shared/components/navigation/tabs/tabs';
 import { ConfirmDialog } from '@shared/components/overlays/confirm-dialog/confirm-dialog';
 import { PageHeader } from '@layout/components/page-header/page-header';
+import { ProfilePreferences } from './profile-preferences/profile-preferences';
 
 /** Los campos que la pestaña «Datos» deja editar. */
 interface ProfileFields {
@@ -66,12 +64,7 @@ interface AccountFact {
   readonly value: string;
 }
 
-/** Un aviso que se puede encender o apagar. */
-interface Notice {
-  readonly key: string;
-  readonly label: string;
-  readonly enabled: WritableSignal<boolean>;
-}
+const VALID_SECTIONS = new Set(['datos', 'seguridad', 'preferencias', 'actividad']);
 
 /** Una sesión abierta con la cuenta, como la lista la pestaña de seguridad. */
 interface Session {
@@ -150,7 +143,7 @@ const SESSIONS: readonly Session[] = [
     PageHeader,
     PasswordInput,
     PasswordStrengthMeter,
-    RadioGroup,
+    ProfilePreferences,
     ResendTimer,
     SectionCard,
     Select,
@@ -166,7 +159,9 @@ const SESSIONS: readonly Session[] = [
 })
 export class Profile {
   private readonly notifications = inject(Notifications);
-  protected readonly theme = inject(ThemeStore);
+
+  /** Sección inicial desde `?seccion=...` (enlazado desde el menú de cuenta). */
+  readonly seccion = input<string>();
 
   protected readonly trail: readonly BreadcrumbItem[] = [
     { label: 'Inicio', route: '/inicio' },
@@ -181,6 +176,15 @@ export class Profile {
   ];
 
   protected readonly tab = signal<string | undefined>('datos');
+
+  constructor() {
+    effect(() => {
+      const section = this.seccion();
+      if (section && VALID_SECTIONS.has(section)) {
+        this.tab.set(section);
+      }
+    });
+  }
 
   // --- Datos personales ----------------------------------------------------
   protected readonly form: ProfileForm = {
@@ -272,24 +276,6 @@ export class Profile {
     { id: 'state', header: 'Estado', sortValue: (row) => (row.current ? 'a' : 'b') },
   ];
 
-  // --- Preferencias --------------------------------------------------------
-  protected readonly themeOptions: readonly RadioOption[] = [
-    { value: 'light', label: 'Claro', description: 'Fondo claro a toda hora.', icon: 'sun' },
-    { value: 'dark', label: 'Oscuro', description: 'Fondo oscuro a toda hora.', icon: 'moon' },
-    {
-      value: 'system',
-      label: 'Seguir al sistema',
-      description: 'Cambia con la preferencia del equipo.',
-      icon: 'sun-moon',
-    },
-  ];
-
-  protected readonly notices: readonly Notice[] = [
-    { key: 'digest', label: 'Resumen diario por correo', enabled: signal(true) },
-    { key: 'stock', label: 'Alertas de inventario bajo', enabled: signal(true) },
-    { key: 'weekly', label: 'Reporte semanal del área', enabled: signal(false) },
-  ];
-
   // --- Actividad -----------------------------------------------------------
   protected readonly history: readonly TimelineEntry[] = [
     {
@@ -331,10 +317,6 @@ export class Profile {
 
   protected trackSession(row: Session): number {
     return row.id;
-  }
-
-  protected setTheme(value: string): void {
-    this.theme.set(value as Theme);
   }
 
   /** Guardar es un retraso y un aviso: no hay servidor detrás de esta pantalla. */

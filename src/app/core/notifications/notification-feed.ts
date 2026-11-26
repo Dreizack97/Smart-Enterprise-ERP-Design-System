@@ -32,7 +32,7 @@ const SAMPLE_NOTIFICATIONS: readonly NotificationItem[] = [
     icon: 'triangle-alert',
     tone: 'yellow',
     title: 'Inventario bajo',
-    description: 'Quedan 4 unidades de «Teclado mecánico RX».',
+    description: 'Quedan 4 unidades de "Teclado mecánico RX".',
     time: 'hace 1 hora',
     read: false,
   },

@@ -1,8 +1,15 @@
 @let node = item();
 
 @if (isGroup()) {
-  <li class="nav__group">
+  <li
+    class="nav__group"
+    (mouseenter)="openFlyout()"
+    (mouseleave)="closeFlyout()"
+    (focusin)="openFlyout()"
+    (focusout)="closeFlyout($event)"
+  >
     <button
+      #trigger
       type="button"
       class="nav__toggle focus-ring"
       [class.nav__toggle--nested]="!isRoot()"
@@ -16,16 +23,22 @@
       } @else if (!isRoot()) {
         <span class="nav__dot"></span>
       }
-      <span class="nav__label">{{ node.label }}</span>
+      <span class="nav__label"><app-highlight-text [text]="node.label" [query]="query()" /></span>
       <app-icon class="nav__chevron" name="chevron-down" [size]="12" />
     </button>
 
-    <div class="nav__submenu" [id]="panelId()" [attr.data-open]="expanded()">
+    <div #submenu class="nav__submenu" [id]="panelId()" [attr.data-open]="expanded()">
       <div class="nav__submenu-inner">
         <p class="nav__flyout-title">{{ node.label }}</p>
         <ul class="nav__subtree">
           @for (child of children(); track child.id) {
-            <app-sidebar-nav-item [item]="child" [siblingIds]="childIds()" [depth]="depth() + 1" />
+            <app-sidebar-nav-item
+              [item]="child"
+              [siblingIds]="childIds()"
+              [depth]="depth() + 1"
+              [query]="query()"
+              (navigated)="navigated.emit()"
+            />
           }
         </ul>
       </div>
@@ -47,7 +60,7 @@
       } @else if (!isRoot()) {
         <span class="nav__dot"></span>
       }
-      <span class="nav__label">{{ node.label }}</span>
+      <span class="nav__label"><app-highlight-text [text]="node.label" [query]="query()" /></span>
     </a>
   </li>
 } @else {
@@ -64,7 +77,7 @@
       } @else if (!isRoot()) {
         <span class="nav__dot"></span>
       }
-      <span class="nav__label">{{ node.label }}</span>
+      <span class="nav__label"><app-highlight-text [text]="node.label" [query]="query()" /></span>
     </span>
   </li>
 }

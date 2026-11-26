@@ -4,6 +4,7 @@ import {
   rowSortingFeature,
   tableFeatures,
 } from '@tanstack/angular-table';
+import { ColumnPriority, MobileColumnRole } from './data-table.model';
 
 /**
  * Las únicas funciones de TanStack Table que el sistema registra.
@@ -26,7 +27,9 @@ export const DATA_TABLE_FEATURES = tableFeatures({
   columnMeta: {} as {
     readonly headerClass: string;
     readonly cellClass: string;
-    readonly alignEnd: boolean;
+    readonly align: 'start' | 'center' | 'end';
+    readonly priority: ColumnPriority;
+    readonly mobileRole: MobileColumnRole;
   },
 });
 

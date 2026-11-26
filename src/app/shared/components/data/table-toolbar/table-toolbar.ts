@@ -1,12 +1,18 @@
 import {
   Component,
+  DOCUMENT,
+  ElementRef,
   booleanAttribute,
   computed,
+  contentChild,
+  effect,
+  inject,
   input,
   numberAttribute,
   output,
 } from '@angular/core';
 import { Button } from '@shared/components/actions/button/button';
+import { SearchInput } from '@shared/components/forms/search-input/search-input';
 
 /**
  * La fila sobre una tabla: lo que la acota, y lo que actúa sobre ella.
@@ -40,7 +46,12 @@ import { Button } from '@shared/components/actions/button/button';
   imports: [Button],
   templateUrl: './table-toolbar.html',
   styleUrl: './table-toolbar.css',
-  host: { role: 'search', '[attr.aria-label]': 'label() || null' },
+  host: {
+    role: 'search',
+    '[attr.aria-label]': 'label() || null',
+    '(document:keydown.control.b)': 'onSearchShortcut($event)',
+    '(document:keydown.meta.b)': 'onSearchShortcut($event)',
+  },
 })
 export class TableToolbar {
   /** Nombra la franja, p. ej. «Filtros de la cartera». */
@@ -71,4 +82,51 @@ export class TableToolbar {
     const count = this.selectedCount();
     return count === 1 ? '1 fila seleccionada' : `${count} filas seleccionadas`;
   });
+
+  private readonly document = inject(DOCUMENT);
+  private readonly host = inject(ElementRef<HTMLElement>);
+  private readonly searchInput = contentChild(SearchInput);
+
+  constructor() {
+    effect(() => {
+      this.searchInput()?.setContainerShortcut(['Control', 'b']);
+    });
+  }
+
+  protected onSearchShortcut(event: Event): void {
+    if (event.defaultPrevented) {
+      return;
+    }
+
+    const search = this.searchInput();
+    if (
+      !search ||
+      this.selecting() ||
+      this.host.nativeElement.closest('[inert], [aria-hidden="true"]')
+    ) {
+      return;
+    }
+
+    const activeModal = this.document.querySelector(
+      'dialog[open], .modal-overlay.is-open, .drawer-scrim.is-open',
+    );
+    if (activeModal && !activeModal.contains(this.host.nativeElement)) {
+      return;
+    }
+
+    const active = this.document.activeElement;
+    if (
+      active &&
+      active.closest('app-table-toolbar') &&
+      !this.host.nativeElement.contains(active)
+    ) {
+      return;
+    }
+
+    if (!search.focus()) {
+      return;
+    }
+
+    event.preventDefault();
+  }
 }

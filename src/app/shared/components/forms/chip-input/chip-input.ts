@@ -1,11 +1,4 @@
-import {
-  Component,
-  booleanAttribute,
-  computed,
-  input,
-  model,
-  signal,
-} from '@angular/core';
+import { Component, booleanAttribute, computed, input, model, signal } from '@angular/core';
 import { ControlError } from '@shared/models/form-control.model';
 import { nextElementId } from '@shared/utils/element-id';
 import { useFormControl } from '@shared/utils/form-control';
@@ -87,7 +80,11 @@ export class ChipInput {
   }
 
   protected onFocus(): void {
-    if (!this.disabled() && this.filteredSuggestions().length > 0 && this.draft().trim().length > 0) {
+    if (
+      !this.disabled() &&
+      this.filteredSuggestions().length > 0 &&
+      this.draft().trim().length > 0
+    ) {
       this.popupOpen.set(true);
     }
   }

@@ -1,5 +1,6 @@
 :host {
   display: block;
+  min-width: 0;
 }
 
 .search {
@@ -41,6 +42,7 @@
 
 .search__input {
   flex: 1;
+  width: 0;
   min-width: 0;
   border: none;
   background: transparent;
@@ -67,8 +69,13 @@
   transition: color var(--duration-fast) var(--ease-out-quart);
 }
 
-.search__clear:hover {
+.search__clear:hover:not(:disabled) {
   color: var(--field-ink);
+}
+
+.search__clear:disabled {
+  opacity: var(--field-disabled-opacity);
+  cursor: not-allowed;
 }
 
 .search__spinner {
@@ -85,4 +92,14 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.search__kbd {
+  flex-shrink: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-fast) var(--ease-out-quart);
+}
+
+.search:focus-within .search__kbd {
+  opacity: 0;
 }

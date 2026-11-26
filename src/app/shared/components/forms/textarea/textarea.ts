@@ -9,6 +9,7 @@ import {
 import { ControlError } from '@shared/models/form-control.model';
 import { nextElementId } from '@shared/utils/element-id';
 import { useFormControl } from '@shared/utils/form-control';
+import { sanitizeInput } from '@shared/utils/sanitize-input';
 import { Field } from '@shared/components/forms/field/field';
 
 /** Área de texto multilínea. Sin redimensionado manual: rompe la cuadrícula. */
@@ -27,8 +28,14 @@ export class Textarea {
   /** Altura del área, en líneas de texto. */
   readonly rows = input(3, { transform: numberAttribute });
 
+  /** Reduce por defecto la altura mínima y conserva el crecimiento automático; se desactiva con `[compact]="false"`. */
+  readonly compact = input(true, { transform: booleanAttribute });
+
   /** Presupuesto de caracteres mostrado como contador. `0` lo oculta. */
   readonly maxLength = input(0, { transform: numberAttribute });
+
+  /** Clase de caracteres permitidos. Ver `app-input`. */
+  readonly allowedChars = input('');
 
   readonly disabled = input(false, { transform: booleanAttribute });
   readonly required = input(false, { transform: booleanAttribute });
@@ -69,6 +76,7 @@ export class Textarea {
   });
 
   protected onInput(event: Event): void {
-    this.value.set((event.target as HTMLTextAreaElement).value);
+    const el = event.target as HTMLTextAreaElement;
+    this.value.set(sanitizeInput(el, this.allowedChars()));
   }
 }

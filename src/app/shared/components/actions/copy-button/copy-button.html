@@ -1,0 +1,18 @@
+<span class="copy__value"><ng-content /></span>
+<button
+  type="button"
+  class="copy focus-ring"
+  [class.copy--copied]="state() === 'copied'"
+  [class.copy--error]="state() === 'error'"
+  [disabled]="inactive()"
+  [attr.aria-label]="label()"
+  [attr.aria-busy]="state() === 'pending' ? 'true' : null"
+  [appTooltip]="feedback() || label()"
+  (click)="copy($event)"
+>
+  <app-icon
+    [name]="state() === 'copied' ? 'check' : state() === 'error' ? 'circle-alert' : 'copy'"
+    [size]="14"
+  />
+</button>
+<span class="sr-only" role="status" aria-live="polite">{{ feedback() }}</span>

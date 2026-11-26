@@ -2,12 +2,22 @@
   display: block;
 }
 
+:host textarea.field-control {
+  field-sizing: content;
+  min-height: 4.5rem;
+  max-height: 14rem;
+}
+
 .textarea__counter {
   align-self: flex-end;
   font-family: var(--font-mono);
   font-size: var(--field-hint-font-size);
   color: var(--field-hint-ink);
   font-variant-numeric: tabular-nums;
+}
+
+:host textarea.field-control--compact {
+  min-height: var(--field-height-md);
 }
 
 .textarea__counter--near {

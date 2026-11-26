@@ -1,0 +1,19 @@
+<div class="table-pagination__size">
+  <span>Mostrar:</span>
+  <app-select
+    [options]="options()"
+    [value]="'' + state().pageSize()"
+    (valueChange)="changeSize($event)"
+    size="sm"
+    ariaLabel="Registros por página"
+  />
+</div>
+<app-pagination
+  [page]="state().page()"
+  (pageChange)="state().setPage($event)"
+  [pageCount]="state().pageCount()"
+  [summary]="state().paginationSummary()"
+  [variant]="compact() ? 'compact' : 'pages'"
+  [size]="compact() ? 'sm' : 'md'"
+  flush
+/>

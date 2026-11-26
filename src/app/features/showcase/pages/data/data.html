@@ -52,6 +52,8 @@
       />
     </app-data-table>
 
+    <app-table-pagination [state]="pagination" />
+
     <p note>
       Ordena «Angel Moreno» junto a «Ángela Ruiz» y «Pedido 9» antes que «Pedido 10»: la comparación
       es <code>Intl.Collator</code> en español, no de cadenas. El importe ordena por su valor y no

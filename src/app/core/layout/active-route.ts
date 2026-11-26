@@ -31,15 +31,15 @@ export class ActiveRoute {
   }
 
   /**
-   * Coincidencia exacta de una ruta y, cuando la entrada nombra una, de su
-   * sección.
+   * Reconoce una ruta o sus descendientes y, cuando la entrada nombra una,
+   * exige que coincida su sección.
    *
    * Sin la segunda mitad, todas las entradas de una página se encenderían a
    * la vez: el menú apunta seis grupos a `/formularios`, y solo se
    * diferencian por el ancla.
    */
   matchesSection(route: string, fragment?: string): boolean {
-    if (this.path() !== route) {
+    if (!this.matches(route)) {
       return false;
     }
     return fragment ? this.fragment() === fragment : true;

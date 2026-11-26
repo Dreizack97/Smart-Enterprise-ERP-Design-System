@@ -1,19 +1,23 @@
 /**
- * Contrast audit of the token layer, in both themes, without a browser.
+ * Contrast audit of the token layer across supported palettes, without a browser.
  *
  * Theming defects hide in the token layer: an ink that was never restated for
  * dark mode keeps its light value and a whole section becomes unreadable at
  * night. That is invisible in code review and easy to miss on screen, because
  * the eye adapts. So it is computed.
  *
- * The script parses the three token files, builds one map per theme resolving
- * `var()` chains, then measures every ink role against the surfaces it can
- * plausibly land on. Run it with `npm run audit:contrast`.
+ * The script parses the three token files, builds one map per palette resolving
+ * `var()` chains, then measures each ink role against its documented fill or
+ * the page surfaces it can plausibly land on. Glass surfaces use color-mix and
+ * ambient gradients, so backdrop-dependent contrast is not measured here.
+ * Run it with `npm run audit:contrast`.
  *
  * Deliberately not a unit test: it is a measurement of the design, and its
  * output is a table someone reads, not a boolean.
  */
-import { readTokens } from './token-map.mjs';
+import { readThemeTokens } from './token-map.mjs';
+import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 /** WCAG AA for body text. Large text is 3:1, but an ink role has to serve both. */
 const AA = 4.5;
@@ -48,7 +52,24 @@ const OWN_FILL = new Map([
   ['--date-grid-range-ink', '--date-grid-range-surface'],
   ['--combobox-option-selected-ink', '--combobox-option-selected-surface'],
   ['--toolbar-selection-ink', '--toolbar-selection-surface'],
+  ['--field-toggle-ink-hover', '--surface-field'],
+  ['--upload-badge-ink', '--surface-1'],
+  ['--strength-caution-ink', '--form-card-surface'],
+  ['--requirements-pending-ink', '--requirements-surface'],
+  ['--requirements-met-ink', '--requirements-surface'],
+  ['--form-card-link-ink', '--form-card-surface'],
+  ['--sidebar-link-ink-hover', '--sidebar-link-surface-hover'],
+  ['--showcase-copied-ink', '--surface-1'],
 ]);
+
+/** Tone text has documented surface roles and should not be tested on every page surface. */
+for (const tone of ['neutral', 'blue', 'green', 'yellow', 'orange', 'red', 'purple']) {
+  OWN_FILL.set(`--tone-${tone}-ink`, ['--surface-1']);
+  OWN_FILL.set(`--tone-${tone}-ink-strong`, [
+    `--tone-${tone}-surface-soft`,
+    `--tone-${tone}-surface-subtle`,
+  ]);
+}
 
 /**
  * Roles whose background is not a token at all.
@@ -59,28 +80,41 @@ const OWN_FILL = new Map([
  */
 const NOT_A_TOKEN_PAIR = new Set(['--avatar-ink', '--chart-tooltip-title', '--chart-tooltip-body']);
 
-main();
+// Estos dos roles solo pintan iconos; el resto pinta texto normal.
+const ROLE_MINIMUM = new Map([
+  ['--field-toggle-ink-hover', 3],
+  ['--upload-badge-ink', 3],
+]);
+
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main();
 
 function main() {
-  const { light, dark } = readTokens();
-
-  const failures = [...report('claro', light), ...report('oscuro', dark)];
+  const palettes = readThemeTokens();
+  const failures = palettes.flatMap(({ label, tokens }) => report(label, tokens));
 
   if (failures.length === 0) {
-    console.log(`✔ Contraste: ningún rol de tinta por debajo de ${AA}:1 en ninguno de los temas.`);
+    console.log(
+      `✔ Contraste: ningún par por debajo del umbral de su rol (texto ${AA}:1; iconos 3:1) en las paletas con superficies opacas.`,
+    );
+    console.log(
+      'ℹ Las superficies de cristal no se miden: su contraste depende del fondo y de los degradados ambientales.',
+    );
     return;
   }
 
-  console.log(`✘ ${failures.length} combinación(es) por debajo de ${AA}:1\n`);
+  console.log(`✘ ${failures.length} combinación(es) por debajo del umbral de su rol\n`);
   for (const row of failures) {
     console.log(
-      `  ${row.theme.padEnd(7)} ${row.ink.padEnd(34)} sobre ${row.surface.padEnd(22)} ${row.ratio.toFixed(2)}:1`,
+      `  ${row.theme.padEnd(20)} ${row.ink.padEnd(34)} sobre ${row.surface.padEnd(30)} ${row.ratio.toFixed(2)}:1`,
     );
   }
+  console.log(
+    '\nℹ Las superficies de cristal no se miden: su contraste depende del fondo y de los degradados ambientales.',
+  );
   process.exitCode = 1;
 }
 
-function report(theme, tokens) {
+export function report(theme, tokens) {
   const failures = [];
   for (const [name, value] of tokens) {
     if (!isInk(name) || NOT_A_TOKEN_PAIR.has(name)) {
@@ -91,16 +125,20 @@ function report(theme, tokens) {
       continue;
     }
     const own = OWN_FILL.get(name);
-    const surfaces = own ? [own] : SURFACES;
+    const surfaces = own ? (Array.isArray(own) ? own : [own]) : SURFACES;
     for (const surfaceName of surfaces) {
-      const surface = lightestStop(tokens.get(surfaceName) ?? '');
+      const surface = worstSurface(
+        tokens.get(surfaceName) ?? '',
+        ink,
+        tokens.get('--surface-1') ?? '',
+      );
       if (!surface) {
         continue;
       }
-      const base = surface.a < 1 ? over(surface, parseColour(tokens.get('--surface-1'))) : surface;
-      const ratio = contrast(over(ink, base), base);
-      if (ratio < AA) {
-        failures.push({ theme, ink: name, surface: surfaceName, ratio });
+      const ratio = contrast(over(ink, surface), surface);
+      const minimum = ROLE_MINIMUM.get(name) ?? AA;
+      if (ratio < minimum) {
+        failures.push({ theme, ink: name, surface: surfaceName, ratio, minimum });
       }
     }
   }
@@ -111,23 +149,50 @@ function isInk(name) {
   return /-ink$|-ink-strong$|-ink-hover$|-ink-active$|^--ink-/.test(name);
 }
 
-/** A gradient is judged by its lightest stop: the worst case for light ink. */
-function lightestStop(value) {
-  if (!/gradient/i.test(value)) {
-    return parseColour(value);
+/** Estimates the lowest contrast across an opaque gradient for either light or dark ink. */
+function worstSurface(value, ink, pageSurface) {
+  const stops = /gradient/i.test(value)
+    ? [...value.matchAll(/#[0-9a-f]{3,8}\b|rgba?\([^)]*\)/gi)]
+        .map((match) => parseColour(match[0]))
+        .filter(Boolean)
+    : [parseColour(value)].filter(Boolean);
+  if (stops.length === 0) return null;
+
+  const page = parseColour(pageSurface);
+  let worst = null;
+  let lowestRatio = Infinity;
+  const consider = (colour) => {
+    const surface = colour.a < 1 ? over(colour, page) : colour;
+    const ratio = contrast(over(ink, surface), surface);
+    if (ratio < lowestRatio) {
+      lowestRatio = ratio;
+      worst = surface;
+    }
+  };
+
+  consider(stops[0]);
+  for (let index = 1; index < stops.length; index += 1) {
+    const from = stops[index - 1];
+    const to = stops[index];
+    for (let step = 1; step <= 32; step += 1) {
+      const fraction = step / 32;
+      consider({
+        r: from.r + (to.r - from.r) * fraction,
+        g: from.g + (to.g - from.g) * fraction,
+        b: from.b + (to.b - from.b) * fraction,
+        a: from.a + (to.a - from.a) * fraction,
+      });
+    }
   }
-  const stops = [...value.matchAll(/#[0-9a-f]{3,6}\b|rgba?\([^)]*\)/gi)]
-    .map((match) => parseColour(match[0]))
-    .filter(Boolean);
-  return stops.length ? stops.reduce((a, b) => (luminance(a) > luminance(b) ? a : b)) : null;
+  return worst;
 }
 
-function parseColour(input) {
+export function parseColour(input) {
   const value = (input ?? '').trim();
-  const hex = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(value);
+  const hex = /^#([0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i.exec(value);
   if (hex) {
     const digits =
-      hex[1].length === 3
+      hex[1].length <= 4
         ? hex[1]
             .split('')
             .map((d) => d + d)
@@ -137,7 +202,7 @@ function parseColour(input) {
       r: parseInt(digits.slice(0, 2), 16),
       g: parseInt(digits.slice(2, 4), 16),
       b: parseInt(digits.slice(4, 6), 16),
-      a: 1,
+      a: digits.length === 8 ? parseInt(digits.slice(6, 8), 16) / 255 : 1,
     };
   }
   const rgb = /^rgba?\(([^)]+)\)$/i.exec(value);

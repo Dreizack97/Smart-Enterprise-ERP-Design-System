@@ -49,11 +49,15 @@ for (const { route, fragment } of entries) {
   }
   const template = pages.get(route);
   if (!template) {
-    problems.push(`«${route}» no carga ninguna página del catálogo, pero el menú le pide un ancla.`);
+    problems.push(
+      `«${route}» no carga ninguna página del catálogo, pero el menú le pide un ancla.`,
+    );
     continue;
   }
   if (!readFileSync(template, 'utf8').includes(`anchor="${fragment}"`)) {
-    problems.push(`«${route}#${fragment}» no existe: ningún bloque de ${template} lleva esa ancla.`);
+    problems.push(
+      `«${route}#${fragment}» no existe: ningún bloque de ${template} lleva esa ancla.`,
+    );
   }
   pointedAt.add(`${route}#${fragment}`);
 }
