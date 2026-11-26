@@ -46,9 +46,12 @@ export class LayoutStore {
   readonly openSubmenus = this.submenus.asReadonly();
 
   toggleCollapsed(): void {
-    const next = !untracked(this.collapsed);
-    this.collapsed.set(next);
-    this.storage.write(SIDEBAR_COLLAPSED_KEY, next);
+    this.setCollapsed(!untracked(this.collapsed));
+  }
+
+  /** Saca al sidebar del riel. La usa la búsqueda, que necesita el panel completo. */
+  expandSidebar(): void {
+    this.setCollapsed(false);
   }
 
   toggleDrawer(): void {
@@ -70,13 +73,19 @@ export class LayoutStore {
    * profundidad, permitir varias ramas abiertas a la vez convierte al menú en
    * una lista que nadie puede escanear de un vistazo.
    */
-  toggleSubmenu(id: string, siblingIds: readonly string[]): void {
+  toggleSubmenu(
+    id: string,
+    siblingSubtreeIds: readonly string[],
+    ownSubtreeIds: readonly string[] = [id],
+  ): void {
     const next = new Set(untracked(this.submenus));
     if (next.has(id)) {
-      next.delete(id);
+      for (const ownId of ownSubtreeIds) {
+        next.delete(ownId);
+      }
     } else {
-      for (const sibling of siblingIds) {
-        next.delete(sibling);
+      for (const siblingId of siblingSubtreeIds) {
+        next.delete(siblingId);
       }
       next.add(id);
     }
@@ -84,14 +93,33 @@ export class LayoutStore {
   }
 
   /** Abre una rama completa. La usa el sidebar para revelar la ruta activa. */
-  openBranch(ids: readonly string[]): void {
+  openBranch(
+    OpenIds: readonly string[],
+    siblingSubtreeIds: readonly string[] = [],
+    keepIds: readonly string[] = OpenIds,
+  ): void {
     const current = untracked(this.submenus);
-    if (ids.every((id) => current.has(id))) {
-      // No hay nada que abrir. Salir sin escribir evita que el efecto que
-      // llama marque el signal en cada pasada de detección de cambios.
+    const keep = new Set(keepIds);
+    const next = new Set(current);
+    let changed = false;
+
+    for (const siblingId of siblingSubtreeIds) {
+      if (!keep.has(siblingId) && next.delete(siblingId)) {
+        changed = true;
+      }
+    }
+
+    for (const id of OpenIds) {
+      if (!next.has(id)) {
+        next.add(id);
+        changed = true;
+      }
+    }
+
+    if (!changed) {
       return;
     }
-    this.applySubmenus(new Set([...current, ...ids]));
+    this.applySubmenus(next);
   }
 
   /** El cajón móvil no tiene sentido en escritorio: ensanchar la ventana lo cierra. */
@@ -99,6 +127,14 @@ export class LayoutStore {
     if (width >= DESKTOP_BREAKPOINT) {
       this.closeDrawer();
     }
+  }
+
+  private setCollapsed(collapsed: boolean): void {
+    if (untracked(this.collapsed) === collapsed) {
+      return;
+    }
+    this.collapsed.set(collapsed);
+    this.storage.write(SIDEBAR_COLLAPSED_KEY, collapsed);
   }
 
   private applySubmenus(next: ReadonlySet<string>): void {

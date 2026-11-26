@@ -1,173 +1,17 @@
 import { Provider } from '@angular/core';
-import {
-  LucideArrowDown,
-  LucideArrowLeft,
-  LucideArrowRight,
-  LucideArrowUp,
-  LucideArrowUpDown,
-  LucideBell,
-  LucideBriefcase,
-  LucideCalendar,
-  LucideCamera,
-  LucideChartColumn,
-  LucideChartLine,
-  LucideChartPie,
-  LucideCheck,
-  LucideCheckCheck,
-  LucideChevronDown,
-  LucideChevronLeft,
-  LucideChevronRight,
-  LucideChevronUp,
-  LucideCircle,
-  LucideCircleAlert,
-  LucideCircleCheck,
-  LucideClock,
-  LucideCode,
-  LucideCopy,
-  LucideDollarSign,
-  LucideDownload,
-  LucideEllipsisVertical,
-  LucideEye,
-  LucideEyeOff,
-  LucideFilter,
-  LucideHouse,
-  LucideImage,
-  LucideInfo,
-  LucideKey,
-  LucideLayoutGrid,
-  LucideList,
-  LucideLock,
-  LucideLogOut,
-  LucideMail,
-  LucideMailOpen,
-  LucideMenu,
-  LucideMoon,
-  LucidePackage,
-  LucidePackageOpen,
-  LucidePencil,
-  LucidePlus,
-  LucidePrinter,
-  LucideQrCode,
-  LucideRefreshCw,
-  LucideRotateCcw,
-  LucideSearch,
-  LucideSend,
-  LucideSettings,
-  LucideShield,
-  LucideShoppingBag,
-  LucideShoppingCart,
-  LucideSmartphone,
-  LucideStar,
-  LucideSun,
-  LucideSunMoon,
-  LucideTrash2,
-  LucideTriangleAlert,
-  LucideUpload,
-  LucideUser,
-  LucideUserPlus,
-  LucideUsers,
-  LucideX,
-  LucideZap,
-  provideLucideIcons,
-} from '@lucide/angular';
+import { provideLucideIcons } from '@lucide/angular';
+import { APP_ICON_DATA } from './app-icon-data';
 
 /**
  * El vocabulario de iconos del sistema.
  *
- * Lucide permite tree-shaking: solo se empaqueta lo que aquí se registra. El
+ * Los dibujos se generan con `npm run generate:icons` desde la versión instalada
+ * de Lucide; se registra su información SVG sin incluir un componente por icono. El
  * conjunto es deliberadamente más amplio de lo que el catálogo demuestra hoy
  * — un vocabulario de iconos es parte de lo que entrega un sistema de diseño,
  * y la página de Fundamentos renderiza cada uno desde `ICON_NAMES`.
  */
-const ICONS = [
-  // Navigation and shell
-  LucideMenu,
-  LucideHouse,
-  LucideChevronDown,
-  LucideChevronUp,
-  LucideChevronLeft,
-  LucideChevronRight,
-  LucideSearch,
-  LucideBell,
-  LucideSettings,
-  LucideLogOut,
-  LucideEllipsisVertical,
-  LucideFilter,
-
-  // Theme
-  LucideSun,
-  LucideMoon,
-  LucideSunMoon,
-
-  // People
-  LucideUser,
-  LucideUsers,
-  LucideUserPlus,
-
-  // Business
-  LucideBriefcase,
-  LucidePackage,
-  LucidePackageOpen,
-  LucideShoppingCart,
-  LucideShoppingBag,
-  LucideDollarSign,
-  LucideCalendar,
-  LucideClock,
-
-  // Charts
-  LucideChartLine,
-  LucideChartColumn,
-  LucideChartPie,
-
-  // Actions
-  LucidePlus,
-  LucidePencil,
-  LucideTrash2,
-  LucideCopy,
-  LucideX,
-  LucideCheck,
-  LucideCheckCheck,
-  LucidePrinter,
-  LucideRefreshCw,
-  LucideRotateCcw,
-  LucideDownload,
-  LucideSend,
-  LucideCamera,
-  LucideImage,
-  LucideUpload,
-
-  // Table sorting
-  LucideArrowUpDown,
-  LucideArrowUp,
-  LucideArrowDown,
-  LucideArrowLeft,
-  LucideArrowRight,
-
-  // Views
-  LucideLayoutGrid,
-  LucideList,
-
-  // Status and notifications
-  LucideCircle,
-  LucideCircleCheck,
-  LucideCircleAlert,
-  LucideInfo,
-  LucideTriangleAlert,
-  LucideStar,
-  LucideZap,
-
-  // Access and security
-  LucideLock,
-  LucideKey,
-  LucideShield,
-  LucideEye,
-  LucideEyeOff,
-  LucideQrCode,
-  LucideSmartphone,
-  LucideMail,
-  LucideMailOpen,
-  LucideCode,
-] as const;
+const ICONS = APP_ICON_DATA;
 
 /**
  * Todo nombre válido para `<app-icon name="...">`.
@@ -184,6 +28,7 @@ export const ICON_NAMES = [
   'arrow-up-down',
   'bell',
   'briefcase',
+  'building-2',
   'calendar',
   'camera',
   'chart-column',
@@ -207,17 +52,24 @@ export const ICON_NAMES = [
   'eye',
   'eye-off',
   'filter',
+  'globe',
+  'heart-pulse',
   'house',
   'image',
   'info',
   'key',
   'layout-grid',
   'list',
+  'locate-fixed',
   'lock',
   'log-out',
   'mail',
   'mail-open',
+  'maximize-2',
   'menu',
+  'minimize-2',
+  'minus',
+  'monitor',
   'moon',
   'package',
   'package-open',
@@ -231,12 +83,15 @@ export const ICON_NAMES = [
   'send',
   'settings',
   'shield',
+  'shield-check',
   'shopping-bag',
   'shopping-cart',
+  'sliders-horizontal',
   'smartphone',
   'star',
   'sun',
   'sun-moon',
+  'tablet',
   'trash-2',
   'triangle-alert',
   'upload',
@@ -245,6 +100,8 @@ export const ICON_NAMES = [
   'users',
   'x',
   'zap',
+  'zoom-in',
+  'zoom-out',
 ] as const;
 
 /**

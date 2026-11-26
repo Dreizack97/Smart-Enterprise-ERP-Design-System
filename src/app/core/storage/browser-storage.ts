@@ -14,6 +14,7 @@ export class BrowserStorage {
 
   /** Respaldo para cuando el navegador se niega a persistir. */
   private readonly fallback = new Map<string, string>();
+  private readonly pendingWrites = new Set<string>();
 
   read<T>(key: string, fallbackValue: T): T {
     const raw = this.readRaw(key);
@@ -31,30 +32,50 @@ export class BrowserStorage {
   write(key: string, value: unknown): void {
     const raw = JSON.stringify(value);
     this.fallback.set(key, raw);
-    try {
-      this.document.defaultView?.localStorage.setItem(key, raw);
-    } catch {
-      /* se conserva en memoria solo para esta sesión */
-    }
+    this.persist(key, raw);
   }
 
   remove(key: string): void {
     this.fallback.delete(key);
-    try {
-      this.document.defaultView?.localStorage.removeItem(key);
-    } catch {
-      /* no hay nada más que hacer */
+    this.persist(key, null);
+  }
+
+  /** Descarta escrituras pendientes en memoria para resincronizar con `localStorage`. */
+  clearPendingWrite(key?: string): void {
+    if (key === undefined) {
+      this.pendingWrites.clear();
+      return;
     }
+    this.pendingWrites.delete(key);
+  }
+
+  private persist(key: string, raw: string | null): void {
+    try {
+      const storage = this.document.defaultView?.localStorage;
+      if (storage) {
+        if (raw === null) storage.removeItem(key);
+        else storage.setItem(key, raw);
+        this.pendingWrites.delete(key);
+        return;
+      }
+    } catch {
+      // Si la escritura falla, la copia local tiene prioridad sobre el valor anterior.
+    }
+    this.pendingWrites.add(key);
   }
 
   private readRaw(key: string): string | null {
+    if (this.pendingWrites.has(key)) return this.fallback.get(key) ?? null;
+
     try {
       const value = this.document.defaultView?.localStorage.getItem(key);
-      if (value !== null && value !== undefined) {
+      if (value !== undefined) {
+        if (value === null) this.fallback.delete(key);
+        else this.fallback.set(key, value);
         return value;
       }
     } catch {
-      /* continúa hacia la copia en memoria */
+      // Si el almacenamiento falla al leer, se utiliza la copia en memoria.
     }
     return this.fallback.get(key) ?? null;
   }
