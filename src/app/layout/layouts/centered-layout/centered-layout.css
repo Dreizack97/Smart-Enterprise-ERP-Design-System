@@ -9,11 +9,24 @@
   background: var(--centered-backdrop);
 }
 
+/* Retícula de puntos, desvanecida hacia los bordes. Transparente en claro. */
+:host::before {
+  position: absolute;
+  inset: 0;
+  content: '';
+  background-image: radial-gradient(var(--centered-grid-color) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse 65% 55% at 50% 50%, black 20%, transparent 85%);
+  pointer-events: none;
+}
+
 .centered__shape {
   position: absolute;
   display: var(--centered-shape-display);
+  border: var(--centered-shape-border);
   border-radius: var(--radius-full);
-  background-color: var(--centered-shape-surface);
+  background: var(--centered-shape-surface);
+  box-shadow: var(--centered-shape-shadow);
   pointer-events: none;
   animation: centered-drift 20s infinite ease-in-out;
 }
@@ -43,6 +56,7 @@
 }
 
 .centered__panel {
+  position: relative;
   z-index: 10;
   width: 100%;
   max-width: var(--centered-panel-width);

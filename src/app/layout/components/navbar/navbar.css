@@ -9,6 +9,7 @@
   height: var(--navbar-height);
   align-items: center;
   justify-content: space-between;
+  gap: 0.75rem;
   padding: 0 0.75rem;
   border-bottom: 1px solid var(--navbar-border);
   background-color: var(--navbar-surface);
@@ -22,6 +23,7 @@
 
 @media (min-width: 1024px) {
   :host {
+    gap: 1rem;
     padding: 0 1.5rem;
   }
 }
@@ -29,6 +31,7 @@
 .navbar__group {
   display: flex;
   align-items: center;
+  flex-shrink: 0;
   gap: 0.25rem;
 }
 
@@ -99,15 +102,24 @@
 
 .navbar__mark {
   display: flex;
-  width: var(--navbar-mark-size);
-  height: var(--navbar-mark-size);
-  flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  border-radius: var(--navbar-control-radius);
-  background: var(--navbar-mark-surface);
-  color: var(--navbar-mark-ink);
-  box-shadow: var(--shadow-md);
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.navbar__mark-img {
+  width: 2.25rem;
+  height: 2.25rem;
+  object-fit: contain;
+  display: block;
+  transition: transform var(--duration-fast) var(--ease-out-quart);
+}
+
+.navbar__brand:hover .navbar__mark-img {
+  transform: scale(1.05);
 }
 
 /* Los nombres desaparecen antes que los controles: en una barra angosta los
@@ -143,7 +155,40 @@
 
 @media (min-width: 768px) {
   .navbar__search {
+    position: relative;
     display: block;
+    flex: 0 1 var(--navbar-search-width);
+    min-width: 0;
+    margin-inline-start: auto;
+    transition: flex-basis var(--duration-fast) var(--ease-out-quart);
+  }
+
+  .navbar__search:focus-within,
+  .navbar__search--active {
+    flex-basis: var(--navbar-search-max-width);
+  }
+
+  .navbar__search-field {
+    width: 100%;
+  }
+
+  .navbar__search-popover {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    inset-inline-end: 0;
+    z-index: 60;
+    width: min(28rem, calc(100vw - 1.5rem));
+    padding: var(--accordion-padding-y) var(--accordion-padding-x);
+    border: 1px solid var(--dropdown-border);
+    border-radius: var(--dropdown-radius);
+    background-color: var(--dropdown-surface);
+    box-shadow: var(--shadow-xl);
+  }
+
+  .navbar__search-popover > [searchPanel] {
+    display: grid;
+    gap: var(--field-gap);
+    min-width: 0;
   }
 }
 
@@ -228,6 +273,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .navbar__control,
+  .navbar__search,
   .navbar__account,
   .navbar__rail-icon,
   .navbar__account-chevron {

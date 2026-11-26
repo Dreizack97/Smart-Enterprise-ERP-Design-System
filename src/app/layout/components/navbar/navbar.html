@@ -25,7 +25,7 @@
 
   <a class="navbar__brand focus-ring" routerLink="/">
     <span class="navbar__mark" aria-hidden="true">
-      <app-icon name="chart-line" [size]="18" />
+      <img class="navbar__mark-img" [src]="logoSrc()" alt="" width="36" height="36" />
     </span>
     <span class="navbar__identity">
       <span class="navbar__brand-name">{{ brand() }}</span>
@@ -34,9 +34,36 @@
   </a>
 </div>
 
+@if (showSearch()) {
+  <div
+    #searchBox
+    class="navbar__search"
+    [class.navbar__search--active]="searchPanelVisible()"
+    (focusin)="onSearchFocusIn()"
+    (pointerdown)="onSearchFocusIn()"
+    (focusout)="onSearchFocusOut($event)"
+  >
+    <app-search-input
+      class="navbar__search-field"
+      variant="chip"
+      [placeholder]="searchPlaceholder()"
+      [label]="searchLabel()"
+      [shortcut]="searchShortcut()"
+      [value]="searchQuery()"
+      (valueChange)="onSearch($event)"
+    />
+    @if (searchPanelVisible()) {
+      <section
+        class="navbar__search-popover"
+        tabindex="-1"
+        [attr.aria-label]="searchResultsLabel()"
+      >
+        <ng-content select="[searchPanel]" />
+      </section>
+    }
+  </div>
+}
 <div class="navbar__group">
-  <app-search-input class="navbar__search" [(value)]="query" (valueChange)="onSearch($event)" />
-
   <button
     type="button"
     class="navbar__control focus-ring"

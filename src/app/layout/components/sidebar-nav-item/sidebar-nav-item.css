@@ -36,7 +36,9 @@
 }
 
 .nav__toggle.nav--trail {
-  color: var(--sidebar-link-ink-hover);
+  background-color: var(--sidebar-sublink-active-surface);
+  color: var(--sidebar-link-active-ink);
+  font-weight: 600;
 }
 
 .nav__link.nav--active {
@@ -162,6 +164,10 @@
    TypeScript.
    ========================================================================= */
 @media (min-width: 1024px) {
+  :host(.nav--rail) > .nav__item {
+    position: relative;
+  }
+
   :host(.nav--rail) > .nav__item > .nav__link,
   :host(.nav--rail) > .nav__group > .nav__toggle {
     justify-content: center;
@@ -169,26 +175,67 @@
     padding-left: 0;
   }
 
-  /* Seguro como descendiente: la etiqueta y el chevron de una fila viven
-     DENTRO del propio `<a>` o `<button>` de esa fila, y los nodos anidados
-     cuelgan del submenú en su lugar. */
-  :host(.nav--rail) > .nav__item > .nav__link .nav__label,
   :host(.nav--rail) > .nav__group > .nav__toggle .nav__label,
   :host(.nav--rail) > .nav__group > .nav__toggle .nav__chevron {
     display: none;
   }
 
+  /* Pastilla flotante (Tooltip) para enlaces directos en modo riel (ej. Inicio) */
+  :host(.nav--rail) > .nav__item > .nav__link .nav__label {
+    position: absolute;
+    left: calc(100% + 0.75rem);
+    top: 50%;
+    z-index: 60;
+    flex: none;
+    width: max-content;
+    padding: 0.375rem 0.625rem;
+    border: 1px solid var(--sidebar-flyout-border);
+    border-radius: var(--radius-md);
+    background-color: var(--sidebar-flyout-surface);
+    box-shadow: var(--sidebar-flyout-shadow);
+    color: var(--ink-primary);
+    font-size: var(--text-caption);
+    font-weight: 600;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-0.25rem, -50%);
+    transition:
+      opacity var(--duration-fast) var(--ease-out-quart),
+      transform var(--duration-fast) var(--ease-out-quart),
+      visibility var(--duration-fast) var(--ease-out-quart);
+  }
+
+  :host(.nav--rail) > .nav__item > .nav__link:hover .nav__label,
+  :host(.nav--rail) > .nav__item > .nav__link:focus-visible .nav__label {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(0, -50%);
+  }
+
+  /* Puente invisible sobre el hueco entre el riel y el flyout: sin él, cruzarlo con el puntero
+     saca al cursor del grupo y el panel se cierra a medio camino. Vive en el grupo y no en el
+     flyout porque el `overflow` del flyout lo recortaría. */
   :host(.nav--rail) > .nav__group {
     position: relative;
   }
 
-  :host(.nav--rail) > .nav__group > .nav__submenu {
+  :host(.nav--rail) > .nav__group::after {
     position: absolute;
     top: 0;
+    bottom: 0;
     left: 100%;
+    width: 1rem;
+    content: '';
+  }
+
+  /* `fixed`, y colocado desde TypeScript con `placeAnchored`: un panel absoluto quedaba recortado
+     por el `<nav>` y se salía por debajo del viewport cuando el grupo vivía al fondo del menú. */
+  :host(.nav--rail) > .nav__group > .nav__submenu {
+    position: fixed;
     z-index: 60;
     width: var(--sidebar-flyout-width);
-    margin-left: 0.5rem;
+    overflow-y: auto;
     /* Forzado a abierto: en el rail el panel se revela por hover o foco, no
        por el propio estado del acordeón. */
     grid-template-rows: 1fr;

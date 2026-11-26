@@ -18,6 +18,51 @@
     width var(--shell-transition-duration) var(--ease-out-quart);
 }
 
+.sidebar__search {
+  padding: var(--sidebar-padding);
+  padding-bottom: 0;
+}
+
+/* Solo existe en el riel, donde el campo no cabe. */
+.sidebar__search-trigger {
+  display: none;
+  width: 100%;
+  justify-content: center;
+  border-radius: var(--sidebar-link-radius);
+  padding: var(--sidebar-link-padding);
+  color: var(--sidebar-link-ink);
+}
+
+.sidebar__search-trigger:hover {
+  background-color: var(--sidebar-link-surface-hover);
+  color: var(--sidebar-link-ink-hover);
+}
+
+.sidebar__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 2.5rem 1rem;
+  text-align: center;
+}
+
+.sidebar__empty-icon {
+  color: var(--ink-muted);
+}
+
+.sidebar__empty-title {
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--ink-secondary);
+}
+
+.sidebar__empty-text {
+  font-size: var(--text-caption);
+  overflow-wrap: anywhere;
+  color: var(--ink-muted);
+}
+
 .sidebar__nav {
   flex: 1;
   overflow-y: auto;
@@ -26,6 +71,18 @@
 
 .sidebar__section {
   margin-bottom: var(--sidebar-section-gap);
+  /* Los descendientes fixed se anclan al viewport: un transform aquí cambia su referencia. */
+  animation: sidebar-section-appear var(--duration-normal, 220ms) var(--ease-out-quart)
+    calc(var(--section-index, 0) * 40ms) backwards;
+}
+
+@keyframes sidebar-section-appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .sidebar__section-title {
@@ -49,10 +106,17 @@
   :host {
     z-index: 50;
     transform: translateX(-100%);
+    visibility: hidden;
+    transition:
+      transform var(--shell-transition-duration) var(--ease-out-quart),
+      width var(--shell-transition-duration) var(--ease-out-quart),
+      visibility 0s var(--shell-transition-duration);
   }
 
   :host(.sidebar--open) {
     transform: translateX(0);
+    visibility: visible;
+    transition-delay: 0s;
   }
 }
 
@@ -69,13 +133,22 @@
     overflow: visible;
   }
 
-  :host(.sidebar--rail) .sidebar__section-title {
+  :host(.sidebar--rail) .sidebar__section-title,
+  :host(.sidebar--rail) .sidebar__search-field {
     display: none;
+  }
+
+  :host(.sidebar--rail) .sidebar__search-trigger {
+    display: flex;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   :host {
     transition: none;
+  }
+  .sidebar__section {
+    transition: none;
+    animation: none;
   }
 }
