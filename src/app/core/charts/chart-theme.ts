@@ -49,6 +49,8 @@ export class ChartTheme {
     // Depende del tema explícitamente: los valores vienen del DOM, así que nada
     // más le avisaría a este computed que ya quedaron obsoletos.
     this.theme.resolvedTheme();
+    this.theme.lightPalette();
+    this.theme.darkPalette();
     const read = this.tokenReader();
     return {
       tick: read('--chart-tick'),
