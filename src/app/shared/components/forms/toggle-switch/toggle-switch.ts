@@ -1,4 +1,4 @@
-import { Component, booleanAttribute, input, model } from '@angular/core';
+import { Component, booleanAttribute, input, output } from '@angular/core';
 import { ControlSize } from '@shared/models/size.model';
 import { nextElementId } from '@shared/utils/element-id';
 
@@ -33,8 +33,11 @@ import { nextElementId } from '@shared/utils/element-id';
   styleUrl: './toggle-switch.css',
 })
 export class ToggleSwitch {
-  /** Estado del interruptor. Un `model()`: el propio control lo alterna. */
-  readonly checked = model(false);
+  /** Estado del interruptor recibido del componente contenedor. */
+  readonly checked = input(false);
+
+  /** Notifica cuando el usuario solicita alternar el interruptor. */
+  readonly checkedChange = output<boolean>();
 
   /** El texto junto al interruptor, y su nombre accesible. */
   readonly label = input.required<string>();
@@ -56,7 +59,7 @@ export class ToggleSwitch {
 
   protected toggle(): void {
     if (!this.disabled()) {
-      this.checked.update((checked) => !checked);
+      this.checkedChange.emit(!this.checked());
     }
   }
 }

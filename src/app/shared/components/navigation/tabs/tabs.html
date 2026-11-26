@@ -1,6 +1,21 @@
+<app-select
+  class="tabs__mobile"
+  [ariaLabel]="label() || 'Sección'"
+  [options]="mobileOptions()"
+  [value]="selected() ?? ''"
+  (valueChange)="onMobileSelect($event)"
+  [disabled]="disabled()"
+  placeholder="Selecciona una sección"
+/>
+
 <ul
+  #tabList
   ngTabList
   class="tabs"
+  [class.tabs--indicator-ready]="indicator() !== null"
+  [style.--tab-indicator-x.px]="indicator()?.left ?? 0"
+  [style.--tab-indicator-y.px]="indicator()?.bottom ?? 0"
+  [style.--tab-indicator-size.px]="indicator()?.width ?? 0"
   [(selectedTab)]="selected"
   [disabled]="disabled()"
   orientation="horizontal"

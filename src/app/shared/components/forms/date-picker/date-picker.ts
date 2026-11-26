@@ -15,7 +15,7 @@ import {
 } from '@angular/core';
 import { ControlError } from '@shared/models/form-control.model';
 import { placeAnchored, watchAnchor } from '@shared/utils/anchored-position';
-import { IsoDate, formatTyped, fromIso, parseDate } from '@shared/utils/calendar';
+import { IsoDate, MONTH_NAMES, formatTyped, fromIso, parseDate } from '@shared/utils/calendar';
 import { absorbSeparatorBackspace, hasFullDate, maskDateField } from '@shared/utils/date-mask';
 import { nextElementId } from '@shared/utils/element-id';
 import { useFormControl } from '@shared/utils/form-control';
@@ -25,6 +25,15 @@ import { Icon } from '@shared/components/media/icon/icon';
 
 /** Espacio entre el campo y el calendario. */
 const POPUP_GAP = 4;
+
+/** Cantidad de años que se exploran en cada página del selector. */
+const YEARS_PER_PAGE = 12;
+
+/** Evita la conversión de los años 0–99 al siglo XX que realiza el constructor de Date. */
+const MIN_YEAR = 100;
+
+/** Conserva el año dentro de las cuatro cifras admitidas por el campo de fecha. */
+const MAX_YEAR = 9999;
 
 /**
  * Un día de calendario, elegido de un calendario.
@@ -75,6 +84,20 @@ export class DatePicker {
   readonly placeholder = input('dd/mm/aaaa');
   readonly disabled = input(false, { transform: booleanAttribute });
   readonly required = input(false, { transform: booleanAttribute });
+  /** Permite elegir año y mes antes del día, conservando el inicio habitual por defecto. */
+  readonly startView = input<'days' | 'years'>('days');
+  /** La exploración de años y meses no confirma el valor hasta elegir un día. */
+  protected readonly view = signal<'years' | 'months' | 'days'>('days');
+  /** Límites alineados al tamaño de página, incluidos los bloques parciales de los extremos. */
+  protected readonly firstYearBlock = Math.floor(MIN_YEAR / YEARS_PER_PAGE) * YEARS_PER_PAGE;
+  protected readonly lastYearBlock = Math.floor(MAX_YEAR / YEARS_PER_PAGE) * YEARS_PER_PAGE;
+  protected readonly yearStart = signal(0);
+  protected readonly yearOptions = computed(() =>
+    Array.from({ length: YEARS_PER_PAGE }, (_, index) => this.yearStart() + index).filter(
+      (year) => year >= MIN_YEAR && year <= MAX_YEAR,
+    ),
+  );
+  protected readonly monthOptions = MONTH_NAMES;
   readonly pickerId = input(nextElementId('date-picker'));
 
   /** Nombre accesible para un picker mostrado sin etiqueta visible. */
@@ -114,6 +137,14 @@ export class DatePicker {
   /** Se activa cuando el texto no se puede leer como fecha, se limpia en cuanto se puede. */
   protected readonly parseError = signal('');
 
+  /** Informa al formulario si la captura está incompleta o no coincide con la fecha confirmada; no valida campos obligatorios. */
+  readonly invalid = computed(
+    () =>
+      !!this.parseError() ||
+      (!!this.text().trim() &&
+        (!hasFullDate(this.text()) || parseDate(this.text()) !== this.value())),
+  );
+
   /**
    * El mensaje bajo el campo: primero un error de validación real, después
    * el propio.
@@ -139,6 +170,8 @@ export class DatePicker {
 
     afterRenderEffect(() => {
       const showing = this.open();
+      this.view();
+      this.yearStart();
       const popup = this.popup()?.nativeElement;
       const anchor = this.anchor()?.nativeElement;
       const view = this.document.defaultView;
@@ -160,7 +193,16 @@ export class DatePicker {
       // para cambiar una fecha, así que la fecha que se está cambiando es
       // donde el teclado debe empezar.
       const chosen = popup.querySelector<HTMLElement>(`[data-iso="${this.value()}"]`);
-      (chosen ?? popup.querySelector<HTMLElement>('.cal__day[tabindex="0"]'))?.focus();
+      // Los selectores se consultan por separado: una lista CSS devuelve el
+      // primer nodo del documento, aunque otra opción esté seleccionada.
+      const selected = popup.querySelector<HTMLElement>('.picker__choices [aria-pressed="true"]');
+      (
+        chosen ??
+        selected ??
+        popup.querySelector<HTMLElement>(
+          '.picker__choices button:not(:disabled), .cal__day[tabindex="0"]',
+        )
+      )?.focus();
     });
   }
 
@@ -170,6 +212,8 @@ export class DatePicker {
     }
     if (!this.open()) {
       this.month.set(fromIso(this.value()) ?? new Date());
+      this.yearStart.set(Math.floor(this.month().getFullYear() / YEARS_PER_PAGE) * YEARS_PER_PAGE);
+      this.view.set(this.startView());
     }
     this.open.update((showing) => !showing);
   }
@@ -268,6 +312,25 @@ export class DatePicker {
 
   protected close(): void {
     this.open.set(false);
+  }
+
+  /** Cambia el bloque de años sin modificar la fecha seleccionada. */
+  protected moveYears(offset: number): void {
+    this.yearStart.update((year) =>
+      Math.max(this.firstYearBlock, Math.min(this.lastYearBlock, year + offset * YEARS_PER_PAGE)),
+    );
+  }
+
+  /** Selecciona el año de trabajo y muestra los meses. */
+  protected chooseYear(year: number): void {
+    this.month.set(new Date(year, this.month().getMonth(), 1));
+    this.view.set('months');
+  }
+
+  /** Selecciona el mes de trabajo y muestra los días. */
+  protected chooseMonth(month: number): void {
+    this.month.set(new Date(this.month().getFullYear(), month, 1));
+    this.view.set('days');
   }
 
   protected choose(iso: IsoDate): void {

@@ -41,13 +41,70 @@
 
   @if (open()) {
     <div #popup class="picker__popup" role="dialog" aria-label="Elegir fecha">
-      <app-date-grid
-        [month]="month()"
-        [selected]="value() || null"
-        label="Calendario"
-        (daySelected)="choose($event)"
-        (monthChanged)="month.set($event)"
-      />
+      @if (view() === 'years') {
+        <nav class="picker__year-nav" aria-label="Bloques de años">
+          <button
+            type="button"
+            class="picker__choice focus-ring"
+            aria-label="Años anteriores"
+            [disabled]="yearStart() <= firstYearBlock"
+            (click)="moveYears(-1)"
+          >
+            <app-icon name="chevron-left" [size]="16" />
+          </button>
+          <span aria-live="polite">{{ yearOptions()[0] }}–{{ yearOptions().at(-1) }}</span>
+          <button
+            type="button"
+            class="picker__choice focus-ring"
+            aria-label="Años siguientes"
+            [disabled]="yearStart() >= lastYearBlock"
+            (click)="moveYears(1)"
+          >
+            <app-icon name="chevron-right" [size]="16" />
+          </button>
+        </nav>
+        <section class="picker__choices" aria-label="Elegir año">
+          @for (year of yearOptions(); track year) {
+            <button
+              type="button"
+              class="picker__choice focus-ring"
+              [attr.aria-pressed]="year === month().getFullYear()"
+              (click)="chooseYear(year)"
+            >
+              {{ year }}
+            </button>
+          }
+        </section>
+      } @else if (view() === 'months') {
+        <button
+          type="button"
+          class="picker__choice focus-ring"
+          aria-label="Volver a elegir año"
+          (click)="view.set('years')"
+        >
+          {{ month().getFullYear() }}
+        </button>
+        <section class="picker__choices picker__choices--months" aria-label="Elegir mes">
+          @for (name of monthOptions; track name; let index = $index) {
+            <button
+              type="button"
+              class="picker__choice focus-ring"
+              [attr.aria-pressed]="index === month().getMonth()"
+              (click)="chooseMonth(index)"
+            >
+              {{ name }}
+            </button>
+          }
+        </section>
+      } @else {
+        <app-date-grid
+          [month]="month()"
+          [selected]="value() || null"
+          label="Calendario"
+          (daySelected)="choose($event)"
+          (monthChanged)="month.set($event)"
+        />
+      }
     </div>
   }
 </app-field>

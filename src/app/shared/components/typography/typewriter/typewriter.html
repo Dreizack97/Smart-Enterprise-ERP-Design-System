@@ -1,0 +1,17 @@
+@if (isAnimated()) {
+  <span class="typewriter-container">
+    <!-- Texto fantasma para reservar el espacio (0 CLS) -->
+    <span class="typewriter-ghost" aria-hidden="true">{{ text() }}</span>
+
+    <!-- Capa visible que se revela con CSS -->
+    <span class="typewriter-revealer" [style.--char-count]="text().length">
+      <span class="typewriter-text">{{ text() }}</span>
+    </span>
+
+    <!-- Cursor que viaja al compás de cada letra -->
+    <span class="typewriter-cursor" [style.--char-count]="text().length" aria-hidden="true">|</span>
+  </span>
+} @else {
+  <!-- Modo estático inmediato -->
+  <span class="typewriter-text">{{ text() }}</span>
+}

@@ -21,7 +21,6 @@ import { Icon } from '@shared/components/media/icon/icon';
   imports: [Button, Icon],
   templateUrl: './confirm-dialog.html',
   styleUrl: './confirm-dialog.css',
-  host: { '(keydown.escape)': 'cancel()' },
 })
 export class ConfirmDialog {
   /**
@@ -88,6 +87,7 @@ export class ConfirmDialog {
     open: this.open,
     panel: this.panel,
     dismissible: computed(() => true),
+    onEscape: () => this.cancel(),
     initialFocus: () =>
       (this.cancelAction()?.nativeElement as HTMLElement | undefined)?.querySelector('button'),
   });

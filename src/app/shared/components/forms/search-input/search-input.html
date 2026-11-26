@@ -1,9 +1,12 @@
 @let text = value();
 
 <div class="search" [class]="'search--' + variant()">
-  <span class="search__icon"><app-icon name="search" /></span>
+  <label class="search__icon" aria-hidden="true" [for]="inputId()"
+    ><app-icon name="search"
+  /></label>
   <label class="sr-only" [for]="inputId()">{{ label() }}</label>
   <input
+    #inputEl
     class="search__input"
     [id]="inputId()"
     type="search"
@@ -11,12 +14,21 @@
     [placeholder]="placeholder()"
     [disabled]="disabled()"
     (input)="onInput($event)"
+    (keydown.escape)="onEscape($event)"
   />
   @if (loading()) {
     <span class="search__spinner" aria-hidden="true"></span>
   } @else if (text) {
-    <button type="button" class="search__clear focus-ring" aria-label="Limpiar" (click)="clear()">
+    <button
+      type="button"
+      class="search__clear focus-ring"
+      aria-label="Limpiar"
+      [disabled]="disabled()"
+      (click)="clear()"
+    >
       <app-icon name="x" [size]="14" />
     </button>
+  } @else if (effectiveShortcut().length && !disabled()) {
+    <app-kbd class="search__kbd" [keys]="effectiveShortcut()" />
   }
 </div>

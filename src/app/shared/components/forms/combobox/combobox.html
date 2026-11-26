@@ -58,6 +58,7 @@
       tabindex="-1"
       aria-hidden="true"
       [disabled]="disabled()"
+      (mousedown)="preserveInputFocus($event)"
       (click)="toggle()"
     >
       <app-icon name="chevron-down" [size]="16" />
@@ -107,6 +108,7 @@
           [value]="option.value"
           [label]="option.label"
           [disabled]="!!option.disabled"
+          (mousedown)="preserveInputFocus($event)"
           (click)="choose(option)"
         >
           <span class="combo__label">{{ option.label }}</span>
@@ -115,7 +117,7 @@
           }
         </div>
       } @empty {
-        <p class="combo__empty">{{ emptyMessage() }}</p>
+        <p class="combo__empty" role="status" aria-live="polite">{{ searchMessage() }}</p>
       }
     </div>
   </ng-template>

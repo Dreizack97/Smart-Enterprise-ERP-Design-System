@@ -82,12 +82,26 @@ export class Button {
    */
   readonly loading = input(false, { transform: booleanAttribute });
 
+  /** Muestra éxito únicamente cuando la pantalla confirma el resultado de la operación. */
+  readonly success = input(false, { transform: booleanAttribute });
+
+  /** Sustituye la etiqueta visible durante el éxito; vacía conserva el contenido original. */
+  readonly successLabel = input('¡Guardado!');
+
   /** Etiqueta accesible para un botón que solo muestra un icono. */
   readonly ariaLabel = input('');
 
   readonly pressed = output<MouseEvent>();
 
-  protected readonly inactive = computed(() => this.disabled() || this.loading());
+  protected readonly isSuccess = computed(() => !this.loading() && this.success());
+  protected readonly successText = computed(() => this.successLabel().trim());
+  /** Anuncia el resultado sin modificar el nombre accesible del botón. */
+  protected readonly feedback = computed(() =>
+    this.isSuccess() ? this.successText() || 'Operación completada' : '',
+  );
+  protected readonly inactive = computed(
+    () => this.disabled() || this.loading() || this.isSuccess(),
+  );
 
   /** El tamaño del icono escala con el botón, para que el emparejamiento nunca se vea mal. */
   protected readonly iconSize = computed(() => ICON_SIZES[this.size()]);

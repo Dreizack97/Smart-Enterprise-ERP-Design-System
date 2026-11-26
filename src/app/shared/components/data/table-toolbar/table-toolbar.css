@@ -10,7 +10,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--toolbar-gap);
-  padding: var(--toolbar-padding);
+  padding: 0;
 }
 
 /* La barra de selección tiñe toda la franja: quien lee tiene que poder
@@ -19,6 +19,7 @@
 .toolbar--selection {
   border-radius: var(--toolbar-radius);
   background-color: var(--toolbar-selection-surface);
+  padding: var(--toolbar-padding);
 }
 
 .toolbar__count {
@@ -36,6 +37,13 @@
   flex: 1;
 }
 
+.toolbar__search:empty,
+.toolbar__search:not(:has(*)),
+.toolbar__group:empty,
+.toolbar__group:not(:has(*)) {
+  display: none;
+}
+
 .toolbar__group {
   display: flex;
   flex-wrap: wrap;
@@ -43,18 +51,6 @@
   gap: var(--toolbar-gap);
 }
 
-/* Los filtros toman el espacio sobrante, y eso es una corrección y no una
-   preferencia. Dimensionado según su contenido, el grupo es solo tan ancho
-   como lo lea max-content del navegador — y un control proyectado que
-   declara su propio `flex-basis`, que es exactamente lo que hace una
-   pantalla cuando quiere que sus filtros se alineen, NO cuenta para esa
-   lectura. Se les pedía a dos selects de 192 px que cupieran en una caja de
-   333 px con 310 px de espacio libre al lado, así que envolvían y se veían
-   apilados.
-
-   Crecer aquí es también la razón por la que las acciones siguen cayendo en
-   el extremo lejano: los filtros se expanden hasta que no queda nada para
-   que algo se siente antes. */
 .toolbar__group--filters {
   flex: 1 1 auto;
 }
@@ -63,8 +59,4 @@
    cosas que acotan la lista. */
 .toolbar__group--actions {
   margin-inline-start: auto;
-}
-
-.toolbar__group--actions:empty {
-  display: none;
 }

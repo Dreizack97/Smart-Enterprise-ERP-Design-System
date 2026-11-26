@@ -31,8 +31,28 @@
 
 .trigger__label {
   display: flex;
+  flex: 1;
+  min-width: 0;
   align-items: center;
   gap: 0.5rem;
+}
+
+.trigger__text {
+  display: grid;
+  min-width: 0;
+  gap: var(--field-gap);
+  overflow-wrap: anywhere;
+}
+
+.trigger__summary,
+.trigger__modified {
+  font-size: var(--text-caption);
+  font-weight: 400;
+  color: var(--ink-secondary);
+}
+
+.trigger__modified {
+  flex-shrink: 0;
 }
 
 .trigger__chevron {

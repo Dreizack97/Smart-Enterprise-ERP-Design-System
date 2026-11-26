@@ -1,21 +1,64 @@
 <nav [attr.aria-label]="label()">
   <ol class="crumbs">
-    @for (item of items(); track item.label; let last = $last) {
+    @for (item of items(); track $index; let i = $index; let last = $last) {
       <li class="crumbs__item">
-        @if (item.route && !last) {
-          <a class="crumbs__link focus-ring" [routerLink]="item.route">{{ item.label }}</a>
-        } @else {
-          <span
-            class="crumbs__current"
-            [class.crumbs__current--last]="last"
-            [attr.aria-current]="last ? 'page' : null"
-          >
-            {{ item.label }}
-          </span>
-        }
+        <div
+          #node
+          class="crumbs__node"
+          [class.crumbs__node--has-menu]="item.children?.length"
+          (mouseenter)="onNodeEnter(i)"
+          (mouseleave)="onNodeLeave()"
+          (focusin)="onNodeEnter(i)"
+          (focusout)="onNodeFocusOut($event, i)"
+        >
+          @if (item.route && !last) {
+            <a
+              class="crumbs__link focus-ring"
+              [routerLink]="item.route"
+              [attr.aria-haspopup]="item.children?.length ? 'menu' : null"
+              [attr.aria-expanded]="item.children?.length ? activeIndex() === i : null"
+            >
+              {{ item.label }}
+            </a>
+          } @else {
+            <span
+              class="crumbs__current focus-ring"
+              [class.crumbs__current--last]="last"
+              [attr.tabindex]="item.children?.length ? 0 : null"
+              [attr.aria-haspopup]="item.children?.length ? 'menu' : null"
+              [attr.aria-expanded]="item.children?.length ? activeIndex() === i : null"
+              [attr.aria-current]="last ? 'page' : null"
+            >
+              {{ item.label }}
+            </span>
+          }
+
+          <!-- Menú flotante: se activa en hover o foco y se mantiene abierto hasta salir o pulsar Escape -->
+          @if (item.children?.length && activeIndex() === i) {
+            <div
+              #menu
+              class="crumbs__menu"
+              (mouseenter)="onMenuEnter()"
+              (mouseleave)="onNodeLeave()"
+              role="menu"
+            >
+              @for (child of item.children; track $index) {
+                <a
+                  class="crumbs__menu-item focus-ring"
+                  [routerLink]="child.route"
+                  [queryParams]="child.queryParams"
+                  (click)="closeMenu()"
+                  role="menuitem"
+                >
+                  <span class="crumbs__menu-label">{{ child.label }}</span>
+                </a>
+              }
+            </div>
+          }
+        </div>
 
         @if (!last) {
-          <app-icon name="chevron-right" [size]="12" />
+          <app-icon name="chevron-right" [size]="12" class="crumbs__separator" />
         }
       </li>
     }

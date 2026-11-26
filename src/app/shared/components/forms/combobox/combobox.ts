@@ -1,6 +1,7 @@
 import {
   Component,
   DOCUMENT,
+  DestroyRef,
   ElementRef,
   afterRenderEffect,
   booleanAttribute,
@@ -8,6 +9,7 @@ import {
   effect,
   inject,
   input,
+  output,
   model,
   signal,
   untracked,
@@ -72,9 +74,76 @@ const POPUP_GAP = 4;
   imports: [AriaCombobox, AriaListbox, ComboboxPopup, ComboboxWidget, Field, Icon, Option],
   templateUrl: './combobox.html',
   styleUrl: './combobox.css',
+  host: {
+    '(document:click)': 'onDocumentClick($event)',
+    '(keydown.escape)': 'onEscape($event)',
+    '(document:keydown.escape)': 'onEscape($event)',
+  },
 })
 export class Combobox {
-  /** El `value` de la entrada elegida. Vacío significa que no hay elección. */
+  /** Longitud mínima del texto antes de filtrar o solicitar resultados. */
+  readonly minSearchLength = input(0);
+
+  /** Espera en milisegundos antes de publicar el término escrito. */
+  readonly debounceMs = input(0);
+
+  /** Cantidad máxima de opciones mostradas cuando es mayor que cero. */
+  readonly maxResults = input(0);
+
+  /** Indica que el consumidor está consultando opciones remotas. */
+  readonly loading = input(false);
+
+  /** Emite el término normalizado al cumplirse la longitud mínima y la espera. */
+  readonly searchRequested = output<string>();
+
+  private readonly debouncedQuery = signal('');
+  private readonly debouncing = signal(false);
+
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  protected readonly searchMessage = computed(() => {
+    if (this.query().trim().length < this.minSearchLength()) {
+      return `Escribe al menos ${this.minSearchLength()} caracteres para buscar`;
+    }
+
+    if (this.loading() || this.debouncing()) return 'Buscando…';
+
+    return this.emptyMessage();
+  });
+
+  protected onDocumentClick(event: MouseEvent): void {
+    if (!this.expanded()) {
+      return;
+    }
+    const target = event.target as Node;
+    const hostEl = this.host.nativeElement;
+    const popupEl = this.popup()?.nativeElement;
+    // Si el clic ocurrió fuera del control y fuera del desplegable
+    if (!hostEl.contains(target) && !popupEl?.contains(target)) {
+      this.close();
+    }
+  }
+
+  protected onEscape(event: Event): void {
+    if (this.expanded()) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.close();
+    }
+  }
+
+  private close(): void {
+    this.expanded.set(false);
+    this.removePopupFromBody();
+  }
+
+  private removePopupFromBody(): void {
+    const popupEl = this.popup()?.nativeElement;
+    if (popupEl && popupEl.parentElement === this.document.body) {
+      popupEl.remove();
+    }
+  }
+
   readonly value = model('');
 
   readonly options = input<readonly ComboboxOption[]>([]);
@@ -142,16 +211,30 @@ export class Combobox {
    */
   protected readonly filtered = computed(() => {
     const typed = this.query().trim();
-    const options = this.options();
-    if (!typed || typed === this.selected()?.label) {
-      return options;
+
+    if (this.disabled() || this.loading() || typed.length < this.minSearchLength()) {
+      return [];
     }
+
+    // Evita presentar resultados del texto anterior durante la espera.
+    if (this.debounceMs() > 0 && typed !== this.debouncedQuery()) {
+      return [];
+    }
+
+    const options = this.options();
     const needle = normalise(typed);
-    return options.filter(
-      (option) =>
-        normalise(option.label).includes(needle) ||
-        (option.hint ? normalise(option.hint).includes(needle) : false),
-    );
+
+    const matches =
+      !typed || typed === this.selected()?.label
+        ? options
+        : options.filter(
+            (option) =>
+              normalise(option.label).includes(needle) ||
+              (option.hint ? normalise(option.hint).includes(needle) : false),
+          );
+
+    const limit = Math.max(0, Math.floor(this.maxResults()));
+    return limit > 0 ? matches.slice(0, limit) : matches;
   });
 
   private unwatch: (() => void) | null = null;
@@ -182,19 +265,75 @@ export class Combobox {
       this.unwatch = null;
 
       if (!open || !popup || !anchor || !view) {
+        if (!open && popup && popup.parentElement === this.document.body) {
+          popup.remove();
+        }
         return;
       }
 
+      const body = this.document.body;
+      if (body && popup.parentElement !== body) {
+        body.appendChild(popup);
+      }
+
       const place = () => {
-        // La lista es tan ancha como el campo al que pertenece: una más
-        // angosta se ve desconectada, una más ancha cubre a los vecinos sin
-        // razón.
-        popup.style.width = `${Math.round(anchor.getBoundingClientRect().width)}px`;
-        placeAnchored(popup, anchor, view, { placement: 'bottom-start', gap: POPUP_GAP });
+        const anchorRect = anchor.getBoundingClientRect();
+        // Si el ancla ya no está visible (el modal se cerró o se ocultó)
+        if (anchorRect.width === 0 && anchorRect.height === 0) {
+          this.close();
+          return;
+        }
+        popup.style.width = `${Math.round(anchorRect.width)}px`;
+        placeAnchored(popup, anchor, view, {
+          placement: 'bottom-start',
+          gap: POPUP_GAP,
+          clampHeight: true,
+        });
       };
 
       place();
-      this.unwatch = watchAnchor(view, place);
+      const stopAnchor = watchAnchor(view, place);
+      const resizeObserver = new ResizeObserver(() => place());
+      resizeObserver.observe(popup);
+      this.unwatch = () => {
+        resizeObserver.disconnect();
+        stopAnchor();
+      };
+    });
+
+    // Aplica el retraso y emite el término cuando alcanza la longitud mínima.
+    effect((onCleanup) => {
+      const term = this.query().trim();
+      const minimum = Math.max(0, this.minSearchLength());
+      const delay = Math.max(0, this.debounceMs());
+
+      if (this.disabled() || term.length < minimum) {
+        this.debouncedQuery.set('');
+        this.debouncing.set(false);
+        return;
+      }
+
+      const publish = () => {
+        this.debouncedQuery.set(term);
+        this.debouncing.set(false);
+
+        // El consumidor decide cómo obtener los datos; Combobox no conoce APIs.
+        untracked(() => this.searchRequested.emit(term));
+      };
+
+      if (delay === 0) {
+        publish();
+        return;
+      }
+
+      this.debouncing.set(true);
+      const timeout = setTimeout(publish, delay);
+      onCleanup(() => clearTimeout(timeout));
+    });
+
+    inject(DestroyRef).onDestroy(() => {
+      this.unwatch?.();
+      this.popup()?.nativeElement.remove();
     });
   }
 
@@ -264,9 +403,21 @@ export class Combobox {
     this.query.set(this.selected()?.label ?? '');
   }
 
-  protected toggle(): void {
-    if (!this.disabled()) {
-      this.expanded.update((open) => !open);
+  /** Conserva el foco del texto hasta que el clic confirma una opción. */
+  protected preserveInputFocus(event: MouseEvent): void {
+    if (event.button === 0) {
+      event.preventDefault();
     }
+  }
+
+  /** Alterna el desplegable y devuelve el foco al campo para seguir escribiendo. */
+  protected toggle(): void {
+    if (this.disabled()) return;
+
+    this.anchor()
+      ?.nativeElement.querySelector<HTMLInputElement>('input')
+      ?.focus({ preventScroll: true });
+
+    this.expanded.update((open) => !open);
   }
 }

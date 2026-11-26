@@ -175,6 +175,24 @@ export class DropdownMenu {
   private readonly entries = viewChildren<ElementRef<HTMLElement>>('menuEntry');
   private readonly panel = viewChild.required<ElementRef<HTMLElement>>('panel');
 
+  /**
+   * Si un ancestro de este componente aplica `backdrop-filter`, `filter` o
+   * `transform` (por ejemplo, una tarjeta en modo Cristal), el navegador lo
+   * convierte en el bloque contenedor de cualquier hijo `position: fixed`,
+   * haciendo que `left` y `top` sean relativos a esa tarjeta en vez del
+   * viewport y que `overflow: hidden` lo recorte.
+   *
+   * Moviendo el panel al `<body>` cuando se abre y devolviéndolo al destruir
+   * el componente, el panel siempre se posiciona respecto al viewport real.
+   */
+  private ensurePanelInBody(): void {
+    const panelEl = this.panel().nativeElement;
+    const body = this.document.body;
+    if (body && panelEl.parentElement !== body) {
+      body.appendChild(panelEl);
+    }
+  }
+
   constructor() {
     effect(() => {
       const isOpen = this.open();
@@ -182,12 +200,16 @@ export class DropdownMenu {
       // abierto debe moverlo.
       this.placement();
       if (isOpen) {
+        this.ensurePanelInBody();
         this.reposition();
       }
       this.watchViewport(isOpen);
     });
 
-    inject(DestroyRef).onDestroy(() => this.watchViewport(false));
+    inject(DestroyRef).onDestroy(() => {
+      this.watchViewport(false);
+      this.panel().nativeElement.remove();
+    });
   }
 
   toggle(): void {
@@ -250,7 +272,11 @@ export class DropdownMenu {
    * alterna.
    */
   protected onDocumentClick(event: MouseEvent): void {
-    if (this.open() && !this.host.nativeElement.contains(event.target as Node)) {
+    if (!this.open()) {
+      return;
+    }
+    const target = event.target as Node;
+    if (!this.host.nativeElement.contains(target) && !this.panel().nativeElement.contains(target)) {
       this.close();
     }
   }

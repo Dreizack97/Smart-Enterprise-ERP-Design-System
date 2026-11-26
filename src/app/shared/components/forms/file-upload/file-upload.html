@@ -59,12 +59,16 @@
         }
       </div>
 
-      <div class="avatar-upload__side">
-        <span class="upload__label">{{ label() }}</span>
-        @if (hint(); as help) {
-          <span class="upload__hint" [id]="hintId()">{{ help }}</span>
-        }
-      </div>
+      @if (label() || hint()) {
+        <div class="avatar-upload__side">
+          @if (label()) {
+            <span class="upload__label">{{ label() }}</span>
+          }
+          @if (hint(); as help) {
+            <span class="upload__hint" [id]="hintId()">{{ help }}</span>
+          }
+        </div>
+      }
     </div>
   } @else {
     <label class="upload__label" [for]="inputId()">{{ label() }}</label>
@@ -112,7 +116,8 @@
       >
         <span class="dropzone__badge"><app-icon name="upload" [size]="22" /></span>
         <span class="dropzone__title">
-          <span class="dropzone__cta">Haz clic para subir</span> o arrastra y suelta
+          <span class="dropzone__cta">Haz clic para subir</span>
+          o arrastra y suelta
         </span>
         @if (hint(); as help) {
           <span class="upload__hint" [id]="hintId()">{{ help }}</span>

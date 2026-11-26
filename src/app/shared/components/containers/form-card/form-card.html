@@ -1,7 +1,11 @@
 <article class="form-card animate-fade-in">
   <header class="form-card__head">
     <span class="form-card__logo">
-      <app-icon [name]="logoIcon()" [size]="26" />
+      @if (logoIcon(); as icon) {
+        <app-icon class="form-card__logo-icon" [name]="icon" [size]="26" />
+      } @else if (logoSrc(); as src) {
+        <img [src]="src" alt="Logo" class="form-card__logo-img" />
+      }
     </span>
     @if (headingLevel() === 1) {
       <h1 class="form-card__brand">{{ brand() }}</h1>

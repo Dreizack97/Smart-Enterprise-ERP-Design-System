@@ -9,23 +9,145 @@
   gap: 0.375rem;
   font-size: var(--text-caption);
   color: var(--ink-muted);
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .crumbs__item {
   display: flex;
+  min-width: 0;
+  max-width: 100%;
   align-items: center;
   gap: 0.375rem;
 }
 
+.crumbs__node {
+  position: relative;
+  display: inline-flex;
+  min-width: 0;
+  max-width: 100%;
+  align-items: center;
+  overflow-wrap: anywhere;
+}
+
 .crumbs__link {
+  display: inline-flex;
+  align-items: center;
   border-radius: var(--radius-sm);
+  color: var(--ink-muted);
+  text-decoration: none;
   transition: color var(--duration-fast) var(--ease-out-quart);
 }
 
 .crumbs__link:hover {
-  color: var(--link);
+  color: var(--color-primary-600);
+}
+
+.crumbs__current {
+  display: inline-flex;
+  align-items: center;
 }
 
 .crumbs__current--last {
   color: var(--ink-secondary);
+  font-weight: 500;
+}
+
+.crumbs__separator {
+  color: var(--line-strong);
+  opacity: 0.5;
+}
+
+/* =======================================================================
+   Menú desplegable en cascada
+   ======================================================================= */
+.crumbs__menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 50;
+  width: max-content;
+  min-width: min(13rem, calc(100vw - 1rem));
+  max-width: calc(100vw - 1rem);
+  max-height: 18rem;
+  overflow-y: auto;
+  padding: 0.375rem;
+  background-color: var(--dropdown-surface);
+  border: 1px solid var(--dropdown-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xl);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+
+  /* Cerrado no existe en el DOM: un menú invisible también puede ensanchar el documento. */
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--duration-fast) ease,
+    transform var(--duration-fast) ease;
+}
+
+/* Puente invisible para evitar pérdida accidental de cursor al transicionar al menú */
+.crumbs__menu::before {
+  content: '';
+  position: absolute;
+  top: -0.5rem;
+  left: 0;
+  right: 0;
+  height: 0.5rem;
+}
+
+@starting-style {
+  .crumbs__menu {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+.crumbs__menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.625rem;
+  border-radius: var(--radius-sm);
+  color: var(--ink-strong);
+  font-size: var(--text-caption);
+  text-decoration: none;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  transition:
+    background-color var(--duration-fast) ease,
+    color var(--duration-fast) ease;
+}
+
+.crumbs__menu-item:hover {
+  background-color: var(--surface-2);
+  color: var(--control-accent-ink);
+}
+
+.crumbs__menu-item--active {
+  background-color: var(--surface-3);
+  color: var(--control-accent-ink);
+  font-weight: 600;
+}
+
+.crumbs__menu-label {
+  flex: 1;
+}
+
+.crumbs__node--has-menu {
+  cursor: pointer;
+}
+
+.crumbs__node--has-menu .crumbs__current {
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-out-quart);
+}
+
+.crumbs__node--has-menu:hover .crumbs__current {
+  color: var(--color-primary-600);
 }

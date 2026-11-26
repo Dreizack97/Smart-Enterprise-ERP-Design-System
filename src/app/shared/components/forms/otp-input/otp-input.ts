@@ -1,11 +1,14 @@
 import {
   Component,
+  ElementRef,
+  afterNextRender,
   booleanAttribute,
   computed,
   input,
   model,
   numberAttribute,
   output,
+  viewChild,
 } from '@angular/core';
 import { nextElementId } from '@shared/utils/element-id';
 
@@ -36,11 +39,27 @@ export class OtpInput {
   readonly inputId = input(nextElementId('otp'));
 
   /**
+   * Enfoca el campo al aparecer. Solo para pantallas cuyo único propósito es
+   * escribir el código; en cualquier otra, mover el foco desorienta.
+   */
+  readonly autofocus = input(false, { transform: booleanAttribute });
+
+  private readonly field = viewChild.required<ElementRef<HTMLInputElement>>('field');
+
+  /**
    * Emitido una sola vez, al alcanzar la longitud requerida, con el código
    * completo. Existe para el auto-envío: el padre no tiene que observar
    * `value`.
    */
   readonly complete = output<string>();
+
+  constructor() {
+    afterNextRender(() => {
+      if (this.autofocus() && !this.disabled()) {
+        this.field().nativeElement.focus();
+      }
+    });
+  }
 
   protected readonly placeholder = computed(() => '•'.repeat(this.length()));
 

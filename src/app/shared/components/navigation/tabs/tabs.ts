@@ -1,7 +1,21 @@
-import { Component, booleanAttribute, input, model } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  ElementRef,
+  afterRenderEffect,
+  booleanAttribute,
+  computed,
+  inject,
+  input,
+  model,
+  signal,
+  viewChild,
+  viewChildren,
+} from '@angular/core';
 import { Tab, TabList, Tabs as AriaTabs } from '@angular/aria/tabs';
 import { IconName } from '@core/icons/lucide-icons';
 import { Icon } from '@shared/components/media/icon/icon';
+import { Select, SelectOption } from '@shared/components/forms/select/select';
 
 /** Una pestaña. `value` es lo que se lee de y se escribe en `selected`. */
 export interface TabItem {
@@ -33,7 +47,7 @@ export interface TabItem {
  */
 @Component({
   selector: 'app-tabs',
-  imports: [TabList, Tab, Icon],
+  imports: [TabList, Tab, Icon, Select],
   // `ngTabs` es una directiva de host y no un elemento en la plantilla, por
   // la misma razón que el acordeón lo hace: `ng-content` no cambia el
   // inyector. Un `app-tab-panel` proyectado se declara en la plantilla del
@@ -45,6 +59,10 @@ export interface TabItem {
   styleUrl: './tabs.css',
 })
 export class Tabs {
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly tabListEl = viewChild<ElementRef<HTMLElement>>('tabList');
+  private readonly tabDirectives = viewChildren(Tab);
+
   readonly tabs = input.required<readonly TabItem[]>();
 
   /** La pestaña activa. Un `model()`: la propia barra la cambia. */
@@ -54,4 +72,63 @@ export class Tabs {
   readonly label = input('');
 
   readonly disabled = input(false, { transform: booleanAttribute });
+
+  /** Ofrece la misma navegación en un selector nativo compacto para pantallas móviles. */
+  protected readonly mobileOptions = computed<readonly SelectOption[]>(() =>
+    this.tabs().map((tab) => ({
+      value: tab.value,
+      label: tab.label + (tab.badge ? ` (${tab.badge})` : ''),
+      disabled: !!tab.disabled,
+    })),
+  );
+
+  /** Geometría de la pestaña seleccionada; `null` conserva el borde estático como respaldo. */
+  protected readonly indicator = signal<{ left: number; bottom: number; width: number } | null>(
+    null,
+  );
+
+  constructor() {
+    afterRenderEffect((onCleanup) => {
+      const list = this.tabListEl()?.nativeElement;
+      const tabs = this.tabDirectives();
+      if (list && typeof ResizeObserver !== 'undefined') {
+        const observer = new ResizeObserver(() => this.syncIndicator());
+        observer.observe(list);
+        for (const tab of tabs) observer.observe(tab.element);
+        onCleanup(() => observer.disconnect());
+      }
+    });
+
+    afterRenderEffect(() => {
+      this.tabs();
+      this.syncIndicator();
+    });
+  }
+
+  /** Cambia la selección compartida solo si la barra y el destino están habilitados. */
+  protected onMobileSelect(value: string): void {
+    if (!this.disabled() && this.tabs().some((tab) => tab.value === value && !tab.disabled))
+      this.selected.set(value);
+  }
+
+  /** Mide la selección real de Angular ARIA y respeta la fila que ocupa dentro de la lista. */
+  private syncIndicator(): void {
+    if (this.destroyRef.destroyed) return;
+    const target = this.tabDirectives().find((tab) => tab.selected())?.element;
+    if (
+      !target ||
+      !target.offsetWidth ||
+      !target.offsetHeight ||
+      typeof ResizeObserver === 'undefined'
+    ) {
+      this.indicator.set(null);
+      return;
+    }
+
+    this.indicator.set({
+      left: target.offsetLeft,
+      bottom: target.offsetTop + target.offsetHeight,
+      width: target.offsetWidth,
+    });
+  }
 }

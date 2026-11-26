@@ -14,6 +14,7 @@
       class="field-control"
       [class]="'field-control--' + size()"
       [class.field-control--with-icon]="icon()"
+      [class.field-control--with-valid-check]="validCheckVisible()"
       [id]="inputId()"
       [type]="type()"
       [value]="value()"
@@ -21,11 +22,20 @@
       [disabled]="disabled()"
       [required]="required()"
       [attr.name]="name() || null"
+      [attr.autocomplete]="autocomplete() || null"
       [attr.aria-label]="!label() && ariaLabel() ? ariaLabel() : null"
       [attr.aria-invalid]="message() ? 'true' : null"
       [attr.aria-describedby]="message() ? errorId() : null"
+      [attr.maxlength]="maxlength() !== null ? maxlength() : null"
+      [attr.minlength]="minlength() !== null ? minlength() : null"
+      [attr.title]="title() || null"
       (input)="onInput($event)"
       (blur)="onBlur()"
     />
+    @if (validCheckVisible()) {
+      <span class="field-affix field-affix--end input-valid-check" aria-hidden="true">
+        <app-icon name="check" [size]="15" />
+      </span>
+    }
   </div>
 </app-field>

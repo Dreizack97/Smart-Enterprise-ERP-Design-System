@@ -14,8 +14,8 @@
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  width: 6rem;
-  height: 6rem;
+  width: var(--avatar-size, 6rem);
+  height: var(--avatar-size, 6rem);
   border: 2px solid var(--field-border);
   border-radius: var(--radius-full);
   background-color: var(--surface-2);
@@ -65,7 +65,7 @@
   inset-inline-end: -0.25rem;
   width: 2rem;
   height: 2rem;
-  background-color: var(--button-primary-surface);
+  background: var(--button-primary-surface);
   color: var(--button-primary-ink);
   box-shadow: var(--shadow-md);
 }

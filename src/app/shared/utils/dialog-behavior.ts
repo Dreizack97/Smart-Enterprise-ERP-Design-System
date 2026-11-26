@@ -20,6 +20,9 @@ const FOCUSABLE = [
   '[tabindex]:not([tabindex="-1"])',
 ].join(', ');
 
+/** Pila global de diálogos abiertos; solo el último en abrirse responde a Escape. */
+const openDialogStack: symbol[] = [];
+
 export interface DialogInputs {
   /** Si la superficie se está mostrando. Se escribe cuando se cierra sola. */
   readonly open: ModelSignal<boolean>;
@@ -30,18 +33,18 @@ export interface DialogInputs {
   /** Un diálogo destructivo o un formulario a medio llenar no debe cerrarse por accidente. */
   readonly dismissible: Signal<boolean>;
 
-  /**
-   * Qué control recibe el foco al abrirse. Por defecto, el primero.
-   *
-   * Una confirmación destructiva lo sobrescribe para enfocar la opción
-   * **segura**: caer sobre «Eliminar» significa que un Enter accidental
-   * borra justo aquello sobre lo que el diálogo existe para preguntar.
-   */
+  /** Callback opcional invocado cuando se intenta cerrar el diálogo mientras `dismissible` es `false`. */
+  readonly onDismissBlocked?: () => void;
+
+  /** Acción ejecutada al presionar Escape cuando este diálogo está en la cima de la pila. */
+  readonly onEscape?: () => void;
+
+  /** Qué control recibe el foco al abrirse. Por defecto, el primero. */
   readonly initialFocus?: () => HTMLElement | null | undefined;
 }
 
 export interface DialogBehavior {
-  /** Cierra, si la superficie permite descartarse. Conectar a Escape y a ✕. */
+  /** Cierra, si la superficie permite descartarse. Conectar a ✕ y botones de cancelar. */
   readonly requestClose: () => void;
 
   /** Cierra ante un clic que empezó y terminó en el fondo (backdrop). */
@@ -51,38 +54,15 @@ export interface DialogBehavior {
   readonly onTab: (event: KeyboardEvent) => void;
 }
 
-/**
- * Todo lo que una superficie modal tiene que hacer además de verse a sí
- * misma.
- *
- * `modal`, `confirm-dialog` y `drawer` difieren en forma, en de dónde vienen
- * y para qué son — y coinciden por completo en las cuatro cosas que las
- * hacen usables: atrapar el foco, sostener el bloqueo de scroll, responder a
- * Escape, y devolver el foco a lo que sea que las abrió. Esa lista no es una
- * coincidencia para re-derivarse por componente; equivocarse sutilmente en
- * cualquiera de las cuatro produce un diálogo que se ve perfecto y deja
- * varado a un usuario de teclado en la página de atrás.
- *
- * Se extrajo cuando llegó `drawer`, en vez de copiarse dentro de él — el
- * mismo razonamiento que convirtió a `popover` en `anchored-position` un
- * lote antes. Extraerlo encontró de inmediato un hueco: `confirm-dialog`
- * tenía el bloqueo y la devolución del foco pero **ninguna trampa de foco en
- * absoluto**, así que Tab caminaba directo hacia afuera de un diálogo
- * `aria-modal` y hacia la página que este cubría.
- *
- * Lo que el helper NO posee es qué significa cada superficie.
- * `confirm-dialog` conserva sus propias rutas de cierre, porque cerrarlo
- * tiene que decir si fue aceptado o cancelado, y esa es una pregunta sobre
- * el diálogo, no sobre los diálogos en general.
- *
- * Debe llamarse en un contexto de inyección.
- */
+/** Coordina foco, bloqueo de scroll y Escape para la superficie superior de la pila. */
 export function useDialog(inputs: DialogInputs): DialogBehavior {
   const document = inject(DOCUMENT);
   const scrollLock = inject(ScrollLock);
+  const dialogId = Symbol('dialog');
 
   let previouslyFocused: HTMLElement | null = null;
   let holdsLock = false;
+  let focusGeneration = 0;
 
   const focusableElements = (): HTMLElement[] => {
     const root = inputs.panel()?.nativeElement;
@@ -92,6 +72,19 @@ export function useDialog(inputs: DialogInputs): DialogBehavior {
     return [...root.querySelectorAll<HTMLElement>(FOCUSABLE)].filter(
       (element) => !element.hasAttribute('disabled') && element.offsetParent !== null,
     );
+  };
+
+  const pushToStack = (): void => {
+    if (!openDialogStack.includes(dialogId)) {
+      openDialogStack.push(dialogId);
+    }
+  };
+
+  const removeFromStack = (): void => {
+    const idx = openDialogStack.indexOf(dialogId);
+    if (idx !== -1) {
+      openDialogStack.splice(idx, 1);
+    }
   };
 
   /** Idempotente: una superficie nunca toma ni libera el bloqueo dos veces. */
@@ -108,53 +101,89 @@ export function useDialog(inputs: DialogInputs): DialogBehavior {
   };
 
   const captureFocus = (): void => {
+    const generation = ++focusGeneration;
     previouslyFocused = document.activeElement as HTMLElement | null;
-    // El panel apenas se hizo visible; esperar un frame evita que `focus()`
-    // caiga sobre algo que todavía no se ha pintado.
+    // Dos frames garantizan que la clase `.is-open` (visibility: visible) ya fue pintada en el DOM.
     document.defaultView?.requestAnimationFrame(() => {
-      const preferred = inputs.initialFocus?.();
-      const focusables = focusableElements();
-      (preferred ?? focusables[0] ?? inputs.panel()?.nativeElement)?.focus();
+      if (generation !== focusGeneration || !inputs.open()) return;
+      document.defaultView?.requestAnimationFrame(() => {
+        // Una apertura posterior o un cierre vuelven obsoleta esta solicitud de foco.
+        if (
+          generation !== focusGeneration ||
+          !inputs.open() ||
+          openDialogStack[openDialogStack.length - 1] !== dialogId
+        )
+          return;
+        const preferred = inputs.initialFocus?.();
+        const focusables = focusableElements();
+        (preferred ?? focusables[0] ?? inputs.panel()?.nativeElement)?.focus();
+      });
     });
   };
 
   const restoreFocus = (): void => {
+    focusGeneration++;
     previouslyFocused?.focus();
     previouslyFocused = null;
   };
+
+  const requestClose = (): void => {
+    if (inputs.dismissible()) {
+      inputs.open.set(false);
+    } else {
+      inputs.onDismissBlocked?.();
+    }
+  };
+
+  const onDocumentKeydown = (event: KeyboardEvent): void => {
+    if (event.key !== 'Escape' || event.defaultPrevented) {
+      return;
+    }
+    if (openDialogStack[openDialogStack.length - 1] !== dialogId) {
+      return;
+    }
+    event.preventDefault();
+    event.stopPropagation();
+    if (inputs.onEscape) {
+      inputs.onEscape();
+    } else {
+      requestClose();
+    }
+  };
+
+  document.addEventListener('keydown', onDocumentKeydown);
 
   effect(() => {
     const isOpen = inputs.open();
     untracked(() => {
       setLock(isOpen);
       if (isOpen) {
+        pushToStack();
         captureFocus();
       } else {
+        removeFromStack();
         restoreFocus();
       }
     });
   });
 
-  // Sin esto, una superficie destruida mientras está abierta dejaría la página congelada.
-  inject(DestroyRef).onDestroy(() => setLock(false));
+  inject(DestroyRef).onDestroy(() => {
+    focusGeneration++;
+    document.removeEventListener('keydown', onDocumentKeydown);
+    removeFromStack();
+    setLock(false);
+  });
 
   return {
-    requestClose: () => {
-      if (inputs.dismissible()) {
-        inputs.open.set(false);
-      }
-    },
+    requestClose,
 
     onOverlayClick: (event: MouseEvent) => {
-      if (event.target === event.currentTarget && inputs.dismissible()) {
-        inputs.open.set(false);
+      if (event.target !== event.currentTarget) {
+        return;
       }
+      requestClose();
     },
 
-    /**
-     * Hace ciclar el foco dentro del panel: sin esto, tabular saca el foco
-     * hacia el contenido de atrás, que para un lector de pantalla sigue ahí.
-     */
     onTab: (event: KeyboardEvent) => {
       if (event.key !== 'Tab') {
         return;

@@ -35,7 +35,10 @@ export class FormCard {
   readonly tagline = input('Sistema de Gestión Empresarial');
 
   /** Icono usado como logo. */
-  readonly logoIcon = input<IconName>('chart-line');
+  readonly logoIcon = input<IconName | null>(null);
+
+  /** Ruta del logo SVG. Por defecto usa '/favicon.svg' cuando no hay logoIcon. */
+  readonly logoSrc = input<string | null>('/favicon.svg');
 
   /**
    * Nivel del encabezado de la marca: `1` cuando la tarjeta ES la pantalla,

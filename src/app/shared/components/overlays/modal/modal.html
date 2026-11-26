@@ -16,6 +16,7 @@
     #panel
     class="modal-panel panel"
     [class]="'panel--' + size()"
+    [class.panel--compact]="density() === 'compact'"
     role="dialog"
     aria-modal="true"
     [attr.aria-labelledby]="titleId"
@@ -24,16 +25,14 @@
   >
     <header class="panel__header">
       <h2 class="panel__title" [id]="titleId">{{ title() }}</h2>
-      @if (dismissible()) {
-        <button
-          type="button"
-          class="panel__close focus-ring"
-          aria-label="Cerrar"
-          (click)="requestClose()"
-        >
-          <app-icon name="x" [size]="18" />
-        </button>
-      }
+      <button
+        type="button"
+        class="panel__close focus-ring"
+        aria-label="Cerrar"
+        (click)="requestClose()"
+      >
+        <app-icon name="x" [size]="density() === 'compact' ? 16 : 18" />
+      </button>
     </header>
 
     <div class="panel__body"><ng-content /></div>
@@ -41,3 +40,14 @@
     <footer class="panel__footer"><ng-content select="[footer]" /></footer>
   </div>
 </div>
+
+<app-confirm-dialog
+  [(open)]="confirmDiscardOpen"
+  [title]="discardTitle()"
+  [message]="discardMessage()"
+  [confirmLabel]="discardConfirmLabel()"
+  [cancelLabel]="discardCancelLabel()"
+  tone="warning"
+  (confirmed)="onConfirmDiscard()"
+  (cancelled)="onCancelDiscard()"
+/>

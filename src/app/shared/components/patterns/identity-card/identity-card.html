@@ -1,0 +1,36 @@
+<div class="identity">
+  <aside class="identity__cap">
+    <div class="identity__header">
+      <div class="identity__avatar">
+        <ng-content select="[avatar]" />
+        <span class="identity__avatar-fallback">
+          <app-avatar [name]="name()" size="lg" />
+        </span>
+      </div>
+
+      <h3 class="identity__name">{{ name() }}</h3>
+      @if (subtitle(); as sub) {
+        <p class="identity__subtitle">{{ sub }}</p>
+      }
+
+      <div class="identity__badges">
+        <ng-content select="[badges]" />
+      </div>
+    </div>
+
+    @if (facts().length > 0) {
+      <dl class="identity__meta">
+        @for (fact of facts(); track fact.label) {
+          <div class="identity__fact">
+            <dt class="identity__fact-label">{{ fact.label }}</dt>
+            <dd class="identity__fact-value">{{ fact.value }}</dd>
+          </div>
+        }
+      </dl>
+    }
+  </aside>
+
+  <div class="identity__content">
+    <ng-content />
+  </div>
+</div>

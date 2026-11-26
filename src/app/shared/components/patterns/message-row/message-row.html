@@ -1,8 +1,4 @@
-<div
-  class="msg-row"
-  [class.msg-row--unread]="unread()"
-  [class.msg-row--selected]="selected()"
->
+<div class="msg-row" [class.msg-row--unread]="unread()" [class.msg-row--selected]="selected()">
   <div class="msg-row__left">
     <app-avatar [name]="sender()" size="md" />
     @if (selectable()) {

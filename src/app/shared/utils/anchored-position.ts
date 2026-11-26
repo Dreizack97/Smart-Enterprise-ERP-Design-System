@@ -27,12 +27,15 @@
  */
 
 /** De qué lado del ancla se abre el panel. */
-export type OverlaySide = 'top' | 'bottom';
+export type OverlaySide = 'top' | 'bottom' | 'left' | 'right';
 
-/** Con qué parte del ancla se alinea el panel. */
+/**
+ * Con qué parte del ancla se alinea el panel, sobre el eje perpendicular al
+ * lado: horizontal para `top`/`bottom`, vertical para `left`/`right`.
+ */
 export type OverlayAlign = 'start' | 'center' | 'end';
 
-/** Un lado más una alineación, por ejemplo `bottom-start`. */
+/** Un lado más una alineación, por ejemplo `bottom-start` o `right-start`. */
 export type OverlayPlacement = `${OverlaySide}-${OverlayAlign}`;
 
 export interface AnchorOptions {
@@ -61,6 +64,26 @@ export interface AnchorOptions {
 
 const DEFAULTS = { gap: 8, gutter: 8, clampHeight: false, minHeight: 120 } as const;
 
+type ResolvedOptions = Required<Omit<AnchorOptions, 'placement'>>;
+
+/** Las dimensiones que el cálculo necesita, medidas una sola vez. */
+interface Geometry {
+  readonly box: DOMRect;
+  readonly width: number;
+  readonly height: number;
+  readonly viewportWidth: number;
+  readonly viewportHeight: number;
+}
+
+/** Dónde cae el panel. `maxHeight` es `null` cuando no hay que recortarlo. */
+interface Placement {
+  readonly side: OverlaySide;
+  readonly align: OverlayAlign;
+  readonly left: number;
+  readonly top: number;
+  readonly maxHeight: number | null;
+}
+
 /**
  * Posiciona `panel` contra `anchor` y devuelve dónde terminó cayendo.
  *
@@ -75,23 +98,47 @@ export function placeAnchored(
   view: Window,
   options: AnchorOptions,
 ): OverlayPlacement {
-  const { gap, gutter, clampHeight, minHeight } = { ...DEFAULTS, ...options };
+  const resolved: ResolvedOptions = { ...DEFAULTS, ...options };
 
   // Se mide sin restricciones: un max-height que quedó de la posición anterior
   // reduciría la lectura y el panel se iría arrastrando hacia el ancla.
-  if (clampHeight) {
+  if (resolved.clampHeight) {
     panel.style.maxHeight = '';
   }
 
-  const box = anchor.getBoundingClientRect();
-  const width = panel.offsetWidth;
-  const height = panel.offsetHeight;
-  const viewportWidth = view.innerWidth;
-  const viewportHeight = view.innerHeight;
+  const geometry: Geometry = {
+    box: anchor.getBoundingClientRect(),
+    width: panel.offsetWidth,
+    height: panel.offsetHeight,
+    viewportWidth: view.innerWidth,
+    viewportHeight: view.innerHeight,
+  };
 
-  const [preferredSide, preferredAlign] = splitPlacement(options.placement);
+  const [side, align] = splitPlacement(options.placement);
+  const placement = isLateral(side)
+    ? placeBeside(geometry, side, align, resolved)
+    : placeAboveOrBelow(geometry, side, align, resolved);
 
-  // --- Horizontal: el borde preferido, volteado solo si el otro cabe mejor.
+  panel.style.left = `${Math.round(placement.left)}px`;
+  panel.style.top = `${Math.round(placement.top)}px`;
+  if (resolved.clampHeight && placement.maxHeight !== null) {
+    panel.style.maxHeight = `${Math.round(placement.maxHeight)}px`;
+  }
+
+  return `${placement.side}-${placement.align}`;
+}
+
+/**
+ * Arriba o abajo del ancla: el lado que tenga espacio, prefiriendo el
+ * solicitado, y el borde horizontal preferido, volteado solo si el otro cabe
+ * mejor.
+ */
+function placeAboveOrBelow(
+  { box, width, height, viewportWidth, viewportHeight }: Geometry,
+  preferredSide: OverlaySide,
+  preferredAlign: OverlayAlign,
+  { gap, gutter, minHeight }: ResolvedOptions,
+): Placement {
   const lefts: Record<OverlayAlign, number> = {
     start: box.left,
     center: box.left + box.width / 2 - width / 2,
@@ -99,23 +146,19 @@ export function placeAnchored(
   };
 
   let align = preferredAlign;
-  let left = lefts[align];
-
-  if (align === 'start' && left + width > viewportWidth - gutter && lefts.end >= gutter) {
+  if (align === 'start' && lefts.start + width > viewportWidth - gutter && lefts.end >= gutter) {
     align = 'end';
-    left = lefts.end;
-  } else if (align === 'end' && left < gutter && lefts.start + width <= viewportWidth - gutter) {
+  } else if (
+    align === 'end' &&
+    lefts.end < gutter &&
+    lefts.start + width <= viewportWidth - gutter
+  ) {
     align = 'start';
-    left = lefts.start;
   }
 
-  left = clamp(left, gutter, viewportWidth - width - gutter);
-
-  // --- Vertical: el lado que tenga espacio, prefiriendo el solicitado.
   const roomBelow = viewportHeight - box.bottom - gap - gutter;
   const roomAbove = box.top - gap - gutter;
   let side = preferredSide;
-
   if (side === 'bottom' && height > roomBelow && roomAbove > roomBelow) {
     side = 'top';
   } else if (side === 'top' && height > roomAbove && roomBelow > roomAbove) {
@@ -125,13 +168,57 @@ export function placeAnchored(
   const available = Math.max(minHeight, side === 'bottom' ? roomBelow : roomAbove);
   const top = side === 'bottom' ? box.bottom + gap : box.top - gap - Math.min(height, available);
 
-  panel.style.left = `${Math.round(left)}px`;
-  panel.style.top = `${Math.round(clamp(top, gutter, viewportHeight - gutter))}px`;
-  if (clampHeight) {
-    panel.style.maxHeight = `${Math.round(available)}px`;
+  return {
+    side,
+    align,
+    left: clamp(lefts[align], gutter, viewportWidth - width - gutter),
+    top: clamp(top, gutter, viewportHeight - gutter),
+    maxHeight: height > available ? available : null,
+  };
+}
+
+/**
+ * A un costado del ancla: el lado que tenga espacio, prefiriendo el
+ * solicitado. En vertical no se voltea, se desplaza: un menú lateral que se
+ * sale por abajo sube lo necesario, y si ni así cabe, se recorta a la altura
+ * del viewport.
+ */
+function placeBeside(
+  { box, width, height, viewportWidth, viewportHeight }: Geometry,
+  preferredSide: OverlaySide,
+  preferredAlign: OverlayAlign,
+  { gap, gutter }: ResolvedOptions,
+): Placement {
+  const roomRight = viewportWidth - box.right - gap - gutter;
+  const roomLeft = box.left - gap - gutter;
+  let side = preferredSide;
+  if (side === 'right' && width > roomRight && roomLeft > roomRight) {
+    side = 'left';
+  } else if (side === 'left' && width > roomLeft && roomRight > roomLeft) {
+    side = 'right';
   }
 
-  return `${side}-${align}`;
+  const left = side === 'right' ? box.right + gap : box.left - gap - width;
+
+  const tops: Record<OverlayAlign, number> = {
+    start: box.top,
+    center: box.top + box.height / 2 - height / 2,
+    end: box.bottom - height,
+  };
+  const available = viewportHeight - gutter * 2;
+  const top = clamp(
+    tops[preferredAlign],
+    gutter,
+    viewportHeight - Math.min(height, available) - gutter,
+  );
+
+  return {
+    side,
+    align: preferredAlign,
+    left: clamp(left, gutter, viewportWidth - width - gutter),
+    top,
+    maxHeight: height > available ? available : null,
+  };
 }
 
 /**
@@ -170,6 +257,10 @@ export function resolveAnchor(candidate: HTMLElement): HTMLElement {
     candidate.querySelector<HTMLElement>('button, a[href], input, select, textarea, [tabindex]') ??
     candidate
   );
+}
+
+function isLateral(side: OverlaySide): side is 'left' | 'right' {
+  return side === 'left' || side === 'right';
 }
 
 function splitPlacement(placement: OverlayPlacement): [OverlaySide, OverlayAlign] {

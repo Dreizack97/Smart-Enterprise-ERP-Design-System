@@ -1,12 +1,22 @@
-<section class="card" [class.card--flush]="flush()">
-  <header class="card__header">
-    <div>
-      <h2 class="card__title" [class]="'card__title--' + titleSize()">{{ title() }}</h2>
-      @if (subtitle(); as text) {
-        <p class="card__subtitle">{{ text }}</p>
-      }
-    </div>
-    <ng-content select="[actions]" />
-  </header>
+<section class="card" [class.card--flush]="flush()" [class.card--compact]="density() === 'compact'">
+  @if (title() || subtitle()) {
+    <header class="card__header">
+      <div>
+        @if (title(); as heading) {
+          <h2
+            class="card__title"
+            [class.card__title--lg]="titleSize() === 'lg'"
+            [class.card__title--xl]="titleSize() === 'xl'"
+          >
+            {{ heading }}
+          </h2>
+        }
+        @if (subtitle(); as text) {
+          <p class="card__subtitle">{{ text }}</p>
+        }
+      </div>
+      <ng-content select="[actions]" />
+    </header>
+  }
   <div class="card__body"><ng-content /></div>
 </section>

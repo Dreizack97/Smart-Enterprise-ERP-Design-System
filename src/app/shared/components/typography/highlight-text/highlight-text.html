@@ -1,0 +1,9 @@
+<!-- `[textContent]` y no interpolación: el texto alrededor de `{{ }}` arrastra los saltos de línea de
+     la plantilla, que se colapsan en un espacio y parten la palabra («asist encia»). -->
+@for (segment of segments(); track $index) {
+  @if (segment.match) {
+    <mark class="highlight" [textContent]="segment.text"></mark>
+  } @else {
+    <span [textContent]="segment.text"></span>
+  }
+}

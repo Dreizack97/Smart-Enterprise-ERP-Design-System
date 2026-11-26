@@ -6,7 +6,11 @@
   [error]="message()"
   [errorId]="errorId()"
 >
-  <div class="chip-input" [class.chip-input--disabled]="disabled()" [class.chip-input--invalid]="!!message()">
+  <div
+    class="chip-input"
+    [class.chip-input--disabled]="disabled()"
+    [class.chip-input--invalid]="!!message()"
+  >
     <div class="chip-input__box">
       @for (chip of value(); track chip) {
         <span class="chip-input__chip">
@@ -43,7 +47,11 @@
     </div>
 
     @if (popupOpen() && filteredSuggestions().length > 0) {
-      <div class="chip-input__popup" role="listbox" [attr.aria-label]="'Sugerencias de ' + (label() || ariaLabel() || 'etiquetas')">
+      <div
+        class="chip-input__popup"
+        role="listbox"
+        [attr.aria-label]="'Sugerencias de ' + (label() || ariaLabel() || 'etiquetas')"
+      >
         @for (item of filteredSuggestions(); track item.value) {
           <button
             type="button"

@@ -22,20 +22,28 @@
       (blur)="onBlur()"
     >
       @if (placeholder(); as hintText) {
-        <option value="" disabled>{{ hintText }}</option>
+        <option value="" disabled [selected]="value() === ''">{{ hintText }}</option>
       }
       @for (group of groups(); track group.label) {
         @if (group.label) {
           <optgroup [label]="group.label">
             @for (option of group.options; track option.value) {
-              <option [value]="option.value" [disabled]="!!option.disabled">
+              <option
+                [value]="option.value"
+                [selected]="option.value === value()"
+                [disabled]="!!option.disabled"
+              >
                 {{ option.label }}
               </option>
             }
           </optgroup>
         } @else {
           @for (option of group.options; track option.value) {
-            <option [value]="option.value" [disabled]="!!option.disabled">
+            <option
+              [value]="option.value"
+              [selected]="option.value === value()"
+              [disabled]="!!option.disabled"
+            >
               {{ option.label }}
             </option>
           }

@@ -1,0 +1,10 @@
+:host {
+  display: contents;
+}
+
+.highlight {
+  border-radius: var(--radius-sm);
+  background-color: var(--highlight-surface);
+  font-weight: 700;
+  color: var(--highlight-ink);
+}

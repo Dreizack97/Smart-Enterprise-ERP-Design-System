@@ -1,6 +1,31 @@
 /** Dirección de ordenamiento de una columna. */
 export type SortDirection = 'asc' | 'desc';
 
+/** Estado del filtro rápido de registros activos/inactivos. */
+export type TableStatusFilter = 'all' | 'active' | 'inactive';
+
+/** Distribución de tarjetas móviles: estándar, campos apilados o título en una fila completa. */
+export type MobileTableLayout = 'standard' | 'stacked' | 'title-first';
+
+/**
+ * Jerarquía de visibilidad responsiva en pantallas de escritorio y tablet:
+ * - `1`: Esencial. Siempre visible en tabla.
+ * - `2`: Secundaria. Se oculta automáticamente cuando el contenedor baja de 820px.
+ * - `3`: Detalle. Se oculta automáticamente cuando el contenedor baja de 1050px.
+ */
+export type ColumnPriority = 1 | 2 | 3 | 4;
+
+/**
+ * Rol semántico de una columna dentro de la mini-tarjeta móvil (< 768px):
+ * - `'code'`: Identificador corto o código en la esquina superior izquierda.
+ * - `'primary'`: Nombre o título principal del registro en la cabecera.
+ * - `'badge'`: Estatus o etiqueta destacada en la esquina superior derecha.
+ * - `'actions'`: Controles interactivos fijos en la barra inferior de la mini-tarjeta.
+ * - `'detail'`: Campo secundario que se pliega dentro del cajón expandible (chevron).
+ * - 'none': Se omite por completo en la mini-tarjeta móvil (p. ej., estado redundante con un toggle).
+ */
+export type MobileColumnRole = 'code' | 'primary' | 'badge' | 'actions' | 'detail' | 'none';
+
 /** Por qué columna está ordenada la tabla, y en qué dirección. */
 export interface TableSort {
   /** Id de la columna activa, tal como se declara en `TableColumn.id`. */
@@ -24,9 +49,7 @@ export interface TableColumn<T> {
    * Texto plano de la celda.
    *
    * Opcional porque una columna con `*appTableCell` nunca lo muestra: la
-   * plantilla siempre gana. Exigirlo significaba escribir formateadores que
-   * nunca corren y que, con el tiempo, dejan de coincidir con lo que
-   * realmente hay en pantalla. Toda columna debe traer uno de los dos.
+   * plantilla siempre gana. Toda columna debe traer uno de los dos.
    */
   readonly cell?: (row: T) => string;
 
@@ -39,42 +62,47 @@ export interface TableColumn<T> {
    */
   readonly sortValue?: (row: T) => string | number;
 
-  /** Habilita el botón de ordenar en el encabezado. Ausente significa no ordenable. */
+  /** Habilita el botón de ordenar en el encabezado. Ausente significa no ordenable; las columnas de acciones nunca ordenan. */
   readonly sortable?: boolean;
 
   /**
    * Si la columna se puede ocultar desde el menú "Columnas".
    *
    * Toda columna es ocultable por defecto. Se pone en `false` en las que no
-   * tienen sentido sin ella — la columna de acciones, la que identifica a
-   * cada fila: ocultar esas deja a la tabla sin forma de actuar o sin forma
-   * de leerse.
+   * tienen sentido sin ella — la columna de acciones o la que identifica a cada fila.
    */
   readonly hideable?: boolean;
 
   /**
-   * Clases AGREGADAS a las propias de la tabla, no las reemplazan. Solo lo
-   * que le pertenece a la columna: un monto monoespaciado, una columna
-   * secundaria apagada. El padding, el tamaño de letra y la ALINEACIÓN vienen
-   * de `app-data-table` — ver `align`.
+   * Habilita o desactiva la copia del texto definido en `cell`.
+   * Las plantillas sin texto de respaldo no copian su valor de ordenamiento.
+   */
+  readonly copyable?: boolean;
+
+  /**
+   * Clases AGREGADAS a las propias de la tabla, no las reemplazan.
    */
   readonly headerClass?: string;
   readonly cellClass?: string;
 
   /**
-   * Desde qué borde se lee la columna. Los montos y conteos quieren `end`.
-   *
-   * Una propiedad declarada y no un `text-right` en `cellClass`, por dos
-   * razones. Primero, un string de utilidad no podría ganar: `.table__header`
-   * declara `text-align: start` — un `<th>` lo centra el agente de usuario,
-   * así que la tabla tiene que decir lo contrario — y una clase de afuera
-   * pierde contra eso. Segundo, y más importante, la alineación tiene que
-   * aplicarse al encabezado Y a la celda juntos, y el control de ordenar
-   * dentro del encabezado tiene que seguirla: tres lugares que deben
-   * coincidir, que es exactamente para lo que sirve una propiedad de columna
-   * y no un string de clase de forma libre.
+   * Desde qué borde se lee la columna o si está centrada.
+   * Las columnas con rol `actions` se centran automáticamente.
    */
-  readonly align?: 'start' | 'end';
+  readonly align?: 'start' | 'center' | 'end';
+
+  /**
+   * Jerarquía de la columna para ocultar progresivamente cuando el ancho
+   * disponible disminuye en pantallas medianas y evitar desbordamientos.
+   * Por defecto es `1` (siempre visible).
+   */
+  readonly priority?: ColumnPriority;
+
+  /**
+   * Rol dentro de la mini-tarjeta móvil (< 768px). Si se omite, la tabla lo
+   * infiere automáticamente a partir del `id` o posición de la columna.
+   */
+  readonly mobileRole?: MobileColumnRole;
 }
 
 /**

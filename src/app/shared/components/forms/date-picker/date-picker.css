@@ -49,3 +49,41 @@
   background-color: var(--dropdown-surface);
   box-shadow: var(--shadow-elevated);
 }
+
+.picker__choices {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--field-gap);
+  min-width: 16rem;
+}
+.picker__year-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-block-end: var(--field-gap);
+  color: var(--ink-primary);
+}
+.picker__choice {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--control-height-sm);
+  padding-inline: var(--field-padding-x);
+  border-radius: var(--field-radius);
+  color: var(--field-ink);
+  cursor: pointer;
+}
+.picker__choice:hover:not(:disabled),
+.picker__choice[aria-pressed='true'] {
+  background: var(--surface-2);
+}
+.picker__choice:disabled {
+  opacity: var(--field-disabled-opacity);
+  cursor: not-allowed;
+}
+
+@media (max-width: 360px) {
+  .picker__choices--months {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

@@ -1,0 +1,121 @@
+<div class="table__toolbar" [attr.data-sort-breakpoint]="sortBreakpoint()">
+  <!-- Filtro segmentado de estado (Todos / Activos / Inactivos) para tablas con columna de estatus -->
+  @if (hasStatusColumn()) {
+    <div class="table__status-filter" role="group" aria-label="Filtrar por estado">
+      <button
+        type="button"
+        class="table__status-pill focus-ring"
+        [class.table__status-pill--active]="statusFilter() === 'all'"
+        [attr.aria-pressed]="statusFilter() === 'all'"
+        (click)="setStatusFilter('all')"
+      >
+        <span>Todos</span>
+        <span class="table__status-count">{{ statusCounts().all }}</span>
+      </button>
+
+      <button
+        type="button"
+        class="table__status-pill focus-ring"
+        [class.table__status-pill--active]="statusFilter() === 'active'"
+        [attr.aria-pressed]="statusFilter() === 'active'"
+        [disabled]="statusUnavailable()"
+        (click)="setStatusFilter('active')"
+      >
+        <app-status-indicator
+          [tone]="statusUnavailable() ? 'neutral' : 'success'"
+          [pulse]="!statusUnavailable()"
+        />
+        <span>Activos</span>
+        <span class="table__status-count">{{
+          statusUnavailable() ? '—' : statusCounts().active
+        }}</span>
+      </button>
+
+      <button
+        type="button"
+        class="table__status-pill focus-ring"
+        [class.table__status-pill--active]="statusFilter() === 'inactive'"
+        [attr.aria-pressed]="statusFilter() === 'inactive'"
+        [disabled]="statusUnavailable()"
+        (click)="setStatusFilter('inactive')"
+      >
+        <app-status-indicator />
+        <span>Inactivos</span>
+        <span class="table__status-count">{{
+          statusUnavailable() ? '—' : statusCounts().inactive
+        }}</span>
+      </button>
+    </div>
+  }
+
+  <div class="table__toolbar-end">
+    <!-- Control de ordenamiento exclusivo para vista móvil (< 768px) -->
+    @if (sortableColumns().length > 0) {
+      <div class="table__mobile-sort">
+        <label class="table__mobile-sort-label" [for]="sortSelectId">Ordenar:</label>
+        <div class="table__mobile-sort-controls">
+          <select
+            [id]="sortSelectId"
+            class="table__mobile-sort-select focus-ring"
+            [value]="currentSort()?.columnId ?? ''"
+            (change)="onMobileSortColumnChange($event)"
+          >
+            <option value="">Por defecto</option>
+            @for (col of sortableColumns(); track col.id) {
+              <option [value]="col.id">{{ col.label }}</option>
+            }
+          </select>
+
+          <button
+            type="button"
+            class="table__mobile-sort-dir focus-ring"
+            [attr.aria-label]="
+              currentSort()?.direction === 'desc' ? 'Orden descendente' : 'Orden ascendente'
+            "
+            (click)="toggleMobileSortDirection()"
+          >
+            <app-icon
+              [name]="currentSort()?.direction === 'desc' ? 'arrow-down' : 'arrow-up'"
+              [size]="15"
+            />
+          </button>
+        </div>
+      </div>
+    }
+
+    @if (columnMenu()) {
+      <div class="table__column-menu-wrap">
+        <app-dropdown-menu
+          #columnsMenu
+          variant="panel"
+          width="14rem"
+          placement="bottom-end"
+          label="Columnas visibles"
+        >
+          <app-button
+            trigger
+            variant="ghost"
+            size="sm"
+            icon="layout-grid"
+            [attr.aria-haspopup]="'dialog'"
+            [attr.aria-expanded]="columnsMenu.open()"
+            (pressed)="columnsMenu.toggle()"
+          >
+            Columnas
+          </app-button>
+          <ul class="table__columns">
+            @for (column of toggleableColumns(); track column.id) {
+              <li class="table__column-option">
+                <app-checkbox
+                  [label]="column.label"
+                  [checked]="column.visible"
+                  (checkedChange)="visibilityChange.emit({ id: column.id, visible: $event })"
+                />
+              </li>
+            }
+          </ul>
+        </app-dropdown-menu>
+      </div>
+    }
+  </div>
+</div>
