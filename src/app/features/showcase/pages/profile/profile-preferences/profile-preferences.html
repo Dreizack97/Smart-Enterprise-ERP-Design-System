@@ -1,0 +1,120 @@
+<!-- Fila 1: Apariencia y Estilo visual en cuadrantes Bento -->
+<app-section-card class="pref-card pref-card--theme" title="Apariencia" titleSize="lg">
+  <app-radio-group
+    class="theme-choice"
+    label="Tema"
+    labelHidden
+    [options]="themeOptions"
+    [value]="theme.theme()"
+    (valueChange)="onThemeChange($event)"
+  />
+</app-section-card>
+
+<app-section-card class="pref-card pref-card--surface" title="Estilo visual" titleSize="lg">
+  <app-radio-group
+    class="theme-choice"
+    label="Estilo visual"
+    labelHidden
+    [options]="surfaceStyleOptions"
+    [value]="theme.surfaceStyle()"
+    (valueChange)="onSurfaceStyleChange($event)"
+  />
+</app-section-card>
+
+<!-- Fila 2: Paleta cromática activa con previsualización -->
+<app-section-card
+  class="pref-card pref-card--palette"
+  [title]="theme.isDark() ? 'Paleta del modo oscuro' : 'Paleta del modo claro'"
+  titleSize="lg"
+>
+  <div class="palette-grid">
+    @for (palette of currentPaletteOptions(); track palette.value) {
+      <button
+        type="button"
+        class="palette-card focus-ring"
+        [class.is-active]="isPaletteActive(palette.value)"
+        [attr.aria-pressed]="isPaletteActive(palette.value)"
+        (click)="onPaletteChange(palette.value)"
+        [style.--canvas]="palette.swatch.canvas"
+        [style.--surface]="palette.swatch.surface"
+        [style.--line]="palette.swatch.line"
+        [style.--accent]="palette.swatch.accent"
+      >
+        <span class="palette-card__preview" aria-hidden="true">
+          <span class="palette-card__accent"></span>
+        </span>
+
+        <span class="palette-card__footer">
+          <span class="palette-card__meta">
+            <strong class="palette-card__title">{{ palette.label }}</strong>
+            <span class="palette-card__desc">{{ palette.description }}</span>
+          </span>
+          @if (isPaletteActive(palette.value)) {
+            <app-icon class="palette-card__check" name="check" [size]="16" />
+          }
+        </span>
+      </button>
+    }
+  </div>
+</app-section-card>
+
+<!-- Fila 3: Lectura y accesibilidad -->
+<app-section-card class="pref-card pref-card--a11y" title="Lectura y accesibilidad" titleSize="lg">
+  <div class="setting-item">
+    <div>
+      <strong class="setting-item__title">Tamaño de la interfaz</strong>
+      <p class="setting-item__hint">Escala el texto y los controles de todas las pantallas.</p>
+    </div>
+    <app-segmented-control
+      label="Tamaño de la interfaz"
+      size="sm"
+      [options]="scaleOptions"
+      [value]="theme.uiScale()"
+      (valueChange)="onScaleChange($event)"
+    />
+  </div>
+
+  <div class="setting-item">
+    <div>
+      <strong class="setting-item__title">Alto contraste</strong>
+      <p class="setting-item__hint">Bordes y separadores más marcados.</p>
+    </div>
+    <app-toggle-switch
+      label="Alto contraste"
+      labelHidden
+      [checked]="theme.highContrast()"
+      (checkedChange)="theme.setHighContrast($event)"
+    />
+  </div>
+
+  <div class="setting-item">
+    <div>
+      <strong class="setting-item__title">Reducir movimiento</strong>
+      <p class="setting-item__hint">Desactiva animaciones y transiciones decorativas.</p>
+    </div>
+    <app-toggle-switch
+      label="Reducir movimiento"
+      labelHidden
+      [checked]="theme.reducedMotion()"
+      (checkedChange)="theme.setReducedMotion($event)"
+    />
+  </div>
+</app-section-card>
+
+<!-- Fila 3: Avisos -->
+<app-section-card
+  class="pref-card pref-card--notices"
+  title="Avisos"
+  subtitle="Qué te llega por correo y qué se queda en la campana"
+  titleSize="lg"
+>
+  <div class="switches">
+    @for (notice of notices; track notice.key) {
+      <app-toggle-switch
+        [label]="notice.label"
+        [checked]="notice.enabled()"
+        (checkedChange)="notice.enabled.set($event)"
+      />
+    }
+  </div>
+</app-section-card>

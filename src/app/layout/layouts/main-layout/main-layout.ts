@@ -78,8 +78,8 @@ export class MainLayout {
   }
 
   /** La barra anuncia la intención; saber que el perfil vive en `/perfil` es de aquí. */
-  protected onProfileOpened(): void {
-    void this.router.navigateByUrl('/perfil');
+  protected onProfileOpened(section = 'datos'): void {
+    void this.router.navigate(['/perfil'], { queryParams: { seccion: section } });
   }
 
   protected onSignOut(): void {

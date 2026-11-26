@@ -207,38 +207,7 @@
     </app-tab-panel>
 
     <app-tab-panel value="preferencias">
-      <div class="card-stack">
-        <app-section-card
-          title="Apariencia"
-          subtitle="El único ajuste de esta pantalla que sí tiene efecto"
-          titleSize="lg"
-        >
-          <app-radio-group
-            class="theme-choice"
-            label="Tema"
-            labelHidden
-            [options]="themeOptions"
-            [value]="theme.theme()"
-            (valueChange)="setTheme($event)"
-          />
-        </app-section-card>
-
-        <app-section-card
-          title="Avisos"
-          subtitle="Qué te llega por correo y qué se queda en la campana"
-          titleSize="lg"
-        >
-          <div class="switches">
-            @for (notice of notices; track notice.key) {
-              <app-toggle-switch
-                [label]="notice.label"
-                [checked]="notice.enabled()"
-                (checkedChange)="notice.enabled.set($event)"
-              />
-            }
-          </div>
-        </app-section-card>
-      </div>
+      <app-profile-preferences />
     </app-tab-panel>
 
     <app-tab-panel value="actividad">
