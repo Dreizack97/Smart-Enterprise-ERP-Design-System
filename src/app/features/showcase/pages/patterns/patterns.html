@@ -208,8 +208,19 @@
         (unblockExternal)="demoExternalBlocked.set(false)"
       >
         <ng-container attachments>
-          <app-attachment-chip name="Propuesta-Arquitectura.pdf" size="1.4 MB" kind="PDF" tone="blue" />
-          <app-attachment-chip name="Cronograma-Q4.xlsx" size="420 KB" kind="Excel" tone="green" [removable]="true" />
+          <app-attachment-chip
+            name="Propuesta-Arquitectura.pdf"
+            size="1.4 MB"
+            kind="PDF"
+            tone="blue"
+          />
+          <app-attachment-chip
+            name="Cronograma-Q4.xlsx"
+            size="420 KB"
+            kind="Excel"
+            tone="green"
+            [removable]="true"
+          />
         </ng-container>
         <p>Contenido del mensaje renderizado con protección contra rastreadores externos.</p>
       </app-safe-content-viewer>
@@ -222,7 +233,28 @@
     layout="stack"
   >
     <div class="patterns__grid-frame">
-      <app-time-grid [columns]="timeGridColumns" [entries]="timeGridEntries" [startHour]="8" [endHour]="13" />
+      <app-time-grid
+        [columns]="timeGridColumns"
+        [entries]="timeGridEntries"
+        [startHour]="8"
+        [endHour]="13"
+      />
     </div>
+  </app-showcase-block>
+
+  <app-showcase-block
+    title="identity-card · totp-setup"
+    description="Ficha capitular de identidad en dos columnas y configuración visual de segundo factor TOTP."
+    layout="stack"
+  >
+    <app-identity-card
+      name="Lucía Fernández"
+      subtitle="lucia.fernandez@nukabe.mx"
+      [facts]="identityFacts"
+    >
+      <p>Contenido principal proyectado junto a la columna capitular de identidad.</p>
+    </app-identity-card>
+
+    <app-totp-setup [qrCodeDataUri]="totpQr" [secret]="totpSecret" />
   </app-showcase-block>
 </app-showcase-page>

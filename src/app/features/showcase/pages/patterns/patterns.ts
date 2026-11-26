@@ -6,13 +6,25 @@ import { VariantRow } from '@features/showcase/components/variant-row/variant-ro
 import { ShowcasePage } from '@features/showcase/components/showcase-page/showcase-page';
 import { AttachmentChip } from '@shared/components/patterns/attachment-chip/attachment-chip';
 import { CalendarCell } from '@shared/components/patterns/calendar-cell/calendar-cell';
-import { ChecklistItem, ChecklistMeta } from '@shared/components/patterns/checklist-item/checklist-item';
+import {
+  ChecklistItem,
+  ChecklistMeta,
+} from '@shared/components/patterns/checklist-item/checklist-item';
+import {
+  IdentityCard,
+  IdentityFact,
+} from '@shared/components/patterns/identity-card/identity-card';
 import { MediaCard } from '@shared/components/patterns/media-card/media-card';
 import { MessageRow } from '@shared/components/patterns/message-row/message-row';
 import { SafeContentViewer } from '@shared/components/patterns/safe-content-viewer/safe-content-viewer';
 import { ScheduleCard } from '@shared/components/patterns/schedule-card/schedule-card';
 import { ScheduleChip } from '@shared/components/patterns/schedule-chip/schedule-chip';
-import { TimeGrid, TimeGridColumn, TimeGridEntry } from '@shared/components/patterns/time-grid/time-grid';
+import {
+  TimeGrid,
+  TimeGridColumn,
+  TimeGridEntry,
+} from '@shared/components/patterns/time-grid/time-grid';
+import { TotpSetup } from '@shared/components/patterns/totp-setup/totp-setup';
 import { TONES, Tone } from '@shared/models/tone.model';
 import { DaySlot, WEEKDAY_HEADINGS, monthGrid, monthTitle } from '@shared/utils/calendar';
 
@@ -112,6 +124,7 @@ function placeholder(hue: string): string {
     Button,
     CalendarCell,
     ChecklistItem,
+    IdentityCard,
     MediaCard,
     MessageRow,
     SafeContentViewer,
@@ -120,6 +133,7 @@ function placeholder(hue: string): string {
     ShowcaseBlock,
     ShowcasePage,
     TimeGrid,
+    TotpSetup,
     VariantGrid,
     VariantRow,
   ],
@@ -179,8 +193,37 @@ export class Patterns {
   ];
 
   protected readonly timeGridEntries: readonly TimeGridEntry[] = [
-    { id: 'e1', columnId: 'wed', hour: 9, title: 'Daily Sistemas', subtitle: 'Sala 2', tone: 'blue' },
-    { id: 'e2', columnId: 'wed', hour: 11, title: 'Revisión UI/UX', subtitle: 'Sala B', tone: 'orange' },
-    { id: 'e3', columnId: 'thu', hour: 10, title: 'Seguridad OWASP', subtitle: 'Remoto', tone: 'purple' },
+    {
+      id: 'e1',
+      columnId: 'wed',
+      hour: 9,
+      title: 'Daily Sistemas',
+      subtitle: 'Sala 2',
+      tone: 'blue',
+    },
+    {
+      id: 'e2',
+      columnId: 'wed',
+      hour: 11,
+      title: 'Revisión UI/UX',
+      subtitle: 'Sala B',
+      tone: 'orange',
+    },
+    {
+      id: 'e3',
+      columnId: 'thu',
+      hour: 10,
+      title: 'Seguridad OWASP',
+      subtitle: 'Remoto',
+      tone: 'purple',
+    },
   ];
+
+  protected readonly identityFacts: readonly IdentityFact[] = [
+    { label: 'Área', value: 'Tecnología' },
+    { label: 'Puesto', value: 'Arquitecta de plataforma' },
+  ];
+
+  protected readonly totpQr = placeholder('#1e293b');
+  protected readonly totpSecret = 'JBSWY3DPEHPK3PXP';
 }

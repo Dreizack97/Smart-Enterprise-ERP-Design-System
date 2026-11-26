@@ -13,9 +13,7 @@
   <app-button actions variant="secondary" size="sm" icon="calendar" (pressed)="myDayOpen.set(true)">
     Mi Día
   </app-button>
-  <app-button actions size="sm" icon="pencil" (pressed)="openComposer()">
-    Nuevo correo
-  </app-button>
+  <app-button actions size="sm" icon="pencil" (pressed)="openComposer()"> Nuevo correo </app-button>
 </app-page-header>
 
 @switch (activeModule()) {
@@ -70,7 +68,11 @@
                 <span>Almacenamiento</span>
                 <strong>2.3 / 50 GB</strong>
               </div>
-              <app-progress [value]="4.6" label="Cuota de almacenamiento del buzón" [showValue]="false" />
+              <app-progress
+                [value]="4.6"
+                label="Cuota de almacenamiento del buzón"
+                [showValue]="false"
+              />
             </div>
           </aside>
 
@@ -119,14 +121,30 @@
                 <section second class="mail-pane mail-pane--viewer" aria-label="Visor de mensaje">
                   @if (selectedMessage(); as current) {
                     <div class="mail-viewer__actions">
-                      <app-button size="sm" icon="send" (pressed)="replyActive()">Responder</app-button>
-                      <app-button variant="secondary" size="sm" (pressed)="toggleMessageRead(current)">
+                      <app-button size="sm" icon="send" (pressed)="replyActive()"
+                        >Responder</app-button
+                      >
+                      <app-button
+                        variant="secondary"
+                        size="sm"
+                        (pressed)="toggleMessageRead(current)"
+                      >
                         {{ current.unread ? 'Marcar leído' : 'Marcar no leído' }}
                       </app-button>
-                      <app-button variant="secondary" size="sm" icon="code" (pressed)="headersModalOpen.set(true)">
+                      <app-button
+                        variant="secondary"
+                        size="sm"
+                        icon="code"
+                        (pressed)="headersModalOpen.set(true)"
+                      >
                         Encabezados RFC 5322
                       </app-button>
-                      <app-button variant="soft-danger" size="sm" icon="trash-2" (pressed)="deleteMessage(current.id)">
+                      <app-button
+                        variant="soft-danger"
+                        size="sm"
+                        icon="trash-2"
+                        (pressed)="deleteMessage(current.id)"
+                      >
                         Eliminar
                       </app-button>
                     </div>
@@ -139,7 +157,9 @@
                         [recipientSummary]="current.recipients"
                         [timestamp]="current.timestamp"
                         [badgeLabel]="current.priority === 'high' ? 'Prioridad Alta' : ''"
-                        [externalBlocked]="!!current.hasExternalImages && !current.externalUnblocked"
+                        [externalBlocked]="
+                          !!current.hasExternalImages && !current.externalUnblocked
+                        "
                         (unblockExternal)="unblockExternal(current.id)"
                       >
                         <ng-container attachments>
@@ -158,11 +178,25 @@
 
                         @if (current.isCalendarInvite) {
                           <div class="mail-invite">
-                            <div class="mail-invite__title">Invitación iCal · Mié 18/11/2026 11:00 – 12:00</div>
+                            <div class="mail-invite__title">
+                              Invitación iCal · Mié 18/11/2026 11:00 – 12:00
+                            </div>
                             <div class="mail-invite__actions">
-                              <app-button size="sm" (pressed)="answerInvite(current.id, 'Aceptada')">Aceptar</app-button>
-                              <app-button variant="secondary" size="sm" (pressed)="answerInvite(current.id, 'Tentativa')">Quizás</app-button>
-                              <app-button variant="soft-danger" size="sm" (pressed)="answerInvite(current.id, 'Rechazada')">Rechazar</app-button>
+                              <app-button size="sm" (pressed)="answerInvite(current.id, 'Aceptada')"
+                                >Aceptar</app-button
+                              >
+                              <app-button
+                                variant="secondary"
+                                size="sm"
+                                (pressed)="answerInvite(current.id, 'Tentativa')"
+                                >Quizás</app-button
+                              >
+                              <app-button
+                                variant="soft-danger"
+                                size="sm"
+                                (pressed)="answerInvite(current.id, 'Rechazada')"
+                                >Rechazar</app-button
+                              >
                               @if (current.rsvpStatus; as rsvp) {
                                 <app-badge tone="green">Respuesta: {{ rsvp }}</app-badge>
                               }
@@ -171,7 +205,8 @@
                         }
 
                         <div footer>
-                          <strong>Nukabe S.A. de C.V.</strong> · Contenido sanitizado con protección anti-XSS
+                          <strong>Nukabe S.A. de C.V.</strong> · Contenido sanitizado con protección
+                          anti-XSS
                         </div>
                       </app-safe-content-viewer>
                     </div>
@@ -198,8 +233,15 @@
   @case ('calendar') {
     <div class="mail-module">
       <div class="mail-module__head">
-        <app-segmented-control [(value)]="calView" [options]="calViewOptions" label="Vista del calendario" size="sm" />
-        <app-button size="sm" icon="plus" (pressed)="notifySaved('Nueva cita lista para programar')">Nueva cita</app-button>
+        <app-segmented-control
+          [(value)]="calView"
+          [options]="calViewOptions"
+          label="Vista del calendario"
+          size="sm"
+        />
+        <app-button size="sm" icon="plus" (pressed)="notifySaved('Nueva cita lista para programar')"
+          >Nueva cita</app-button
+        >
       </div>
 
       <div class="mail-calendar-layout">
@@ -243,7 +285,12 @@
   @case ('contacts') {
     <div class="mail-module">
       <div class="mail-module__head">
-        <app-segmented-control [(value)]="contactScope" [options]="contactScopeOptions" label="Alcance de directorio" size="sm" />
+        <app-segmented-control
+          [(value)]="contactScope"
+          [options]="contactScopeOptions"
+          label="Alcance de directorio"
+          size="sm"
+        />
         <app-search-input
           class="mail-shell__search"
           [(value)]="contactQuery"
@@ -254,7 +301,11 @@
       </div>
 
       <div class="mail-contacts-layout">
-        <app-section-card title="Directorio corporativo" subtitle="Contactos personales (.VCF) y Lista Global (GAL)" [flush]="true">
+        <app-section-card
+          title="Directorio corporativo"
+          subtitle="Contactos personales (.VCF) y Lista Global (GAL)"
+          [flush]="true"
+        >
           <app-data-table
             [columns]="contactColumns"
             [rows]="filteredContacts()"
@@ -262,7 +313,11 @@
             caption="Contactos personales y Lista Global de Direcciones"
           >
             <ng-template appTableCell="name" [appTableCellOf]="filteredContacts()" let-person>
-              <button type="button" class="mail-contact-btn focus-ring" (click)="selectedContact.set(person)">
+              <button
+                type="button"
+                class="mail-contact-btn focus-ring"
+                (click)="selectedContact.set(person)"
+              >
                 <app-avatar [name]="person.name" size="sm" />
                 <span>{{ person.name }}</span>
               </button>
@@ -270,7 +325,11 @@
           </app-data-table>
         </app-section-card>
 
-        <app-section-card [title]="selectedContact().name" [subtitle]="selectedContact().role" titleSize="lg">
+        <app-section-card
+          [title]="selectedContact().name"
+          [subtitle]="selectedContact().role"
+          titleSize="lg"
+        >
           <p class="mail-detail-line">{{ selectedContact().email }}</p>
           <p class="mail-detail-line">{{ selectedContact().phone }}</p>
           <app-button
@@ -289,7 +348,12 @@
   @case ('tasks') {
     <div class="mail-module">
       <div class="mail-module__head">
-        <app-segmented-control [(value)]="pimMode" [options]="pimOptions" label="Tareas o notas" size="sm" />
+        <app-segmented-control
+          [(value)]="pimMode"
+          [options]="pimOptions"
+          label="Tareas o notas"
+          size="sm"
+        />
       </div>
 
       @if (pimMode() === 'tasks') {
@@ -335,32 +399,60 @@
       <div class="mail-options-body">
         @switch (selectedOptionTab()) {
           @case ('gen-regional') {
-            <app-section-card title="Configuración regional" subtitle="Zona horaria e idioma del buzón">
+            <app-section-card
+              title="Configuración regional"
+              subtitle="Zona horaria e idioma del buzón"
+            >
               <app-combobox [(value)]="timezone" [options]="timezoneOptions" label="Zona horaria" />
-              <app-button size="sm" (pressed)="notifySaved('Zona horaria guardada')">Guardar</app-button>
+              <app-button size="sm" (pressed)="notifySaved('Zona horaria guardada')"
+                >Guardar</app-button
+              >
             </app-section-card>
           }
           @case ('gen-account') {
-            <app-section-card title="Seguridad del buzón" subtitle="Cambio de contraseña y actividad reciente">
-              <app-input type="text" label="Buzón corporativo" value="jorge.silva@nukabe.mx" disabled />
-              <app-button size="sm" (pressed)="notifySaved('Verificación completada')">Validar cuenta</app-button>
+            <app-section-card
+              title="Seguridad del buzón"
+              subtitle="Cambio de contraseña y actividad reciente"
+            >
+              <app-input
+                type="text"
+                label="Buzón corporativo"
+                value="jorge.silva@nukabe.mx"
+                disabled
+              />
+              <app-button size="sm" (pressed)="notifySaved('Verificación completada')"
+                >Validar cuenta</app-button
+              >
             </app-section-card>
           }
           @case ('mail-signature') {
-            <app-section-card title="Firma automática HTML" subtitle="Se inyecta al redactar, responder o reenviar">
+            <app-section-card
+              title="Firma automática HTML"
+              subtitle="Se inyecta al redactar, responder o reenviar"
+            >
               <app-rich-text-editor [(value)]="signatureDraft" label="Firma corporativa" />
-              <app-button size="sm" (pressed)="notifySaved('Firma actualizada')">Guardar firma</app-button>
+              <app-button size="sm" (pressed)="notifySaved('Firma actualizada')"
+                >Guardar firma</app-button
+              >
             </app-section-card>
           }
           @case ('mail-ooo') {
             <app-section-card title="Respuesta automática (Fuera de oficina)">
-              <app-toggle-switch [(checked)]="oooEnabled" label="Activar respuesta automática por ausencia" />
+              <app-toggle-switch
+                [(checked)]="oooEnabled"
+                label="Activar respuesta automática por ausencia"
+              />
               <app-date-range-picker [(start)]="oooStart" [(end)]="oooEnd" label="Periodo activo" />
-              <app-button size="sm" (pressed)="notifySaved('Respuesta automática guardada')">Aplicar</app-button>
+              <app-button size="sm" (pressed)="notifySaved('Respuesta automática guardada')"
+                >Aplicar</app-button
+              >
             </app-section-card>
           }
           @case ('mail-rules') {
-            <app-section-card title="Reglas de filtrado del buzón" subtitle="Motor compatible con las 11 condiciones de MailEnable">
+            <app-section-card
+              title="Reglas de filtrado del buzón"
+              subtitle="Motor compatible con las 11 condiciones de MailEnable"
+            >
               <div class="mail-stack">
                 @for (rule of rules(); track rule.id) {
                   <div class="mail-rule">
@@ -368,7 +460,12 @@
                       <div class="mail-rule__name">{{ rule.name }}</div>
                       <div class="mail-rule__desc">Si {{ rule.condition }} → {{ rule.action }}</div>
                     </div>
-                    <app-toggle-switch [checked]="rule.enabled" [label]="rule.name" labelHidden (checkedChange)="toggleRule(rule.id)" />
+                    <app-toggle-switch
+                      [checked]="rule.enabled"
+                      [label]="rule.name"
+                      labelHidden
+                      (checkedChange)="toggleRule(rule.id)"
+                    />
                   </div>
                 }
               </div>
@@ -432,7 +529,12 @@
     <app-input [(value)]="composerSubject" label="Asunto" placeholder="Agrega un asunto claro..." />
     <app-rich-text-editor [(value)]="composerBody" label="Mensaje">
       <div toolbarEnd class="mail-composer-opts">
-        <app-select [(value)]="composerPriority" [options]="priorityOptions" ariaLabel="Prioridad de envío" size="sm" />
+        <app-select
+          [(value)]="composerPriority"
+          [options]="priorityOptions"
+          ariaLabel="Prioridad de envío"
+          size="sm"
+        />
       </div>
       <div footer class="mail-composer-sig">
         <strong>Jorge Silva</strong> · Arquitectura de Software · Nukabe Corporativo
@@ -440,7 +542,9 @@
     </app-rich-text-editor>
     <app-checkbox [(checked)]="composerReadReceipt" label="Solicitar confirmación de lectura" />
     <div class="mail-composer-foot">
-      <app-button variant="secondary" (pressed)="composerOpen.set(false)">Guardar borrador</app-button>
+      <app-button variant="secondary" (pressed)="composerOpen.set(false)"
+        >Guardar borrador</app-button
+      >
       <app-button icon="send" (pressed)="sendDraft()">Enviar correo</app-button>
     </div>
   </div>

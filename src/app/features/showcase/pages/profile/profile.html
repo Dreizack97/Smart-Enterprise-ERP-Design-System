@@ -118,10 +118,7 @@
             </div>
 
             @if (newPassword()) {
-              <app-password-strength-meter
-                [password]="newPassword()"
-                [userInputs]="ownWords()"
-              />
+              <app-password-strength-meter [password]="newPassword()" [userInputs]="ownWords()" />
             }
 
             <div class="card-actions">

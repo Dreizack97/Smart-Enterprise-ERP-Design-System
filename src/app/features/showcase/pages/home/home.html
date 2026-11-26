@@ -18,11 +18,7 @@
     <ul class="cards">
       @for (family of families; track family.folder) {
         <li>
-          <a
-            class="card focus-ring"
-            [routerLink]="family.route"
-            [fragment]="family.fragment"
-          >
+          <a class="card focus-ring" [routerLink]="family.route" [fragment]="family.fragment">
             <span class="card__head">
               <app-icon [name]="family.icon" [size]="18" />
               <span class="card__title">{{ family.label }}</span>
@@ -78,8 +74,8 @@
       <li class="step">
         <a class="step__link focus-ring" routerLink="/fundamentos">Fundamentos</a>
         <span class="step__note">
-          Color, tipografía, forma y movimiento. Todo se lee del documento, así que lo que se ve
-          ahí es lo que de verdad está cargado.
+          Color, tipografía, forma y movimiento. Todo se lee del documento, así que lo que se ve ahí
+          es lo que de verdad está cargado.
         </span>
       </li>
       <li class="step">
@@ -87,8 +83,8 @@
           Un componente
         </a>
         <span class="step__note">
-          Cada bloque muestra la matriz de variantes y explica por qué el componente es así, no
-          solo cómo se ve.
+          Cada bloque muestra la matriz de variantes y explica por qué el componente es así, no solo
+          cómo se ve.
         </span>
       </li>
       <li class="step">

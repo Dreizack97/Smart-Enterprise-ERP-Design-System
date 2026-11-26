@@ -1,7 +1,10 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Notifications } from '@core/services/notification';
 import { Button } from '@shared/components/actions/button/button';
-import { SegmentedControl, SegmentOption } from '@shared/components/actions/segmented-control/segmented-control';
+import {
+  SegmentedControl,
+  SegmentOption,
+} from '@shared/components/actions/segmented-control/segmented-control';
 import { SectionCard } from '@shared/components/containers/section-card/section-card';
 import { SplitPane } from '@shared/components/containers/split-pane/split-pane';
 import { DataTable } from '@shared/components/data/data-table/data-table';
@@ -30,7 +33,11 @@ import { ChecklistItem } from '@shared/components/patterns/checklist-item/checkl
 import { MessageRow, MessageRowTag } from '@shared/components/patterns/message-row/message-row';
 import { SafeContentViewer } from '@shared/components/patterns/safe-content-viewer/safe-content-viewer';
 import { ScheduleCard } from '@shared/components/patterns/schedule-card/schedule-card';
-import { TimeGrid, TimeGridColumn, TimeGridEntry } from '@shared/components/patterns/time-grid/time-grid';
+import {
+  TimeGrid,
+  TimeGridColumn,
+  TimeGridEntry,
+} from '@shared/components/patterns/time-grid/time-grid';
 import { CodeBlock } from '@shared/components/typography/code-block/code-block';
 import { Tone } from '@shared/models/tone.model';
 import { normalise } from '@shared/utils/text';
@@ -108,7 +115,8 @@ const INITIAL_MESSAGES: readonly MailMessage[] = [
     email: 'isabel.barboza@nukabe.mx',
     recipients: 'Para: Jorge Silva <jorge.silva@nukabe.mx> · CC: Abiud Gonzalez',
     subject: 'Revisión de avances ERP y portal de correo corporativo',
-    snippet: 'Revisamos la propuesta para reemplazar el cliente actual por la interfaz moderna con paridad Outlook...',
+    snippet:
+      'Revisamos la propuesta para reemplazar el cliente actual por la interfaz moderna con paridad Outlook...',
     body: 'Confirmamos que la prioridad para la primera entrega es asegurar el diseño responsivo sin recortes horizontales, visor seguro contra rastreadores y el centro unificado de reglas y firma.',
     timestamp: '09:42',
     unread: true,
@@ -129,7 +137,8 @@ const INITIAL_MESSAGES: readonly MailMessage[] = [
     email: 'abiud.gonzalez@nukabe.mx',
     recipients: 'Para: Jorge Silva <jorge.silva@nukabe.mx>',
     subject: 'Minuta semanal · Infraestructura Windows Server x64',
-    snippet: 'Se validaron MailEnable.Store.dll y MailEnable.Administration.dll en bin64 para acceso co-localizado...',
+    snippet:
+      'Se validaron MailEnable.Store.dll y MailEnable.Administration.dll en bin64 para acceso co-localizado...',
     body: 'El servicio .NET 10 operará co-localizado en el Windows Server x64 para notificaciones SignalR instantáneas y lectura directa de buzones.',
     timestamp: 'Ayer 17:15',
     unread: false,
@@ -145,7 +154,8 @@ const INITIAL_MESSAGES: readonly MailMessage[] = [
     email: 'adrian.reyes@nukabe.mx',
     recipients: 'Para: Jorge Silva <jorge.silva@nukabe.mx> · CC: Aketzali Sanchez',
     subject: 'Invitación: Junta de Alineación Diseño UI / UX',
-    snippet: 'Revisión de tokens en modo claro y oscuro, accesibilidad WCAG AA y componentes de correo...',
+    snippet:
+      'Revisión de tokens en modo claro y oscuro, accesibilidad WCAG AA y componentes de correo...',
     body: 'Te invitamos a revisar la plantilla interactiva en la sala ejecutiva B hoy de 11:00 a 12:00 hrs.',
     timestamp: '16 Nov',
     unread: false,
@@ -162,7 +172,8 @@ const INITIAL_MESSAGES: readonly MailMessage[] = [
     email: 'no-reply@nukabe.mx',
     recipients: 'Para: Personal Nukabe <todos@nukabe.mx>',
     subject: 'Aviso automático: Comprobante quincenal disponible (Masivo)',
-    snippet: 'Este es un mensaje informativo masivo generado automáticamente por Smart Enterprise ERP...',
+    snippet:
+      'Este es un mensaje informativo masivo generado automáticamente por Smart Enterprise ERP...',
     body: 'Tu recibo de nómina correspondiente al periodo en curso ya se encuentra disponible para descarga segura.',
     timestamp: '15 Nov',
     unread: false,
@@ -179,7 +190,8 @@ const INITIAL_MESSAGES: readonly MailMessage[] = [
     email: 'isabel.barboza@nukabe.mx',
     recipients: 'Para: isabel.barboza@nukabe.mx',
     subject: 'RE: Revisión de avances ERP y portal de correo corporativo',
-    snippet: 'Excelente, ya promovimos los componentes compartidos al Design System de Smart Enterprise ERP...',
+    snippet:
+      'Excelente, ya promovimos los componentes compartidos al Design System de Smart Enterprise ERP...',
     body: 'Los componentes nuevos ya pasan todas las auditorías de contraste, geometría y consistencia del repositorio.',
     timestamp: 'Ayer 16:05',
     unread: false,
@@ -191,12 +203,54 @@ const INITIAL_MESSAGES: readonly MailMessage[] = [
 ];
 
 const CONTACTS: readonly DirectoryContact[] = [
-  { id: 'c1', name: 'Isabel Barboza', role: 'Gerencia General', email: 'isabel.barboza@nukabe.mx', phone: '+52 442 555 0101', scope: 'personal' },
-  { id: 'c2', name: 'Abiud Gonzalez', role: 'Director de TI', email: 'abiud.gonzalez@nukabe.mx', phone: '+52 442 555 0114', scope: 'personal' },
-  { id: 'c3', name: 'Aketzali Sanchez', role: 'Comunicación', email: 'aketzali.sanchez@nukabe.mx', phone: '+52 442 555 0128', scope: 'personal' },
-  { id: 'c4', name: 'Adrian Reyes', role: 'Diseño UI / UX', email: 'adrian.reyes@nukabe.mx', phone: '+52 442 555 0139', scope: 'personal' },
-  { id: 'c5', name: 'Luis Mendoza', role: 'Producción', email: 'luis.mendoza@nukabe.mx', phone: '+52 442 555 0152', scope: 'gal' },
-  { id: 'c6', name: 'Mariana Torres', role: 'Recursos Humanos', email: 'mariana.torres@nukabe.mx', phone: '+52 442 555 0166', scope: 'gal' },
+  {
+    id: 'c1',
+    name: 'Isabel Barboza',
+    role: 'Gerencia General',
+    email: 'isabel.barboza@nukabe.mx',
+    phone: '+52 442 555 0101',
+    scope: 'personal',
+  },
+  {
+    id: 'c2',
+    name: 'Abiud Gonzalez',
+    role: 'Director de TI',
+    email: 'abiud.gonzalez@nukabe.mx',
+    phone: '+52 442 555 0114',
+    scope: 'personal',
+  },
+  {
+    id: 'c3',
+    name: 'Aketzali Sanchez',
+    role: 'Comunicación',
+    email: 'aketzali.sanchez@nukabe.mx',
+    phone: '+52 442 555 0128',
+    scope: 'personal',
+  },
+  {
+    id: 'c4',
+    name: 'Adrian Reyes',
+    role: 'Diseño UI / UX',
+    email: 'adrian.reyes@nukabe.mx',
+    phone: '+52 442 555 0139',
+    scope: 'personal',
+  },
+  {
+    id: 'c5',
+    name: 'Luis Mendoza',
+    role: 'Producción',
+    email: 'luis.mendoza@nukabe.mx',
+    phone: '+52 442 555 0152',
+    scope: 'gal',
+  },
+  {
+    id: 'c6',
+    name: 'Mariana Torres',
+    role: 'Recursos Humanos',
+    email: 'mariana.torres@nukabe.mx',
+    phone: '+52 442 555 0166',
+    scope: 'gal',
+  },
 ];
 
 /**
@@ -320,10 +374,38 @@ export class Mail {
     { id: 'fri', label: 'Vie 20' },
   ];
   protected readonly timeEntries: readonly TimeGridEntry[] = [
-    { id: 'ev-1', columnId: 'wed', hour: 9, title: 'Daily Sistemas & MailEnable', subtitle: 'Sala 2', tone: 'blue' },
-    { id: 'ev-2', columnId: 'wed', hour: 11, title: 'Alineación Diseño UI/UX', subtitle: 'Sala B', tone: 'orange' },
-    { id: 'ev-3', columnId: 'thu', hour: 10, title: 'Auditoría OWASP', subtitle: 'Remoto', tone: 'purple' },
-    { id: 'ev-4', columnId: 'fri', hour: 13, title: 'Demo Gerencia', subtitle: 'Sala A', tone: 'green' },
+    {
+      id: 'ev-1',
+      columnId: 'wed',
+      hour: 9,
+      title: 'Daily Sistemas & MailEnable',
+      subtitle: 'Sala 2',
+      tone: 'blue',
+    },
+    {
+      id: 'ev-2',
+      columnId: 'wed',
+      hour: 11,
+      title: 'Alineación Diseño UI/UX',
+      subtitle: 'Sala B',
+      tone: 'orange',
+    },
+    {
+      id: 'ev-3',
+      columnId: 'thu',
+      hour: 10,
+      title: 'Auditoría OWASP',
+      subtitle: 'Remoto',
+      tone: 'purple',
+    },
+    {
+      id: 'ev-4',
+      columnId: 'fri',
+      hour: 13,
+      title: 'Demo Gerencia',
+      subtitle: 'Sala A',
+      tone: 'green',
+    },
   ];
 
   // Contactos + GAL
@@ -349,13 +431,49 @@ export class Mail {
     { value: 'notes', label: 'Notas (.NTT)' },
   ];
   protected readonly tasks = signal<readonly PimTask[]>([
-    { id: 't-1', title: 'Validar plantilla /correo en Design System', description: 'Comprobar modo claro y oscuro + auditorías.', badgeLabel: 'Alta', badgeTone: 'red', due: 'Hoy 18:00', done: false },
-    { id: 't-2', title: 'Configurar adaptadores MailEnable v10.62 x64', description: 'Store.dll y Administration.dll en .NET 10.', badgeLabel: 'En curso', badgeTone: 'blue', due: '19 Nov 2026', done: false },
-    { id: 't-3', title: 'Auditar webmail nukabe.mx', description: 'Inventario completo de vistas y reglas 1..11.', badgeLabel: 'Completada', badgeTone: 'green', due: '18 Nov 2026', done: true },
+    {
+      id: 't-1',
+      title: 'Validar plantilla /correo en Design System',
+      description: 'Comprobar modo claro y oscuro + auditorías.',
+      badgeLabel: 'Alta',
+      badgeTone: 'red',
+      due: 'Hoy 18:00',
+      done: false,
+    },
+    {
+      id: 't-2',
+      title: 'Configurar adaptadores MailEnable v10.62 x64',
+      description: 'Store.dll y Administration.dll en .NET 10.',
+      badgeLabel: 'En curso',
+      badgeTone: 'blue',
+      due: '19 Nov 2026',
+      done: false,
+    },
+    {
+      id: 't-3',
+      title: 'Auditar webmail nukabe.mx',
+      description: 'Inventario completo de vistas y reglas 1..11.',
+      badgeLabel: 'Completada',
+      badgeTone: 'green',
+      due: '18 Nov 2026',
+      done: true,
+    },
   ]);
   protected readonly notes: readonly MailNote[] = [
-    { id: 'n-1', title: 'Topología Escenario 1', body: 'Co-localizado en Windows Server x64 con notificaciones SignalR y MimeKit.', tone: 'yellow', updated: 'Hoy 09:15' },
-    { id: 'n-2', title: 'Regla de Design System', body: 'Solo tokens de Nivel 3 en component.css y verificación continua con npm run audit.', tone: 'blue', updated: 'Ayer 18:30' },
+    {
+      id: 'n-1',
+      title: 'Topología Escenario 1',
+      body: 'Co-localizado en Windows Server x64 con notificaciones SignalR y MimeKit.',
+      tone: 'yellow',
+      updated: 'Hoy 09:15',
+    },
+    {
+      id: 'n-2',
+      title: 'Regla de Design System',
+      body: 'Solo tokens de Nivel 3 en component.css y verificación continua con npm run audit.',
+      tone: 'blue',
+      updated: 'Ayer 18:30',
+    },
   ];
 
   // Opciones del Buzón
@@ -379,18 +497,42 @@ export class Mail {
   ];
   protected readonly timezone = signal('america-mexico');
   protected readonly timezoneOptions: readonly ComboboxOption[] = [
-    { value: 'america-mexico', label: '(UTC-06:00) Guadalajara, Ciudad de México, Monterrey', hint: 'CST' },
+    {
+      value: 'america-mexico',
+      label: '(UTC-06:00) Guadalajara, Ciudad de México, Monterrey',
+      hint: 'CST',
+    },
     { value: 'america-chihuahua', label: '(UTC-07:00) Chihuahua, Mazatlán', hint: 'MST' },
     { value: 'america-tijuana', label: '(UTC-08:00) Tijuana, Baja California', hint: 'PST' },
   ];
   protected readonly oooEnabled = signal(false);
   protected readonly oooStart = signal('2026-12-24');
   protected readonly oooEnd = signal('2027-01-02');
-  protected readonly signatureDraft = signal('<p><strong>Jorge Silva</strong> · Nukabe Corporativo</p>');
+  protected readonly signatureDraft = signal(
+    '<p><strong>Jorge Silva</strong> · Nukabe Corporativo</p>',
+  );
   protected readonly rules = signal<readonly MailRule[]>([
-    { id: 'r1', name: 'Etiquetar boletines masivos', condition: 'Encabezado Precedence contiene bulk', action: 'Mover a Proyectos Nukabe', enabled: true },
-    { id: 'r2', name: 'Facturas CFDI automáticas', condition: 'Asunto contiene CFDI o Adjunto .XML', action: 'Mover a Facturación CFDI', enabled: true },
-    { id: 'r3', name: 'Alerta Gerencia General', condition: 'Remitente es isabel.barboza@nukabe.mx', action: 'Marcar importancia Alta', enabled: false },
+    {
+      id: 'r1',
+      name: 'Etiquetar boletines masivos',
+      condition: 'Encabezado Precedence contiene bulk',
+      action: 'Mover a Proyectos Nukabe',
+      enabled: true,
+    },
+    {
+      id: 'r2',
+      name: 'Facturas CFDI automáticas',
+      condition: 'Asunto contiene CFDI o Adjunto .XML',
+      action: 'Mover a Facturación CFDI',
+      enabled: true,
+    },
+    {
+      id: 'r3',
+      name: 'Alerta Gerencia General',
+      condition: 'Remitente es isabel.barboza@nukabe.mx',
+      action: 'Marcar importancia Alta',
+      enabled: false,
+    },
   ]);
 
   // Computados
@@ -527,9 +669,7 @@ export class Mail {
 
   protected batchMarkRead(): void {
     const ids = this.checkedIds();
-    this.messages.update((list) =>
-      list.map((m) => (ids.has(m.id) ? { ...m, unread: false } : m)),
-    );
+    this.messages.update((list) => list.map((m) => (ids.has(m.id) ? { ...m, unread: false } : m)));
     this.checkedIds.set(new Set());
     this.notifications.success('Mensajes seleccionados marcados como leídos.');
   }

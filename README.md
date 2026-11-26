@@ -43,7 +43,7 @@ Catálogo de componentes Angular para el ERP de Smart Enterprise: la librería d
 
 ## 1. Descripción general
 
-El proyecto es un **catálogo standalone de Angular 22**: 64 componentes compartidos, organizados en 10 familias, expuestos a través de páginas de *showcase* que los documentan en vivo (variantes, estados, accesibilidad, ambos temas). Cuatro plantillas completas (`/acceso`, `/panel`, `/clientes`, `/perfil`) demuestran cómo esos componentes se combinan en pantallas reales de un ERP, sin que exista ninguna de negocio detrás — son fachadas.
+El proyecto es un **catálogo standalone de Angular 22**: 64 componentes compartidos, organizados en 10 familias, expuestos a través de páginas de _showcase_ que los documentan en vivo (variantes, estados, accesibilidad, ambos temas). Cuatro plantillas completas (`/acceso`, `/panel`, `/clientes`, `/perfil`) demuestran cómo esos componentes se combinan en pantallas reales de un ERP, sin que exista ninguna de negocio detrás — son fachadas.
 
 No hay servidor, ni `HttpClient`, ni guards de ruta, ni interceptores: no hay nada de eso porque no hay nada que proteger ni ninguna API que consumir. Lo que el proyecto sí tiene, con el mismo nivel de cuidado que tendría una aplicación de producción, es:
 
@@ -64,11 +64,11 @@ layout/    → el armazón visual (navbar, sidebar, layouts de página)
 features/  → páginas concretas (aquí, el showcase)
 ```
 
-| Regla | Consecuencia |
-|---|---|
+| Regla                                                      | Consecuencia                                                  |
+| ---------------------------------------------------------- | ------------------------------------------------------------- |
 | `shared/` no puede importar de `features/` ni de `layout/` | Un componente reutilizable no puede depender de dónde se usa. |
-| `core/` no puede importar de `features/` ni de `layout/` | La infraestructura no puede depender de la presentación. |
-| `layout/` no puede importar de `features/` | El armazón no puede depender de una página concreta. |
+| `core/` no puede importar de `features/` ni de `layout/`   | La infraestructura no puede depender de la presentación.      |
+| `layout/` no puede importar de `features/`                 | El armazón no puede depender de una página concreta.          |
 
 `features/` no tiene restricciones: es la única área que puede importar de las otras tres. La regla está anclada a los cuatro directorios de nivel superior (`@core/*`, `@shared/*`, etc.) y no a un patrón de nombre — un `core/layout/` interno no dispara por accidente la regla de `layout/`.
 
@@ -86,7 +86,7 @@ Los servicios de estado (`ThemeStore`, `LayoutStore`, `ActiveRoute`, `Notificati
 
 `src/styles.css` importa, en orden, `tokens/primitive.css` → `tokens/semantic.css` → `tokens/component.css`. La regla, verificada por `scripts/audit-consistency.mjs`, es que **un componente solo puede leer tokens de nivel 3** (`--control-height-md`, `--chart-series-1`, etc.), nunca un valor primitivo ni un hex literal. Esto es lo que hace que un tema oscuro sea cambiar el archivo semántico, no auditar cada hoja de estilos.
 
-`styles/shell.css` documenta por qué las clases transversales que ahí viven (`.focus-ring`, `.touch-target`, `.tone-*`, `.modal-open`) están deliberadamente **fuera de `@layer`**: en la cascada de CSS, las reglas sin capa le ganan a `@layer utilities` de Tailwind, así que sobrescriben utilidades sin necesitar `!important` — razón por la cual `styles.css` importa Tailwind *antes* que este archivo.
+`styles/shell.css` documenta por qué las clases transversales que ahí viven (`.focus-ring`, `.touch-target`, `.tone-*`, `.modal-open`) están deliberadamente **fuera de `@layer`**: en la cascada de CSS, las reglas sin capa le ganan a `@layer utilities` de Tailwind, así que sobrescriben utilidades sin necesitar `!important` — razón por la cual `styles.css` importa Tailwind _antes_ que este archivo.
 
 ### 2.5 El tema, antes del primer pintado
 
@@ -94,7 +94,7 @@ Los servicios de estado (`ThemeStore`, `LayoutStore`, `ActiveRoute`, `Notificati
 
 ### 2.6 Iconos: vocabulario cerrado, tree-shakable
 
-`core/icons/lucide-icons.ts` registra un subconjunto explícito de `@lucide/angular` (`ICONS`) y deriva de ahí el tipo `IconName`, que es un *union type* literal — no `string`. `strictTemplates` rechaza en tiempo de compilación un `<app-icon name="...">` con un nombre no registrado, en vez de dejar un hueco vacío en producción. `app-icon` (`shared/components/media/icon`) es el único punto del sistema que conoce a Lucide directamente; cambiar de familia de iconos toca ese archivo y el catálogo, nada más.
+`core/icons/lucide-icons.ts` registra un subconjunto explícito de `@lucide/angular` (`ICONS`) y deriva de ahí el tipo `IconName`, que es un _union type_ literal — no `string`. `strictTemplates` rechaza en tiempo de compilación un `<app-icon name="...">` con un nombre no registrado, en vez de dejar un hueco vacío en producción. `app-icon` (`shared/components/media/icon`) es el único punto del sistema que conoce a Lucide directamente; cambiar de familia de iconos toca ese archivo y el catálogo, nada más.
 
 ## 3. Estructura del proyecto
 
@@ -149,18 +149,18 @@ scripts/                        # auditorías estáticas — ver §11
 
 Los 64 componentes compartidos viven en `shared/components/`, agrupados en 10 familias. Todos son standalone, `ChangeDetectionStrategy.OnPush` (por defecto en Angular 22) y usan `input()` / `output()` / `model()` en vez de decoradores `@Input()` / `@Output()`.
 
-| Familia | Componentes | Responsabilidad |
-|---|---|---|
-| `actions` | `button`, `segmented-control`, `social-button`, `theme-toggle` | Controles de acción. `variant` y `size` son ejes ortogonales — ninguna variante trae su propio padding. |
-| `forms` | 20 componentes: `field`, `input`, `textarea`, `select`, `checkbox`, `toggle-switch`, `radio-group`, `number-input`, `search-input`, `password-input`, `password-strength-meter`, `password-requirements`, `otp-input`, `file-upload`, `slider`, `rating`, `combobox`, `date-picker`, `date-range-picker`, `date-grid` | Controles de formulario. Todos comparten el contrato de `useFormControl` (`shared/utils/form-control.ts`) para `errorId`, `message` y `onBlur`. |
-| `feedback` | `status-badge`, `badge`, `alert`, `progress`, `skeleton`, `empty-state`, `error-state`, `resend-timer` | Comunican estado y resultado. |
-| `overlays` | `modal`, `confirm-dialog`, `drawer`, `dropdown-menu`, `notification-list` | Superficies flotantes. Comparten el comportamiento de `useDialog` (`shared/utils/dialog-behavior.ts`) — trampa de foco, bloqueo de scroll, Escape, devolución de foco. |
-| `navigation` | `breadcrumb`, `tabs`, `tab-panel`, `accordion`, `accordion-item`, `stepper`, `pagination` | Moverse por la aplicación o por el contenido de una pantalla. |
-| `data` | `data-table`, `table-toolbar`, `chart-canvas` | Tabla (sobre TanStack Table) y gráficos (sobre Chart.js). |
-| `containers` | `section-card`, `stat-card`, `form-card`, `divider` | Envuelven contenido. |
-| `media` | `icon`, `avatar`, `avatar-group`, `activity-item`, `timeline` | Identidad visual y multimedia. |
-| `patterns` | `media-card`, `checklist-item`, `schedule-card`, `schedule-chip`, `calendar-cell` | Composiciones generalizadas — no traen vocabulario de negocio propio, a diferencia de las plantillas de `features/showcase/pages`. |
-| `typography` | `code-block`, `code-list`, `kbd` | Texto técnico. |
+| Familia      | Componentes                                                                                                                                                                                                                                                                                                           | Responsabilidad                                                                                                                                                        |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `actions`    | `button`, `segmented-control`, `social-button`, `theme-toggle`                                                                                                                                                                                                                                                        | Controles de acción. `variant` y `size` son ejes ortogonales — ninguna variante trae su propio padding.                                                                |
+| `forms`      | 20 componentes: `field`, `input`, `textarea`, `select`, `checkbox`, `toggle-switch`, `radio-group`, `number-input`, `search-input`, `password-input`, `password-strength-meter`, `password-requirements`, `otp-input`, `file-upload`, `slider`, `rating`, `combobox`, `date-picker`, `date-range-picker`, `date-grid` | Controles de formulario. Todos comparten el contrato de `useFormControl` (`shared/utils/form-control.ts`) para `errorId`, `message` y `onBlur`.                        |
+| `feedback`   | `status-badge`, `badge`, `alert`, `progress`, `skeleton`, `empty-state`, `error-state`, `resend-timer`                                                                                                                                                                                                                | Comunican estado y resultado.                                                                                                                                          |
+| `overlays`   | `modal`, `confirm-dialog`, `drawer`, `dropdown-menu`, `notification-list`                                                                                                                                                                                                                                             | Superficies flotantes. Comparten el comportamiento de `useDialog` (`shared/utils/dialog-behavior.ts`) — trampa de foco, bloqueo de scroll, Escape, devolución de foco. |
+| `navigation` | `breadcrumb`, `tabs`, `tab-panel`, `accordion`, `accordion-item`, `stepper`, `pagination`                                                                                                                                                                                                                             | Moverse por la aplicación o por el contenido de una pantalla.                                                                                                          |
+| `data`       | `data-table`, `table-toolbar`, `chart-canvas`                                                                                                                                                                                                                                                                         | Tabla (sobre TanStack Table) y gráficos (sobre Chart.js).                                                                                                              |
+| `containers` | `section-card`, `stat-card`, `form-card`, `divider`                                                                                                                                                                                                                                                                   | Envuelven contenido.                                                                                                                                                   |
+| `media`      | `icon`, `avatar`, `avatar-group`, `activity-item`, `timeline`                                                                                                                                                                                                                                                         | Identidad visual y multimedia.                                                                                                                                         |
+| `patterns`   | `media-card`, `checklist-item`, `schedule-card`, `schedule-chip`, `calendar-cell`                                                                                                                                                                                                                                     | Composiciones generalizadas — no traen vocabulario de negocio propio, a diferencia de las plantillas de `features/showcase/pages`.                                     |
+| `typography` | `code-block`, `code-list`, `kbd`                                                                                                                                                                                                                                                                                      | Texto técnico.                                                                                                                                                         |
 
 ### Primitivas compartidas detrás de varios componentes
 
@@ -179,29 +179,29 @@ Las primitivas headless de `@angular/aria` se usan en `combobox`, `accordion`, `
 
 No hay lógica de negocio — es un catálogo de componentes. Los "servicios" son infraestructura de la aplicación anfitriona (estado de UI, no de dominio):
 
-| Servicio | Ubicación | Responsabilidad |
-|---|---|---|
-| `ThemeStore` | `core/theme` | Preferencia de tema (claro/oscuro/sistema), persistencia y sincronización con `prefers-color-scheme`. |
-| `LayoutStore` | `core/layout` | Estado del armazón: riel colapsado, cajón móvil abierto, submenús expandidos. Solo estado — sin efectos, sin DOM. |
-| `ActiveRoute` | `core/layout` | La URL actual como signal (`Router.url` es una propiedad, no un signal), con coincidencia por ruta y por sección (`#fragment`). |
-| `NotificationFeed` | `core/notifications` | El centro de notificaciones persistentes (la bandeja de la campana), con datos de ejemplo porque no hay backend. |
-| `Notifications` | `core/services` | Toasts efímeros, unificados a través de `ngx-sonner`. Única puerta por la que el sistema emite un toast. |
-| `ScrollLock` | `core/services` | Bloqueo de scroll del documento **contado por referencia**, para que dos overlays abiertos a la vez no se pisen al cerrarse. |
-| `BrowserStorage` | `core/storage` | Acceso a `localStorage` tolerante a fallos (modo privado, cuota agotada): degrada a memoria en vez de romper la pantalla. |
-| `ChartTheme` | `core/charts` | Colorea Chart.js con los tokens `--chart-*` del tema activo; asigna la paleta categórica del sistema en vez de dejar que Chart.js use la suya. |
-| `PasswordStrengthEvaluator` | `shared/components/forms/password-strength-meter` | Evalúa la fortaleza de una contraseña con `zxcvbn`, cargado de forma perezosa (ver [§10](#10-dependencias-relevantes)). |
+| Servicio                    | Ubicación                                         | Responsabilidad                                                                                                                                |
+| --------------------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ThemeStore`                | `core/theme`                                      | Preferencia de tema (claro/oscuro/sistema), persistencia y sincronización con `prefers-color-scheme`.                                          |
+| `LayoutStore`               | `core/layout`                                     | Estado del armazón: riel colapsado, cajón móvil abierto, submenús expandidos. Solo estado — sin efectos, sin DOM.                              |
+| `ActiveRoute`               | `core/layout`                                     | La URL actual como signal (`Router.url` es una propiedad, no un signal), con coincidencia por ruta y por sección (`#fragment`).                |
+| `NotificationFeed`          | `core/notifications`                              | El centro de notificaciones persistentes (la bandeja de la campana), con datos de ejemplo porque no hay backend.                               |
+| `Notifications`             | `core/services`                                   | Toasts efímeros, unificados a través de `ngx-sonner`. Única puerta por la que el sistema emite un toast.                                       |
+| `ScrollLock`                | `core/services`                                   | Bloqueo de scroll del documento **contado por referencia**, para que dos overlays abiertos a la vez no se pisen al cerrarse.                   |
+| `BrowserStorage`            | `core/storage`                                    | Acceso a `localStorage` tolerante a fallos (modo privado, cuota agotada): degrada a memoria en vez de romper la pantalla.                      |
+| `ChartTheme`                | `core/charts`                                     | Colorea Chart.js con los tokens `--chart-*` del tema activo; asigna la paleta categórica del sistema en vez de dejar que Chart.js use la suya. |
+| `PasswordStrengthEvaluator` | `shared/components/forms/password-strength-meter` | Evalúa la fortaleza de una contraseña con `zxcvbn`, cargado de forma perezosa (ver [§10](#10-dependencias-relevantes)).                        |
 
 ## 6. Modelos y contratos
 
-| Modelo | Ubicación | Qué fija |
-|---|---|---|
-| `Tone` | `shared/models/tone.model.ts` | El vocabulario de matices de color del sistema (`neutral`, `blue`, `green`…). Un componente nunca nombra un matiz en su hoja de estilos: pone `data-tone` y una clase `.tone-*`. |
-| `StatusTone` | `shared/models/status-tone.model.ts` | El *significado* de un estado (`success`, `warning`, `danger`…), no un color — mapea a un `Tone` a través de `STATUS_HUE`. |
-| `ControlSize` | `shared/models/size.model.ts` | El eje de tamaño (`sm` / `md` / `lg`), deliberadamente ortogonal a `variant`. |
-| `ControlError` | `shared/models/form-control.model.ts` | La forma mínima de un error de validación (`kind` + `message` opcional) que coincide con lo que emite Signal Forms sin atarse a sus tipos genéricos. |
-| `NavItem` / `NavSection` | `layout/components/sidebar/navigation.model.ts` | El árbol de navegación: nodo con `route` y `fragment` opcional, o grupo con `children`. |
-| `NotificationItem` | `core/notifications/notification.model.ts` | Una entrada persistente del centro de notificaciones (no confundir con los toasts efímeros). |
-| `IsoDate` | `shared/utils/calendar.ts` | Alias de `string` para fechas en formato `YYYY-MM-DD`. Las fechas viajan como texto, nunca como `Date`, para evitar el desfase de un día que produce `new Date('2026-09-08')` al interpretarse como medianoche UTC. |
+| Modelo                   | Ubicación                                       | Qué fija                                                                                                                                                                                                            |
+| ------------------------ | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Tone`                   | `shared/models/tone.model.ts`                   | El vocabulario de matices de color del sistema (`neutral`, `blue`, `green`…). Un componente nunca nombra un matiz en su hoja de estilos: pone `data-tone` y una clase `.tone-*`.                                    |
+| `StatusTone`             | `shared/models/status-tone.model.ts`            | El _significado_ de un estado (`success`, `warning`, `danger`…), no un color — mapea a un `Tone` a través de `STATUS_HUE`.                                                                                          |
+| `ControlSize`            | `shared/models/size.model.ts`                   | El eje de tamaño (`sm` / `md` / `lg`), deliberadamente ortogonal a `variant`.                                                                                                                                       |
+| `ControlError`           | `shared/models/form-control.model.ts`           | La forma mínima de un error de validación (`kind` + `message` opcional) que coincide con lo que emite Signal Forms sin atarse a sus tipos genéricos.                                                                |
+| `NavItem` / `NavSection` | `layout/components/sidebar/navigation.model.ts` | El árbol de navegación: nodo con `route` y `fragment` opcional, o grupo con `children`.                                                                                                                             |
+| `NotificationItem`       | `core/notifications/notification.model.ts`      | Una entrada persistente del centro de notificaciones (no confundir con los toasts efímeros).                                                                                                                        |
+| `IsoDate`                | `shared/utils/calendar.ts`                      | Alias de `string` para fechas en formato `YYYY-MM-DD`. Las fechas viajan como texto, nunca como `Date`, para evitar el desfase de un día que produce `new Date('2026-09-08')` al interpretarse como medianoche UTC. |
 
 ## 7. Routing y navegación
 
@@ -249,34 +249,34 @@ Los nueve servicios del proyecto (ver [§5](#5-servicios-y-lógica-de-negocio)) 
 
 No hay `environments/`: el proyecto no tiene nada que configurar por entorno porque no consume ninguna API. La única configuración de build vive en `angular.json`:
 
-| Configuración | Detalle |
-|---|---|
-| **Presupuestos de producción** | `initial`: 700 kB de aviso / 850 kB de error. `anyComponentStyle`: 4 kB de aviso / 8 kB de error. |
-| **`outputHashing: 'all'`** | Solo en producción, para el cacheo de assets. |
-| **Locale** | `es-MX`, registrado con `registerLocaleData` en `core-providers.ts` y fijado como `LOCALE_ID`. Gobierna formato de fechas, números y plurales. |
-| **Alias de import** | `@core`, `@shared`, `@layout`, `@features` (`tsconfig.json`), reflejando las cuatro áreas de la arquitectura. |
-| **Prefijo de selector** | `app`, forzado por ESLint (`@angular-eslint/component-selector` / `directive-selector`), no solo declarado en `angular.json`. |
-| **TypeScript estricto** | `strict`, `noUnusedLocals`, `noUnusedParameters`, `noImplicitReturns`, más `strictTemplates`, `strictInjectionParameters` y `strictInputAccessModifiers` del lado de Angular. |
+| Configuración                  | Detalle                                                                                                                                                                       |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Presupuestos de producción** | `initial`: 700 kB de aviso / 850 kB de error. `anyComponentStyle`: 4 kB de aviso / 8 kB de error.                                                                             |
+| **`outputHashing: 'all'`**     | Solo en producción, para el cacheo de assets.                                                                                                                                 |
+| **Locale**                     | `es-MX`, registrado con `registerLocaleData` en `core-providers.ts` y fijado como `LOCALE_ID`. Gobierna formato de fechas, números y plurales.                                |
+| **Alias de import**            | `@core`, `@shared`, `@layout`, `@features` (`tsconfig.json`), reflejando las cuatro áreas de la arquitectura.                                                                 |
+| **Prefijo de selector**        | `app`, forzado por ESLint (`@angular-eslint/component-selector` / `directive-selector`), no solo declarado en `angular.json`.                                                 |
+| **TypeScript estricto**        | `strict`, `noUnusedLocals`, `noUnusedParameters`, `noImplicitReturns`, más `strictTemplates`, `strictInjectionParameters` y `strictInputAccessModifiers` del lado de Angular. |
 
 ## 10. Dependencias relevantes
 
-| Paquete | Para qué se usa |
-|---|---|
-| `@angular/aria` | Primitivas headless de accesibilidad — ver [§4](#4-componentes-principales). |
-| `@lucide/angular` | Fuente del vocabulario de iconos (ver [§2.6](#26-iconos-vocabulario-cerrado-tree-shakable)). |
-| `@tanstack/angular-table` | Motor de `data-table`: ordenamiento, paginado y modelo de filas, sin UI propia — la UI es del componente. |
-| `chart.js` | Motor de `chart-canvas`, coloreado por `ChartTheme` en vez de por su paleta por defecto. |
+| Paquete                                                  | Para qué se usa                                                                                                                                                                                                             |
+| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@angular/aria`                                          | Primitivas headless de accesibilidad — ver [§4](#4-componentes-principales).                                                                                                                                                |
+| `@lucide/angular`                                        | Fuente del vocabulario de iconos (ver [§2.6](#26-iconos-vocabulario-cerrado-tree-shakable)).                                                                                                                                |
+| `@tanstack/angular-table`                                | Motor de `data-table`: ordenamiento, paginado y modelo de filas, sin UI propia — la UI es del componente.                                                                                                                   |
+| `chart.js`                                               | Motor de `chart-canvas`, coloreado por `ChartTheme` en vez de por su paleta por defecto.                                                                                                                                    |
 | `@zxcvbn-ts/core` + `language-common` + `language-es-es` | Evaluación de fortaleza de contraseña en `password-strength-meter`, con diccionario en español. **Cargado de forma perezosa** (`import()` dinámico dentro de `password-strength-evaluator.ts`): no entra al bundle inicial. |
-| `ngx-sonner` | Motor de toasts detrás de `Notifications` (`core/services/notification.ts`). |
-| `tailwindcss` (v4) + `@tailwindcss/postcss` | Utilidades de bajo nivel; los tokens de diseño son la capa por encima, no un reemplazo. |
-| `rxjs` | Solo en la frontera con APIs Observable — ver [§8](#8-estado-y-programación-reactiva). |
-| `angular-eslint` + `typescript-eslint` | Además de estilo, **hacen cumplir la arquitectura**: el prefijo de selector y las fronteras entre `core/` / `shared/` / `layout/` / `features/` son reglas de lint, no acuerdos verbales. |
+| `ngx-sonner`                                             | Motor de toasts detrás de `Notifications` (`core/services/notification.ts`).                                                                                                                                                |
+| `tailwindcss` (v4) + `@tailwindcss/postcss`              | Utilidades de bajo nivel; los tokens de diseño son la capa por encima, no un reemplazo.                                                                                                                                     |
+| `rxjs`                                                   | Solo en la frontera con APIs Observable — ver [§8](#8-estado-y-programación-reactiva).                                                                                                                                      |
+| `angular-eslint` + `typescript-eslint`                   | Además de estilo, **hacen cumplir la arquitectura**: el prefijo de selector y las fronteras entre `core/` / `shared/` / `layout/` / `features/` son reglas de lint, no acuerdos verbales.                                   |
 
 ## 11. Observaciones técnicas
 
 - **Sin `.spec.ts` y sin documentación previa, por decisión de alcance.** Este README es la primera documentación estructurada del proyecto — no reemplaza pruebas, que quedan fuera del alcance actual.
 
-- **El servidor de desarrollo transfiere el paquete completo de Lucide (~48 MB) en cada recarga.** Es un costo exclusivo de desarrollo: `@lucide/angular` publica cada icono como un componente Angular completo (~12 MB de origen), y el *dev server* no puede aplicar tree-shaking sobre eso — producción sí lo hace, y el bundle inicial real (`~644 kB` en bruto, `~117 kB` de transferencia) no lo incluye entero. Se evaluó extraer solo los datos de trazo de los iconos usados (reduciendo esa carga a ~12 kB) y se revirtió deliberadamente: el costo es solo de desarrollo y no justificaba abandonar la forma documentada de consumir la librería.
+- **El servidor de desarrollo transfiere el paquete completo de Lucide (~48 MB) en cada recarga.** Es un costo exclusivo de desarrollo: `@lucide/angular` publica cada icono como un componente Angular completo (~12 MB de origen), y el _dev server_ no puede aplicar tree-shaking sobre eso — producción sí lo hace, y el bundle inicial real (`~644 kB` en bruto, `~117 kB` de transferencia) no lo incluye entero. Se evaluó extraer solo los datos de trazo de los iconos usados (reduciendo esa carga a ~12 kB) y se revirtió deliberadamente: el costo es solo de desarrollo y no justificaba abandonar la forma documentada de consumir la librería.
 
 - **`date-grid` no usa `@angular/aria` para su navegación de teclado**, a diferencia del resto de componentes con interacción compleja — ver [§4](#4-componentes-principales) para el razonamiento medido, no supuesto, detrás de esa excepción.
 
